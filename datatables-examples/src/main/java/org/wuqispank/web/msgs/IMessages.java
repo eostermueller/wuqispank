@@ -1,0 +1,27 @@
+package org.wuqispank.web.msgs;
+
+import java.io.Serializable;
+
+import org.intrace.client.connection.HostPort;
+
+public interface IMessages {
+	String getInvalidAgentHostName(String value, String parmName, String className);
+
+	public abstract String getInvalidAgentPortNumber(Exception e, String value,
+			String parmName, String className);
+
+	String getInvalidCircularRequestBufferSize(Exception e, String value,
+			String parmName, String className);
+
+	public String getConnectionError(HostPort agent);
+
+	String getExportDirNotSet(String webXmlExportDir);
+
+	String getHowToSpecifyExportDir();
+
+	Serializable getExportSuccessfulMsg(String fileName);
+
+	String getBypassImportMessage(String webXmlExportDirProperty, String exportDir);
+	
+
+}

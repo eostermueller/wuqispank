@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+  <!-- only available with servlet spec. 2.4 -->
+  <locale-encoding-mapping-list>
+    <locale-encoding-mapping>
+      <locale>en</locale>
+      <encoding>UTF-8</encoding>
+    </locale-encoding-mapping>
+  </locale-encoding-mapping-list>
+	  <listener>
+	  	<listener-class>org.wuqispank.web.BackgroundSqlCollector</listener-class>
+	  </listener>
+  
+	<context-param>
+        <param-name>intrace-agent-host</param-name>
+        <param-value>localhost</param-value>
+    </context-param>	
+	<context-param>
+        <param-name>export-dir</param-name>
+        <param-value>/Users/erikostermueller/Documents/src/jsource/wuqispank-parent/export-dir</param-value>
+    </context-param>	
+	<context-param>
+        <param-name>intrace-agent-port</param-name>
+        <param-value>9125</param-value>
+    </context-param>	
+	<context-param>
+        <param-name>circular-request-buffer-size</param-name>
+        <param-value>10000</param-value>
+    </context-param>	
+  <!--
+    There are three means to configure Wickets configuration mode and they are
+    tested in the order given.
+    1) A system property: -Dwicket.configuration
+    2) servlet specific <context-param>
+    3) context specific <context-param>
+    The value might be either "development" (reloading when templates change)
+    or "deployment". If no configuration is found, "deployment" is the default.
+  -->
+
+  <context-param>
+    <param-name>configuration</param-name>
+    <param-value>development</param-value>
+  </context-param>
+  <!--  org.wuqispank.web.StatusServlet -->
+
+  <filter>
+    <filter-name>MyApplication</filter-name>
+    <filter-class>org.apache.wicket.protocol.http.WicketFilter</filter-class>
+    <init-param>
+      <param-name>applicationClassName</param-name>
+      <param-value>org.wuqispank.web.WuqispankApp</param-value>
+    </init-param>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>MyApplication</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <session-config>
+    <session-timeout>50</session-timeout>
+  </session-config>
+  <servlet>
+    <servlet-name>status</servlet-name>
+    <servlet-class>org.wuqispank.web.StatusServlet</servlet-class>
+  </servlet>
+     <servlet>
+                <servlet-name>test</servlet-name>
+                <servlet-class>org.mortbay.jetty.servlet.Invoker</servlet-class>
+        </servlet>
+
+
+
+  <servlet-mapping>
+    <servlet-name>status</servlet-name>
+    <url-pattern>/status</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+          <servlet-name>test</servlet-name>
+          <url-pattern>/test/*</url-pattern>
+  </servlet-mapping>
+  
+</web-app>
+

@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Built-By: erikostermueller
+Build-Jdk: 1.7.0_51
+Implementation-Vendor-Id: org.wicketstuff
+Created-By: Maven Integration for Eclipse
+Implementation-Title: DataTables jQuery Plugin Integration
+Implementation-Version: 6.11.0
+SCM-url: https://github.com/wicketstuff/core/tree/wicketstuff-core-6.1
+ 1.0/jdk-1.6-parent/datatables-parent/wicketstuff-datatables
+Specification-Title: DataTables jQuery Plugin Integration
+Specification-Version: 6.11.0
+

@@ -1,0 +1,95 @@
+
+<html xmlns:wicket="http://wicket.apache.org">
+<head><link rel="stylesheet" type="text/css" href="../../css/demo_page.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="../../css/demo_table_wuqispank.css" media="screen" />
+<script type="text/javascript" src="../../js/jquery.js"></script>
+<script type="text/javascript" src="../../js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="../../js/KeyTable.js"></script>
+<script type="text/javascript" src="../../js/wuqispank.js"></script>
+<script type="text/javascript" id="sqlTable_datatables">
+/*<![CDATA[*/
+$(document).ready( function() {
+	var oTable = $('#sqlTable1').dataTable( {
+	"aoColumns": [	{ "sWidth": "7.5%" },  	{ "sWidth": "7.5%" },  	{ "sWidth": "30%" },  	{ "sWidth": "30%" },  	{ "sWidth": "25%" },  	{ "sWidth": "10%" },  ],		"sPaginationType": "full_numbers"
+	} );
+var keys = new KeyTable( {"table": document.getElementById('sqlTable1'),"datatable": oTable} );	keys.event.focus( null, null, function( nNode, x, y) {    fnMessage( 'data:'+getText(nNode) );	} );} );
+/*]]>*/
+</script>
+
+    <title>Wicket Examples - library</title>
+    <link rel="stylesheet" type="text/css" href="../../style.css"/>
+</head>
+<body>
+
+	<span wicket:id="mainNavigation"><wicket:panel>
+    <a href="../../index.html" style="color: #E9601A" target="_top"><img src="../../logo.png"/></a>      
+        <div style="float:left;"><span wicket:id="exampleTitle">web</span></div>
+    <br/>
+  </wicket:panel></span>
+	
+      <p>
+       <wicket:link><a href="../../">Home</a></wicket:link>&#160;
+       <wicket:link><a href="SignOut.html">Sign Out</a></wicket:link>
+       <br />
+       <div style="border:1px solid gray; overflow: hidden; padding: 1em;">
+		<wicket:child><wicket:extend>
+<wicket:message key="label.sql.statement.count">Sql Statement Count:</wicket:message>
+		<span wicket:id="sqlStatementCount">6</span>
+	<p>
+		<div wicket:id="tabs" class="tabpanel"><wicket:panel xmlns:wicket="http://wicket.apache.org">
+<div wicket:id="tabs-container" class="tab-row">
+<ul>
+	<li wicket:id="tabs" class="tab0 selected"><a href="./org.wuqispank.web.RequestDetail?id=48db8675-af9c-415a-a6e0-67a60a83f3d0" wicket:id="link"><span wicket:id="title">first tab</span></a></li><li wicket:id="tabs" class="tab1"><a href="./org.wuqispank.web.RequestDetail?id=48db8675-af9c-415a-a6e0-67a60a83f3d0&amp;tab=1" wicket:id="link"><span wicket:id="title">second tab</span></a></li><li wicket:id="tabs" class="tab2 last"><a href="./org.wuqispank.web.RequestDetail?id=48db8675-af9c-415a-a6e0-67a60a83f3d0&amp;tab=2" wicket:id="link"><span wicket:id="title">third tab</span></a></li>
+</ul>
+</div>
+<div wicket:id="panel" class="tab-panel"><wicket:panel wicket:id="panel1">
+<br/>
+This is tab-panel 1
+<div>
+<table wicket:id="sqlTable" cellpadding="0" cellspacing="0" border="0" class="display" style="width: 980px" id="sqlTable1">
+	<thead>
+		<tr>
+			<th><wicket:message key="col.header.table.count">Tables</wicket:message></th>
+			<th><wicket:message key="col.header.field.count">Columns</wicket:message></th>
+			<th><wicket:message key="col.header.table.names">TableNames</wicket:message></th>
+			<th><wicket:message key="col.header.sql.text">SqlText</wicket:message></th>
+			<th><wicket:message key="col.header.stack.trace">StackTrace</wicket:message></th>
+			<th><wicket:message key="col.header.sql.sequence">Sequence</wicket:message></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr wicket:id="sqlRows">
+			<td wicket:id="col.table.count">1</td>
+			<td wicket:id="col.field.count">2</td>
+			<td wicket:id="col.table.names">[Location]</td>
+			<td wicket:id="col.sql.text">INSERT INTO Location (name, address) VALUES(?, ?)</td>
+			<td wicket:id="col.stack.trace">[org.hsqldb.jdbc.jdbcConnection.prepareStatement(Unknown Source), org.apache.commons.dbcp.DelegatingConnection.prepareStatement(DelegatingConnection.java:281), org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper.prepareStatement(PoolingDataSource.java:313), sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method), sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57), sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43), java.lang.reflect.Method.invoke(Method.java:601), org.springframework.jdbc.core.JdbcTemplate$CloseSuppressingInvocationHandler.invoke(JdbcTemplate.java:1345), $Proxy7.prepareStatement(Unknown Source), org.springframework.jdbc.core.simple.AbstractJdbcInsert$2.doInConnection(AbstractJdbcInsert.java:490), org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:341), org.springframework.jdbc.core.simple.AbstractJdbcInsert.executeInsertAndReturnKeyHolderInternal(AbstractJdbcInsert.java:485), org.springframework.jdbc.core.simple.AbstractJdbcInsert.executeInsertAndReturnKeyInternal(AbstractJdbcInsert.java:426), org.springframework.jdbc.core.simple.AbstractJdbcInsert.doExecuteAndReturnKey(AbstractJdbcInsert.java:380), org.springframework.jdbc.core.simple.SimpleJdbcInsert.executeAndReturnKey(SimpleJdbcInsert.java:122), example.webapp.dao.JdbcLocationDAO.save(JdbcLocationDAO.java:106), example.webapp.dao.JdbcLocationDAO.save(JdbcLocationDAO.java:1), sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method), sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57), sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43), java.lang.reflect.Method.invoke(Method.java:601), org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:309), org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:183), org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:150), org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:110), org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172), org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:202), $Proxy5.save(Unknown Source), example.webapp.dao.JdbcEventDAO.save(JdbcEventDAO.java:108), example.webapp.dao.JdbcEventDAO.save(JdbcEventDAO.java:1), sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method), sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57), sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43), java.lang.reflect.Method.invoke(Method.java:601), org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:309), org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:183), org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:150), org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:110), org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172), org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:202), $Proxy6.save(Unknown Source), example.webapp.servlet.HelloWorld.doGet(HelloWorld.java:34), javax.servlet.http.HttpServlet.service(HttpServlet.java:668), javax.servlet.http.HttpServlet.service(HttpServlet.java:770), org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669), org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455), org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137), org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560), org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231), org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072), org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382), org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193), org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006), org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135), org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116), org.eclipse.jetty.server.Server.handle(Server.java:365), org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485), org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53), org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926), org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988), org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635), org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235), org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72), org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264), org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608), org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)]</td>
+			<td wicket:id="col.sql.sequence">-1</td>
+		</tr><tr wicket:id="sqlRows">
+			<td wicket:id="col.table.count">1</td>
+			<td wicket:id="col.field.count">4</td>
+			<td wicket:id="col.table.names">[Event]</td>
+			<td wicket:id="col.sql.text">INSERT INTO Event (name, description, date, location) VALUES(?, ?, ?, ?)</td>
+			<td wicket:id="col.stack.trace">[org.hsqldb.jdbc.jdbcConnection.prepareStatement(Unknown Source), org.apache.commons.dbcp.DelegatingConnection.prepareStatement(DelegatingConnection.java:281), org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper.prepareStatement(PoolingDataSource.java:313), sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method), sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57), sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43), java.lang.reflect.Method.invoke(Method.java:601), org.springframework.jdbc.core.JdbcTemplate$CloseSuppressingInvocationHandler.invoke(JdbcTemplate.java:1345), $Proxy7.prepareStatement(Unknown Source), org.springframework.jdbc.core.simple.AbstractJdbcInsert$2.doInConnection(AbstractJdbcInsert.java:490), org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:341), org.springframework.jdbc.core.simple.AbstractJdbcInsert.executeInsertAndReturnKeyHolderInternal(AbstractJdbcInsert.java:485), org.springframework.jdbc.core.simple.AbstractJdbcInsert.executeInsertAndReturnKeyInternal(AbstractJdbcInsert.java:426), org.springframework.jdbc.core.simple.AbstractJdbcInsert.doExecuteAndReturnKey(AbstractJdbcInsert.java:380), org.springframework.jdbc.core.simple.SimpleJdbcInsert.executeAndReturnKey(SimpleJdbcInsert.java:122), example.webapp.dao.JdbcEventDAO.save(JdbcEventDAO.java:122), example.webapp.dao.JdbcEventDAO.save(JdbcEventDAO.java:1), sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method), sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57), sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43), java.lang.reflect.Method.invoke(Method.java:601), org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:309), org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:183), org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:150), org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:110), org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172), org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:202), $Proxy6.save(Unknown Source), example.webapp.servlet.HelloWorld.doGet(HelloWorld.java:34), javax.servlet.http.HttpServlet.service(HttpServlet.java:668), javax.servlet.http.HttpServlet.service(HttpServlet.java:770), org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669), org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455), org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137), org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560), org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231), org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072), org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382), org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193), org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006), org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135), org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116), org.eclipse.jetty.server.Server.handle(Server.java:365), org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485), org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53), org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926), org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988), org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635), org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235), org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72), org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264), org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608), org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)]</td>
+			<td wicket:id="col.sql.sequence">-1</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+		<p> <p>Detail:<p>
+		<div>
+		<p>
+		</div>
+		<div id="info" class="box" overflow="scroll" onclick="selectText('info');" >
+				Event information:<br>
+			</div>		<p>
+
+</wicket:panel></div>
+</wicket:panel></div>
+	</p>
+</wicket:extend></wicket:child>           
+       </div>
+	</p>
+
+</body>
+</html>

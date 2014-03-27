@@ -1,0 +1,30 @@
+<wicket:extend xmlns:wicket="http://wicket.apache.org">
+<h1>wuqispank</h1>
+<div style="width: 980px">
+<table wicket:id="table" cellpadding="0" cellspacing="0" border="0"
+	class="display" style="width: 980px">
+	<thead>
+		<tr>
+			<th><wicket:message key="col.header.request.id">Default label</wicket:message></th>
+			<th><wicket:message key="col.header.sql.statement.count">Default label</wicket:message></th>
+			<th><wicket:message key="col.header.table.count">Default label</wicket:message></th>
+			<th><wicket:message key="col.header.column.count">Default label</wicket:message></th>
+			<th><wicket:message key="col.header.thread.id">Default label</wicket:message></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr wicket:id="rows">
+		      <td>
+	 			<a href="#" wicket:id="details">
+	 				<span wicket:id="title">[[tab title]]</span>
+	 			</a>
+		      </td>
+			<td wicket:id="col.sql.statement.count">Row 1 Data 1</td>
+			<td wicket:id="col.table.count">Row 1 Data 2</td>
+			<td wicket:id="col.column.count">etc</td>
+			<td wicket:id="col.thread.id">etc</td>
+		</tr>
+	</tbody>
+</table>
+</div>
+</wicket:extend>
