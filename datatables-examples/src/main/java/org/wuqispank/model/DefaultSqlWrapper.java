@@ -50,14 +50,14 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 //	}
 	@Override
 	public void setSqlText(String val) {
-		m_sqlText = val;
+		m_sqlText = val.trim();
 		setSqlModel(DefaultFactory.getFactory().getSqlModel());
 		getSqlModel().setColumnCount(17);
 
 		ISqlParser parser = DefaultFactory.getFactory().getSqlParser();
 		try {
 			parser.setSqlModel(getSqlModel());
-			parser.parse(val);
+			parser.parse(m_sqlText);
 		} catch (SqlParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
