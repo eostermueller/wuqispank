@@ -26,6 +26,7 @@ import org.intrace.client.connection.DefaultConnectionList;
 import org.intrace.client.connection.HostPort;
 import org.intrace.client.connection.IConnection;
 import org.intrace.client.connection.IConnectionList;
+import org.intrace.client.connection.Callback;
 import org.intrace.client.connection.command.ClassInstrumentationCommand;
 import org.intrace.client.connection.command.IAgentCommand;
 import org.intrace.client.filter.IncludeAnyOfTheseEventsFilterExt;
@@ -39,7 +40,6 @@ import org.intrace.client.request.IRequest;
 import org.intrace.client.request.RequestConnection;
 import org.intrace.client.request.RequestWriter;
 import org.intrace.client.test.level2.connection.lowLevel.ConnectionTestUtils;
-import org.intrace.client.test.level2.connection.lowLevel.TestCallback;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ import org.xml.sax.SAXException;
 public class BackgroundSqlCollector implements ServletContextListener, ICompletedRequestCallback {
 	private IRequestRepository m_repo = DefaultFactory.getFactory().createRepo();
 	static Logger LOG = LoggerFactory.getLogger(BackgroundSqlCollector.class);
-	TestCallback testCallback = null;
+	Callback testCallback = null;
 	public IRequestRepository getRepo() {
 		return m_repo;
 	}
@@ -166,7 +166,7 @@ public class BackgroundSqlCollector implements ServletContextListener, IComplete
 			LOG.debug("New RequestConnection[" + requestConnection.hashCode() + "]");
 			requestConnection.setCompletedRequestCallback(this);
 			
-			testCallback = new TestCallback();
+			testCallback = new Callback();
 			requestConnection.addCallback(testCallback);
 			requestConnection.getTraceWriter().setTraceFilterExt(filter);
 			requestConnection.setRequestCompletionEvent(t3_requestCompletion);

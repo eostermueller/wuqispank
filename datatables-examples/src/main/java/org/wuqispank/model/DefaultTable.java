@@ -76,7 +76,7 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 		IColumn rc = null;
 		for(IColumn c : getWhereClauseColumns()) {
 			log.debug("Looking for column [" + nameCriteria + "] in table [" + getName() + "] comparing to column [" + c.getName() + "]");
-			if (nameCriteria.toLowerCase().equals(c.getName().toLowerCase())) {
+			if (c.getName()!=null && nameCriteria.toLowerCase().equals(c.getName().toLowerCase())) {
 				rc = c;
 				break;
 			}

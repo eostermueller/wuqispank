@@ -29,7 +29,10 @@ public class DefaultColumn implements IColumn, java.io.Serializable {
 	
 	@Override
 	public String getName() {
-		return m_name.toLowerCase().trim();
+		String tmp = m_name;
+		if (tmp!=null)
+			tmp = tmp.toLowerCase().trim();
+		return tmp;
 	}
 	@Override
 	public void setName(String val) {
