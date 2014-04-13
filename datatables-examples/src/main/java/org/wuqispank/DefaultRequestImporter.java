@@ -1,8 +1,5 @@
 package org.wuqispank;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.wuqispank.model.IRequestWrapper;
+import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.IStackTrace;
 import org.xml.sax.SAXException;
@@ -44,30 +42,20 @@ public class DefaultRequestImporter implements IRequestImporter {
 			Node eventNode = sqlList.item(i);
 			if (eventNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) eventNode;
+				
+				ISqlWrapper sqlWrapper = rqWrap.createBlankSqlWrapper();
 
-				ISqlWrapper sqlWrapper = DefaultFactory.getFactory().getSqlWrapper();
-				sqlWrapper.setSqlModel(  DefaultFactory.getFactory().getSqlModel() );
-				
-				
-				String myStackTrace = eElement.getElementsByTagName(IRequestExporter.EXPORT_STACK_TRACE_TAG_NAME).item(0).getTextContent().trim();
-				if (myStackTrace.charAt(0)=='[')
-					myStackTrace = myStackTrace.substring(1);
-				
-				if (myStackTrace.charAt(myStackTrace.length()-1)==']')
-					myStackTrace = myStackTrace.substring(0,myStackTrace.length()-1);
-				
-				ITraceEventParser eventParser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
-				StackTraceElement[] arraySte = eventParser.parseStackTrace(myStackTrace);
-				IStackTrace modelStackTrace = DefaultFactory.getFactory().getStackTrace(); 
-				modelStackTrace.setStackTraceElements(arraySte);
-				sqlWrapper.setStackTrace(modelStackTrace);
-				
-				sqlWrapper.setSqlText( eElement.getElementsByTagName(IRequestExporter.EXPORT_SQL_STMT_TAG_NAME).item(0).getTextContent() );
-				
+				rqWrap.addSqlWrapper(sqlWrapper);
+
 				String currentAttrName = null;
 				String tmpString = null;
 				long tmpLong = -1;
 				try {
+					currentAttrName = IRequestExporter.ATTRIBUTE_NAME_SEQUENCE;
+					tmpString = eElement.getAttribute(currentAttrName);		
+					tmpLong = Long.parseLong(tmpString);
+					sqlWrapper.setSequence((int) tmpLong);
+					
 					currentAttrName = IRequestExporter.ATTRIBUTE_NAME_CLIENT_DATE_TIME;
 					tmpString = eElement.getAttribute(currentAttrName);		
 					tmpLong = Long.parseLong(tmpString);
@@ -87,13 +75,45 @@ public class DefaultRequestImporter implements IRequestImporter {
 					throw new WuqispankException("Found an invalid numeric for an exported trace for ["  + sqlWrapper.getSequence() + "], child of [id=" + rqWrap.getUniqueId() + "].  Attribute [" + currentAttrName + "] value [" + tmpString + "]", nfe);
 				}
 				
-				rqWrap.getSql().add(sqlWrapper);
+				String myStackTrace = extractTextChildren((Element)eElement.getElementsByTagName(IRequestExporter.EXPORT_STACK_TRACE_TAG_NAME).item(0));
+				if (myStackTrace.charAt(0)=='[')
+					myStackTrace = myStackTrace.substring(1);
+				
+				if (myStackTrace.charAt(myStackTrace.length()-1)==']')
+					myStackTrace = myStackTrace.substring(0,myStackTrace.length()-1);
+				
+				ITraceEventParser eventParser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+				StackTraceElement[] arraySte = eventParser.parseStackTrace(myStackTrace);
+				IStackTrace modelStackTrace = DefaultFactory.getFactory().getStackTrace(); 
+				modelStackTrace.setStackTraceElements(arraySte);
+				sqlWrapper.setStackTrace(modelStackTrace);
+
+				String sql = extractTextChildren((Element)eElement.getElementsByTagName(IRequestExporter.EXPORT_SQL_STMT_TAG_NAME).item(0));
+				//String sql = eElement.getElementsByTagName(IRequestExporter.EXPORT_SQL_STMT_TAG_NAME).item(0).getTextContent();
+				if (sql.trim().length() >0)
+					sqlWrapper.setSqlText( sql );
+				else {
+					String msg = DefaultFactory.getFactory().getMessages().getEmptySqlError(sql,rqWrap.getUniqueId(), sqlWrapper.getSequence() );
+					throw new WuqispankException(msg);
+				}
+				
+				//rqWrap.getSql().add(sqlWrapper);
 			}
 		}
 			
 		
 	}
-
+	public static String extractTextChildren(Element parentNode) {
+		StringBuilder sb = new StringBuilder();
+	    NodeList childNodes = parentNode.getChildNodes();
+	    for (int i = 0; i < childNodes.getLength(); i++) {
+	      Node node = childNodes.item(i);
+	      if (node.getNodeType() == Node.TEXT_NODE) {
+	        sb.append(node.getNodeValue() );
+	      }
+	    }
+	    return sb.toString();
+	}
 	@Override
 	public IRequestWrapper[] importRq() throws SAXException, IOException, ParserConfigurationException, WuqispankException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -131,7 +151,7 @@ public class DefaultRequestImporter implements IRequestImporter {
 				results.add(rqWrapper);
 				
 			} else
-				fail("Did not find [" + IRequestExporter.EXPORT_SINGLE_REQUEST_TAG_NAME + "]");
+				throw new WuqispankException("Did not find [" + IRequestExporter.EXPORT_SINGLE_REQUEST_TAG_NAME + "]");
 		}
 		IRequestWrapper prototype[]={};
 		return results.toArray(prototype);

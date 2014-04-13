@@ -136,8 +136,6 @@ public class BackgroundSqlCollector implements ServletContextListener, IComplete
 			}
 		}
 		
-
-		
 		//m_requestQueue = new FixedLengthQueue<IRequestWrapper>(config.getCircularBufferSize());
 		//m_requestQueue = new ConcurrentLinkedDeque<IRequestWrapper>();
 		
@@ -196,7 +194,6 @@ public class BackgroundSqlCollector implements ServletContextListener, IComplete
 			// 
 			e.printStackTrace();
 		}
-		
 		
 	}
 	

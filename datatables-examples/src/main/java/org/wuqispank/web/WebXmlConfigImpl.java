@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.web.msgs.IMessages;
 
-public class WebXmlConfigImpl implements IConfig {
+public class WebXmlConfigImpl implements IConfig, java.io.Serializable {
 	static Logger LOG = LoggerFactory.getLogger(BackgroundSqlCollector.class);
 	
 	private static final String WEB_XML_INTRACE_AGENT_HOST = "intrace-agent-host";
@@ -28,7 +28,7 @@ public class WebXmlConfigImpl implements IConfig {
 
 	private static final int DEFAULT_CIRCULAR_BUFFER_SIZE = 10000;
 	
-	private ServletContext m_servletContext;
+	private transient ServletContext m_servletContext;
 
 	private ServletContext getServletContext() {
 		return m_servletContext;
@@ -88,7 +88,7 @@ public class WebXmlConfigImpl implements IConfig {
 			StringBuilder sb = new StringBuilder();
 			sb.append("<context-param>\n");
 			sb.append("\t\t<param-name>export-dir</param-name>\n");
-			sb.append("\t\t<param-value>/home/myUser/myFolder</param-value>\n");
+			sb.append("\t\t<param-value>c:/home/myUser/myFolder</param-value>\n");
 			sb.append("<context-param>\n");
 			
 			LOG.warn(msgs.getHowToSpecifyExportDir() + sb.toString());
@@ -98,5 +98,88 @@ public class WebXmlConfigImpl implements IConfig {
 			exportDir.mkdirs();
 		return exportDir;
 	}
+
+	/**
+	 * Never should there be more than 20 rows (sql statements)
+	 * in a single collapsible group, unless there is a block of 
+	 * identical statements (then see getRowCountOfHeterogenousGroup).
+	 */
+	@Override
+	public int getMaxRowCountOfHeterogenousGroup() {
+		return 1000;
+	}
+
+	/**
+	 * If 1000 sql statements execute in uninterrupted sequence,
+	 * they should all be in the same collapsible swim lane.
+	 */
+	@Override
+	public int getMaxRowCountOfHomogeneousGroup() {
+		return 1000;
+	}
+
+	@Override
+	public String getMxGraphFolderName() {
+		return "mxGraph-2_4_0_4";
+	}
+	@Override
+	public int getXSpaceBetwenTableLanes() {
+		return 70;
+	}
+	@Override
+	public int getXStartLeftMostTableLane() {
+		return 113;
+	}
+	@Override
+	public int getXNegOffset() {
+		return 15;
+	}
+	@Override
+	public int getTableMarkerX() {
+		return 0;
+	}
+	@Override
+	public int getTableMarkerY() {
+		return 25;
+		//return 50;
+	}
+	@Override
+	public int getTableMarkerYOffset() {
+		return 5;
+	}
+	@Override
+	public int getTableMarkerWidth() {
+		return 20;
+	}
+	@Override
+	public int getTableMarkerHeight() {
+		return 20;
+	}
+
+	@Override
+	public int getEvenOddRowWidth() {
+		return 1200;
+	}
+	@Override
+	public int getEvenOddRowHeight() {
+		//return 50;
+		return 35;
+	}
+
+	@Override
+	public int getWidthOfVerticalTableLane() {
+		return 20;
+	}
+
+	@Override
+	public int getXStartLeftMostTableLabel() {
+		return 13;
+	}
+
+	@Override
+	public int getHeightOfVerticalTableLane() {
+		return 100;
+	}
+	
 
 }

@@ -17,6 +17,24 @@ import org.wuqispank.jdbc.DefaultJdbcSqlWrapperFactory;
  *
  */
 public class DefaultRequestWrapper implements IRequestWrapper {
+	private ISqlStatsObserver m_sqlStats = null;
+	@Override
+	public ISqlStatsObserver getSqlStats() {
+		return m_sqlStats;
+	}
+	public void setSqlStats(ISqlStatsObserver sqlStats) {
+		this.m_sqlStats = sqlStats;
+	}
+	public DefaultRequestWrapper() {
+		m_sqlStatements = new ArrayList<ISqlWrapper>();
+		
+		setObservationMgr( DefaultFactory.getFactory().getObservationMgr() );
+		setSqlStats( DefaultFactory.getFactory().getSqlStatsCounter() );
+
+		getObservationMgr().registerNewTableListener(getSqlStats());
+		getObservationMgr().registerNewJoinListener(getSqlStats());
+		getObservationMgr().registerNewSqlListener(getSqlStats());
+	}
 	private IRequest m_request = null;
 	private ISqlModel m_sqlModel = null;
 	private long m_monitoredTimestamp = ISqlModel.NOT_INITIALIZED;
@@ -30,11 +48,11 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 
 	private IModelObservationMgr m_modelObservationMgr = null;
 	@Override
-	public IModelObservationMgr getModelObservationMgr() {
+	public IModelObservationMgr getObservationMgr() {
 		return m_modelObservationMgr;
 	}
 	@Override
-	public void setModelObservationMgr(IModelObservationMgr modelObservationMgr) {
+	public void setObservationMgr(IModelObservationMgr modelObservationMgr) {
 		this.m_modelObservationMgr = modelObservationMgr;
 	}
 
@@ -66,6 +84,21 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 		this.aggregateColumnCount = aggregateColumnCount;
 	}
 	@Override
+	public void addSqlWrapper(ISqlWrapper val) throws WuqispankException {
+
+//		if (getSqlModel()==null)
+//			throw new WuqispankException("found null sql model");
+
+		if (getObservationMgr()==null)
+			throw new WuqispankException("found null sql observation mgr");
+		
+		//val.getSqlModel().setObservationMgr( this.getObservationMgr() );
+
+		getSql().add(val);
+		getObservationMgr().addNewSql();
+		
+	}
+	@Override
 	public int getSqlStatementCount() {
 		return 42;
 	}
@@ -77,8 +110,18 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 	}
 
 	@Override
+	public ISqlWrapper createBlankSqlWrapper() throws WuqispankException {
+		if (this.getObservationMgr()==null)
+			throw new WuqispankException("CODE ERROR.  Improper initialization, DefaultRequestWrapper must have a non-null ModelObservationManager.");
+		ISqlWrapper sqlWrapper = DefaultFactory.getFactory().getSqlWrapper();
+		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
+		model.setObservationMgr(this.getObservationMgr());
+		sqlWrapper.setSqlModel( model );
+		return sqlWrapper;
+		
+	}
+	@Override
 	public void setRequest(IRequest request) throws WuqispankException {
-		m_sqlStatements = new ArrayList<ISqlWrapper>();
 		loadEvents(request.getEvents());
 		this.m_request = request;
 		calculateStats();
@@ -94,7 +137,12 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 				if ( allEvents.size() >= i+ sqlWrapperFactory.getNumEventsPerSql() ) {
 					for (int j=0; j < sqlWrapperFactory.getNumEventsPerSql(); j++ )
 						sqlWrapperFactory.add(allEvents.get(i+j));
-					getSql().add( sqlWrapperFactory.createSqlWrapper() );
+					
+					//ISqlModel model = DefaultFactory.getFactory().getSqlModel();
+					//model.setObservationMgr(this.getObservationMgr());
+					
+					addSqlWrapper(sqlWrapperFactory.createSqlWrapper( this ) );
+					//getSql().add( sqlWrapperFactory.createSqlWrapper() );
 					i+=sqlWrapperFactory.getNumEventsPerSql();
 				} else
 					throw new WuqispankException("Factory [" + sqlWrapperFactory.getClass().getName() + "] was selected to parse event [" + allEvents.get(i).getRawEventData() + "] but the remaining number of events [" + allEvents.size() + "] wasnt' enough [" + i+ sqlWrapperFactory.getNumEventsPerSql() + "] to create an sql object");

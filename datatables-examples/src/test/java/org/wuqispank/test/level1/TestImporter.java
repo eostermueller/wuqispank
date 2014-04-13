@@ -24,14 +24,14 @@ public class TestImporter {
 	private static final long EXPECTED_ENTRY_TIME_1 = 1395747371009L;
 
 	private static final String[] EXPECTED_STACK_TRACE_0 = {
-		"org.hsqldb.jdbc.jdbcConnection.prepareStatement(UnknownSource)"
+		"[org.hsqldb.jdbc.jdbcConnection.prepareStatement(UnknownSource)"
 		,"org.apache.commons.dbcp.DelegatingConnection.prepareStatement(DelegatingConnection.java:281)"
 		,"org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper.prepareStatement(PoolingDataSource.java:313)"
 		,"sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)"
 		,"org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)"
 	};
 	private static final String[] EXPECTED_STACK_TRACE_1 = {
-		"org.hsqldb.jdbc.jdbcConnection.prepareStatement(UnknownSource)"
+		"[org.hsqldb.jdbc.jdbcConnection.prepareStatement(UnknownSource)"
 		,"org.apache.commons.dbcp.DelegatingConnection.prepareStatement(DelegatingConnection.java:281)"
 		,"org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper.prepareStatement(PoolingDataSource.java:313)"
 		,"sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)"

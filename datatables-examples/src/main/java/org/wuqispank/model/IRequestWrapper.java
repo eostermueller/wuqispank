@@ -36,10 +36,16 @@ public interface IRequestWrapper extends Serializable {
 
 	int getSqlStatementCount();
 
-	IModelObservationMgr getModelObservationMgr();
-	void setModelObservationMgr(IModelObservationMgr val);
+	IModelObservationMgr getObservationMgr();
+	void setObservationMgr(IModelObservationMgr val);
 
 	String getUniqueId();
 	void setUniqueId(String val);
+
+	void addSqlWrapper(ISqlWrapper val) throws WuqispankException;
+
+	ISqlStatsObserver getSqlStats();
+
+	ISqlWrapper createBlankSqlWrapper() throws WuqispankException;
 
 }

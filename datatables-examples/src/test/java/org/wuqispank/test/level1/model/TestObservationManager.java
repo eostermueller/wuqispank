@@ -18,7 +18,7 @@ public class TestObservationManager {
 
 	@Test
 	public void canDetectSingleNewTable() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsObserver = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewTableListener(sqlStatsObserver);
@@ -36,7 +36,7 @@ public class TestObservationManager {
 	}
 	@Test
 	public void canCountMultipleNewTables() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsObserver = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewTableListener(sqlStatsObserver);
@@ -66,6 +66,7 @@ public class TestObservationManager {
 		 * first model or the second model...they get tallied as a 
 		 * single total across all ISqlModel instances that were 
 		 * registered with setObservationMgr();
+		 * This will allow us to tally metrics across multiple SQL statement.
 		 */
 		sqlModel2.addTable(table1_1);
 		sqlModel1.addTable(table1_1);
@@ -79,7 +80,7 @@ public class TestObservationManager {
 
 	@Test
 	public void canDetectSingleNewJoin() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsCounter = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewJoinListener(sqlStatsCounter);
@@ -111,7 +112,7 @@ public class TestObservationManager {
 	}
 	@Test
 	public void canDetectMultipleNewJoins() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsCounter = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewJoinListener(sqlStatsCounter);
@@ -146,6 +147,7 @@ public class TestObservationManager {
 		 * Just as with new tables, doesn't matter whether we're
 		 * adding to sqlModel1 or sqlModel2.
 		 * A single tally is kept of all table additions.
+		 * This will allow us to tally metrics across multiple SQL statement.
 		 */
 		ISqlModel sqlModel2 = DefaultFactory.getFactory().getSqlModel();
 		sqlModel2.setObservationMgr(observationMgr);
@@ -167,7 +169,7 @@ public class TestObservationManager {
 	}
 	@Test
 	public void canGetCountOfZero() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsObserver = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewTableListener(sqlStatsObserver);
@@ -181,7 +183,7 @@ public class TestObservationManager {
 	}
 	@Test
 	public void canCalculateAverageJoinPerSqlStatement() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsCounter = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewJoinListener(sqlStatsCounter);
@@ -210,8 +212,8 @@ public class TestObservationManager {
 		
 	}	
 	@Test
-	public void canCalculateManyAveragesJoinCountPerSqlStatement() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+	public void canCalculateManyAverages_JoinCountPerSqlStatement() {
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsCounter = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewJoinListener(sqlStatsCounter);
@@ -268,7 +270,7 @@ public class TestObservationManager {
 	
 	@Test
 	public void canSortTablesByAverageJoinCount() {
-		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getModelObservationMgr();
+		IModelObservationMgr observationMgr = DefaultFactory.getFactory().getObservationMgr();
 		
 		ISqlStatsObserver sqlStatsCounter = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewJoinListener(sqlStatsCounter);
@@ -308,11 +310,11 @@ public class TestObservationManager {
 		
 		System.out.println("Left compareTo(right) [" + "left".compareTo("right") + "]");
 		int myCounter = 0;
-		Iterator<TableStats> itr = sqlStatsCounter.getAllTables().values().iterator();
+		Iterator<TableStats> itr = sqlStatsCounter.getOrderedTables().values().iterator();
 		while (itr.hasNext()) {
 			TableStats tableStats = itr.next();
 			System.out.println("table count [" + tableStats.getAverageJoinsPerSql() + "]");
-			switch(myCounter) {
+			switch(myCounter++) {
 				case 0:
 					assertEquals("Was expecting the table with smallest average", "lefttable-1",tableStats.getTable().getName());
 					assertEquals("Was expecting the table with smallest average", 1,tableStats.getAverageJoinsPerSql(), .5);
@@ -354,7 +356,6 @@ public class TestObservationManager {
 					assertEquals("Was expecting the table with largest", 15,tableStats.getAverageJoinsPerSql(), .5);
 					break;
 			}
-			myCounter++;
 		}		
 		
 	}
@@ -377,8 +378,6 @@ public class TestObservationManager {
 			sqlModel.addBinaryOperatorExpression(expr);
 		}
 	}
-	
-
 }
 
  

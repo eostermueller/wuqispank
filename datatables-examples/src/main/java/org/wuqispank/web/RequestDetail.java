@@ -386,7 +386,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 						ISqlWrapper sql = item.getModelObject();
 						item.add(new Label("col.table.count", 	new PropertyModel(sql,"sqlModel.tableCount" ) ));
 						item.add(new Label("col.field.count", 	new PropertyModel(sql,"sqlModel.columnCount" ) ));
-						item.add(new Label("col.table.names", 	new PropertyModel(sql,"sqlModel.tableNames" ) ));
+						item.add(new Label("col.table.names", 	new PropertyModel(sql,"sqlModel.humanReadableTableNames" ) ));
 						item.add(new Label("col.sql.text",    	new PropertyModel(sql,"sqlText") ));
 						item.add(new Label("col.stack.trace",   new PropertyModel(sql,"stackTrace") ));
 						item.add(new Label("col.sql.sequence",  new PropertyModel(sql,"sequence") ));

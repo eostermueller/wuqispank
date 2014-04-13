@@ -4,6 +4,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
+import org.wuqispank.model.CenterHeavyTableOrderMgr;
 import org.wuqispank.model.DefaultBinaryOperatorExpression;
 import org.wuqispank.model.DefaultColumn;
 import org.wuqispank.model.DefaultModelObservationMgr;
@@ -23,6 +24,7 @@ import org.wuqispank.model.ISqlStatsObserver;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.IStackTrace;
 import org.wuqispank.model.ITable;
+import org.wuqispank.model.ITableOrderMgr;
 import org.wuqispank.model.InMemoryRequstRepo;
 import org.wuqispank.ta_OLD.DefaultTableHeaderConfiguration;
 import org.wuqispank.ta_OLD.ITableHeaderConfiguration;
@@ -32,6 +34,15 @@ import org.wuqispank.web.IConfig;
 import org.wuqispank.web.IFactory;
 import org.wuqispank.web.msgs.AmericanEnglishMessages;
 import org.wuqispank.web.msgs.IMessages;
+import org.wuqispank.web.tablecount.DefaultRow;
+import org.wuqispank.web.tablecount.DefaultRowGroup;
+import org.wuqispank.web.tablecount.DefaultTableLaneMgr;
+import org.wuqispank.web.tablecount.IRow;
+import org.wuqispank.web.tablecount.IRowGroup;
+import org.wuqispank.web.tablecount.ITableLaneMgr;
+import org.wuqispank.web.tablecount.GraphContext;
+
+import com.mxgraph.view.mxGraph;
 
 
 /**
@@ -66,8 +77,9 @@ public class DefaultFactory implements IFactory {
 	@Override
 	public IRequestWrapper getRequestWrapper() {
 		IRequestWrapper requestWrapper = new DefaultRequestWrapper();
-		requestWrapper.setModelObservationMgr( this.getModelObservationMgr());
-		return new DefaultRequestWrapper();
+		//requestWrapper.setModelObservationMgr( this.getModelObservationMgr());
+		//return new DefaultRequestWrapper();
+		return requestWrapper;
 	}
 	@Override
 	public IMessages getMessages() {
@@ -147,7 +159,7 @@ public class DefaultFactory implements IFactory {
 		return new DefaultBinaryOperatorExpression();
 	}
 	@Override
-	public IModelObservationMgr getModelObservationMgr() {
+	public IModelObservationMgr getObservationMgr() {
 		return new DefaultModelObservationMgr();
 	}
 	@Override
@@ -167,5 +179,23 @@ public class DefaultFactory implements IFactory {
 	public IRequestImporter getRequestImporter() throws ParserConfigurationException {
 		return new DefaultRequestImporter();
 	}
-	
+	@Override
+	public ITableOrderMgr getTableOrderMgr() {
+		return new CenterHeavyTableOrderMgr();
+	}
+	@Override
+	public ITableLaneMgr getTableLaneMgr() {
+		ITableLaneMgr tlm =new DefaultTableLaneMgr();
+		tlm.setConfig(getConfig());
+		return tlm;
+	}
+	@Override
+	public IRow createRow(GraphContext ctx, ISqlWrapper sql, Object groupLane, String parentRequestId, int sqlSeq) {
+		return new DefaultRow(ctx,sql, groupLane, parentRequestId, sqlSeq);
+	}
+	@Override
+	public IRowGroup createRowGroup(GraphContext val, String string) {
+		
+		return new DefaultRowGroup(val, string);
+	}
 }

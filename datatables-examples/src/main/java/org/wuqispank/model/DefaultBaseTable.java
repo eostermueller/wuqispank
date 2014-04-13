@@ -17,4 +17,12 @@ public class DefaultBaseTable implements IBaseTable {
 		this.m_name = name;
 	}
 
+	@Override
+	public boolean equivalent(ITable val) {
+		if (this.getName().equals(val.getName()))
+			return true;
+		else 
+			return false;
+	}
+
 }

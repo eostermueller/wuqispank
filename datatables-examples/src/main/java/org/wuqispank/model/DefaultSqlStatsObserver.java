@@ -15,7 +15,7 @@ import java.util.Observable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultSqlStatsObserver implements ISqlStatsObserver {
+public class DefaultSqlStatsObserver implements ISqlStatsObserver, java.io.Serializable {
 	private static final Logger log = LoggerFactory.getLogger(DefaultSqlStatsObserver.class);
 
 	private Map<String, TableStats> m_tableStats = new Hashtable<String, TableStats>();
@@ -96,10 +96,12 @@ public class DefaultSqlStatsObserver implements ISqlStatsObserver {
 		}
 	}
 	/**
+	 * Can iterate through the return in order, where tables with lowest join averages are first in the list.
+	 * Tables with highest join averages are last in the list.
 	 * @stolen from here:  http://stackoverflow.com/questions/1448369/how-to-sort-a-treemap-based-on-its-values
 	 */
 	@Override
-	public Map<String, TableStats> getAllTables()
+	public Map<String, TableStats> getOrderedTables()
     {
         List<Entry<String, TableStats>> list = new LinkedList<Entry<String, TableStats>>(m_tableStats.entrySet());
 
@@ -133,7 +135,7 @@ public class DefaultSqlStatsObserver implements ISqlStatsObserver {
 
         return sortedMap;
     }	
-	public class TableStats {
+	public class TableStats implements java.io.Serializable {
 		private double m_averageJoinsPerSql = -1;
 		
 		public double getAverageJoinsPerSql() {

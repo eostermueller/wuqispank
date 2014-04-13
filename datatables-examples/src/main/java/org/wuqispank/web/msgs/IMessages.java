@@ -22,6 +22,8 @@ public interface IMessages {
 	Serializable getExportSuccessfulMsg(String fileName);
 
 	String getBypassImportMessage(String webXmlExportDirProperty, String exportDir);
+
+	String getEmptySqlError(String sql, String uniqueId, int sequence);
 	
 
 }

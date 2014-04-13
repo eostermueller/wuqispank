@@ -5,5 +5,7 @@ public abstract interface IBaseTable {
 	void setName(String name);
 
 	String getName();
+	
+	boolean equivalent(ITable val);
 
 }

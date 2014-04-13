@@ -32,4 +32,12 @@ public interface ISqlModel {
 	Iterator<IBinaryOperatorExpression> getBinaryOperatorExpressionsIterator();
 
 	void setObservationMgr(IModelObservationMgr observationMgr);
+
+	String getHumanReadableTableNames();
+
+	boolean matchesTablesOf(ISqlModel val);
+
+	boolean tableExists(ITable table);
+
+	ITable[] getTablesWithoutJoins();
 }

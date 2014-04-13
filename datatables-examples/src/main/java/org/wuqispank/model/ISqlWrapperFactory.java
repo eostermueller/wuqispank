@@ -13,6 +13,6 @@ public interface ISqlWrapperFactory {
 
 	void add(ITraceEvent iTraceEvent);
 
-	ISqlWrapper createSqlWrapper() throws WuqispankException;
+	ISqlWrapper createSqlWrapper(IRequestWrapper irw) throws WuqispankException;
 
 }

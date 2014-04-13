@@ -24,6 +24,9 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 
 	private String m_sqlText;
 
+	public DefaultSqlWrapper() {
+		setSqlModel( DefaultFactory.getFactory().getSqlModel() );
+	}
 	@Override
 	public int getSequence() {
 		return m_sequence;
@@ -50,8 +53,10 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 //	}
 	@Override
 	public void setSqlText(String val) {
-		m_sqlText = val.trim();
-		setSqlModel(DefaultFactory.getFactory().getSqlModel());
+		//text = text.replace("\n", "").replace("\r", "");
+		m_sqlText = val.replace("\n"," ").replace("\r"," ").trim();
+//		if (getSqlModel()==null)
+//			setSqlModel(DefaultFactory.getFactory().getSqlModel());
 		getSqlModel().setColumnCount(17);
 
 		ISqlParser parser = DefaultFactory.getFactory().getSqlParser();

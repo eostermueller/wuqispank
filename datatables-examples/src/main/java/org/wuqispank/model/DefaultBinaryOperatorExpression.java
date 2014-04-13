@@ -1,10 +1,11 @@
 package org.wuqispank.model;
 
 public class DefaultBinaryOperatorExpression implements
-		IBinaryOperatorExpression {
+		IBinaryOperatorExpression, java.io.Serializable {
 
 	private IColumn m_rightColumn;
 	private IColumn m_leftColumn;
+	private boolean m_literalComparison;
 	private static String NULL_PLACEHOLDER = "<WS_NULL>";
 
 	@Override
@@ -41,6 +42,14 @@ public class DefaultBinaryOperatorExpression implements
 				return getRightColumn();
 			
 		return null;
+	}
+	@Override
+	public boolean isLiteralComparison() {
+		return m_literalComparison;
+	}
+	@Override
+	public void setLiteralComparison(boolean val) {
+		m_literalComparison = val;
 	}
 
 }

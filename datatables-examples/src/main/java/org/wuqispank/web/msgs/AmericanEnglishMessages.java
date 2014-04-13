@@ -6,7 +6,7 @@ import java.io.Serializable;
 import org.intrace.client.connection.HostPort;
 
 
-public class AmericanEnglishMessages implements IMessages {
+public class AmericanEnglishMessages implements IMessages, java.io.Serializable {
 
 	@Override
 	public String getInvalidAgentHostName(String value, String parmName,
@@ -45,5 +45,10 @@ public class AmericanEnglishMessages implements IMessages {
 	@Override
 	public String getExportSuccessfulMsg(String fileName) {
 		return "The request was successfully exported to [" + fileName + "] on the wuqispank server";
+	}
+
+	@Override
+	public String getEmptySqlError(String sql, String uniqueId, int sequence) {
+		return "Found null/blank/empty sql statement [" + sql + "] in request with unique id [" + uniqueId + "] and seq [" + sequence + "]";
 	}
 }

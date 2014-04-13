@@ -113,9 +113,6 @@ public class XmlSwimlanes_9 extends HttpServlet {
     	
     	mxICell table1Header = (mxICell)graph.insertVertex(tablesHeaderLane,  null, tableCount, x, 0, 50, 50, STYLE_WUQISPANK_TABLE_HEADER);
     	mxICell table1Footer = (mxICell)graph.insertVertex(tablesFooterLane,  null, tableCount, x, 0, 50, 50, STYLE_WUQISPANK_TABLE_HEADER);
-        //Object edge = graph.insertEdge(pool, null, "", table1Header, table1Footer);
-        //graph.orderCells(true,new Object[]{ edge });
-    	//
     	mxICell table1HeaderLabel = (mxICell)graph.insertVertex(tablesHeaderLane, null, tableName, x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=30");
     	mxICell table1FooterLabel = (mxICell)graph.insertVertex(tablesFooterLane, null, tableName, x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=30");
 		

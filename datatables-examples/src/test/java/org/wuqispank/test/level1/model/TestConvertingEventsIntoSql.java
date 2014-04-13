@@ -218,7 +218,7 @@ public class TestConvertingEventsIntoSql {
 		factory.add(e_arg);
 		
 		try {
-			ISqlWrapper sqlWrapper = factory.createSqlWrapper();
+			ISqlWrapper sqlWrapper = factory.createSqlWrapper(null);
 			fail("Should have received 1 error to indicate that exit method was missing");
 
 		} catch (WuqispankException we) {
@@ -230,13 +230,14 @@ public class TestConvertingEventsIntoSql {
 	@Test
 	public void canDetectIncorrectClassName() throws WuqispankException {
 		
+		IRequestWrapper rqWrap = DefaultFactory.getFactory().getRequestWrapper();
 		ISqlWrapperFactory factory = new DefaultJdbcSqlWrapperFactory();
 		factory.add(e_entry);
 		factory.add(e_arg);
 		factory.add(e_exit_other);
 		
 		try {
-			ISqlWrapper sqlWrapper = factory.createSqlWrapper();
+			ISqlWrapper sqlWrapper = factory.createSqlWrapper(rqWrap);
 			fail("Should have received 1 error to indicate that the class names did not all match");
 		} catch (WuqispankException we) {
 			

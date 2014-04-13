@@ -1,52 +1,82 @@
 package org.wuqispank.web.tablecount;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.wuqispank.DefaultFactory;
+import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
-import org.wuqispank.tablecount_DEPRECATED.MXGraphContext;
+import org.wuqispank.model.ISqlWrapper;
+import org.wuqispank.model.ITable;
+import org.wuqispank.model.ITableOrderMgr;
 
 import com.mxgraph.io.mxCodec;
+import com.mxgraph.layout.mxStackLayout;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.view.mxSwimlaneManager;
 
+/**
+ * Definitions:
+ * Group:  A set of rows in the TableCountGraph, represented by multiple
+ * stacked rows in a single, collapsable swimlane.  This is one of the main
+ * techniques used to minimize the visual distress of when thousands or 10's of 1000's
+ * of SQL statements must be represented for a single web request.
+ * Each group's collapsible lane is rendered with its own mxGraph vertical lanes, 
+ * one for each table used in the request.
+ * We're aiming to give the impression that each lane spreads vertically down
+ * the page across multiple groups.
+ * @author erikostermueller
+ *
+ */
 public class TableCountGraph extends WebMarkupContainer {
-    /**
-	 * 
-	 */
-	private static final String STYLE_WUQISPANK_SWIMLANE = "swimlane";
-	private MXGraphContext m_graphContext;
-	private static final String STYLE_WUQISPANK_JOIN_EDGE = "wsJoinEdge";
+	private GraphContext m_ctx = null;
+	GraphContext ctx() {
+		return m_ctx;
+	}
+	public static final String STYLE_WUQISPANK_SWIMLANE = "swimlane";
+	//private MXGraphContext m_graphContext;
+	public static final String STYLE_WUQISPANK_JOIN_EDGE = "wsJoinEdge";
 	public static final String STYLE_WUQISPANK_ROW_ODD = "wsRowOdd";
 	public static final String STYLE_WUQISPANK_ROW_EVEN = "wsRowEven";
 	public static final String STYLE_WUQISPANK_TABLE_HEADER = "wsTableHeader";
 	public static final String STYLE_WUQISPANK_TABLE_VERTICAL = "tableVertical";
-	private static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqispank/images/stock_draw-sphere.png";
-	private static final String STYLE_WUQISPANK_VERTICAL_TABLE_LANE = "wsVerticalTableLane";
-    private static final String WUQISPANK_SWIMLANE = "swimlane";
+	public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqispank/images/stock_draw-sphere.png";
+	public static final String STYLE_WUQISPANK_VERTICAL_TABLE_LANE = "wsVerticalTableLane";
 
 	
 	public TableCountGraph(String id, IRequestWrapper iRequestWrapper) {
 		super(id);
-		setMxGraphFolder("mxGraph-2_4_0_4");
+		setGraphContext( new GraphContext() );
+		ctx().setConfig( DefaultFactory.getFactory().getConfig() );
+
+		setMxGraphFolder( ctx().getConfig().getMxGraphFolderName() );
+		ctx().setGraph( new mxGraph() );
 		setRequestWrapper(iRequestWrapper);
-		// TODO Auto-generated constructor stub
+		
 	}
-	private IRequestWrapper requestWrapper = null;
+	private void setGraphContext(GraphContext val) {
+		m_ctx = val;
+	}
+	private IRequestWrapper m_requestWrapper = null;
     public IRequestWrapper getRequestWrapper() {
-		return requestWrapper;
+		return m_requestWrapper;
 	}
 	public void setRequestWrapper(IRequestWrapper requestWrapper) {
-		this.requestWrapper = requestWrapper;
+		this.m_requestWrapper = requestWrapper;
+    	ITableOrderMgr mgr = DefaultFactory.getFactory().getTableOrderMgr();
+    	ctx().setTableLaneMgr( DefaultFactory.getFactory().getTableLaneMgr() );
+    	ctx().getTableLaneMgr().setTableLaneOrder( mgr.reorderTables(getRequestWrapper().getSqlStats()));
 	}
 	private String m_mxGraphFolder = null;
+	private List<IRowGroup> m_rowGroups = new ArrayList<IRowGroup>();
 	public void setMxGraphFolder(String val) {
 		m_mxGraphFolder = val;
 	}
@@ -89,57 +119,177 @@ public class TableCountGraph extends WebMarkupContainer {
 	@Override
 	protected void onRender()
 	{
-		getResponse().write("<div id='graphContainer'");
-		getResponse().write("        style='position:relative;overflow:hidden;top:10px;left:20px;bottom:36px;right:250px;height:500;width:500'>");
-		getResponse().write("</div>");		
-		getResponse().write("        <!-- Contains a graph description which will be converted. -->");
-		getResponse().write("        <div class='mxgraph' style='position:relative;overflow:hidden;border:6px solid gray;' >");
-		getResponse().write("        </div>");
-		getResponse().write("");
-		getResponse().write("        <script type='text/javascript'>");
-		getResponse().write("                	swimlaneGraphLoader(document.getElementById('graphContainer'), '" + createGraph()  + "');");
-		getResponse().write("        </script>");
+		try {
+			getResponse().write("<div id='graphContainer'");
+			getResponse().write("        style='position:relative;overflow:hidden;top:10px;left:20px;bottom:36px;right:250px;height:500;width:500'>");
+			getResponse().write("</div>");		
+			getResponse().write("        <!-- Contains a graph description which will be converted. -->");
+			getResponse().write("        <div class='mxgraph' style='position:relative;overflow:hidden;border:6px solid gray;' >");
+			getResponse().write("        </div>");
+			getResponse().write("");
+			getResponse().write("        <script type='text/javascript'>");
+			getResponse().write("                	swimlaneGraphLoader(document.getElementById('graphContainer'), '" + createGraph()  + "');");
+			getResponse().write("        </script>");
+			getResponse().write("     		<td valign='top'>");
+			getResponse().write("     	<div id='properties'");
+			getResponse().write("     		style='border: solid 1px black; padding: 10px;'>");
+			getResponse().write("     	</div>");
+			getResponse().write("     	</td>");
+			
+		} catch (WuqispankException we) {
+			we.printStackTrace();
+			getResponse().write(we.getMessage());
+		}
 		
 	}
     /**
      * Puts the O-->O graph onto s simple swimlange.
      * @param request
      * @return
+     * @throws WuqispankException 
      */
-    String createGraph()
+    String createGraph() throws WuqispankException
     {
             // Creates the graph on the server-side
             mxCodec codec = new mxCodec();
-            mxGraph graph = new mxGraph();
-            setStyleSheet(graph);
-            Object parent = graph.getDefaultParent();
+            
+            setStyleSheet(ctx().getGraph());
+            Object parent = ctx().getGraph().getDefaultParent();
 
-            graph.getModel().beginUpdate();
+            ctx().getGraph().getModel().beginUpdate();
             try
             {
-            		
-            		mxSwimlaneManager swimMgr = new mxSwimlaneManager(graph);
+            		mxSwimlaneManager swimMgr = new mxSwimlaneManager(ctx().getGraph());
             		swimMgr.setHorizontal(true);
+                	Object masterPool = ctx().getGraph().insertVertex(parent, null, "pool", 0, 0, 100, 65, STYLE_WUQISPANK_SWIMLANE);
+                	ctx().setMasterPool(masterPool);
             		
-            		
-                	Object pool = graph.insertVertex(parent, null, "pool", 0, 0, 100, 150, WUQISPANK_SWIMLANE);
-            		
-                	Object lane1 = graph.insertVertex(pool, null, "lane1", 5, 5, 100, 50, WUQISPANK_SWIMLANE);
-                	Object lane2 = graph.insertVertex(pool, null, "lane2", 10, 10, 100, 50, WUQISPANK_SWIMLANE);
-            		
-                    Object v1 = graph.insertVertex(lane2, null, "Hello", 20, 20, 80, 30,"tableHeader");
-                    Object v2 = graph.insertVertex(lane2, null, "World", 200, 150, 80, 30,"tableHeader");
-                    graph.insertEdge(parent, null, "", v1, v2);
+                	Object tableHeaderLane = ctx().getGraph().insertVertex(
+                			ctx().getMasterPool(), 
+                			null, "", 
+                			0, 0, 
+                			125, 100, 
+                			STYLE_WUQISPANK_SWIMLANE);
+                	
+                	createRowGroups();
+                	
+                	renderRowGroups();
+                	
+                	Object tableFooterLane = ctx().getGraph().insertVertex(
+                			ctx().getMasterPool(), 
+                			null, "", 
+                			0, 0, 
+                			125, 75, 
+                			STYLE_WUQISPANK_SWIMLANE);
+                	
+                	createTableNameLabels(tableHeaderLane,tableFooterLane);
+            		layout();
             }
             finally
             {
-                    graph.getModel().endUpdate();
+            	ctx().getGraph().getModel().endUpdate();
             }
 
             // Turns the graph into XML data
-            return mxXmlUtils.getXml(codec.encode(graph.getModel()));
+            return mxXmlUtils.getXml(codec.encode(ctx().getGraph().getModel()));
     }
-    private void setStyleSheet(mxGraph graph) {
+	private void layout() {
+		mxStackLayout layout = new mxStackLayout(ctx().getGraph(),false) {
+			public mxStackLayout init() {
+				this.resizeParent = true;
+				this.y0 = 0;
+				this.x0 = 0;
+				return this;
+			}
+			public boolean isVertexMovable(Object vertex) {
+				boolean ynMovable = true;
+				for(mxICell cell : ctx().getTableLaneMgr().getLanes() ) {
+					if (vertex==cell)
+						return false;
+				}
+				return ctx().getGraph().isCellMovable(vertex);
+			}
+		}.init();
+		layout.execute(ctx().getMasterPool());
+	}
+	private void createTableNameLabels(Object tableHeaderLane, Object tableFooterLane) {
+		//int gap = 85;
+		int gap = ctx().getConfig().getXSpaceBetwenTableLanes();
+		
+		int tableX = ctx().getConfig().getXStartLeftMostTableLabel();
+		for( ITable table : ctx().getTableLaneMgr().getTableLaneOrder2()) {
+			tableX += gap;
+			insertTableName(
+					ctx().getGraph(),
+					ctx().getMasterPool(),
+					tableHeaderLane,tableFooterLane,
+					table.getName().toUpperCase(),
+					getRequestWrapper().getSqlStats().getTableCount(table),
+					tableX
+					);
+		}
+		
+	}
+	private void insertTableName(mxGraph graph, Object pool, Object tablesHeaderLane, Object tablesFooterLane, String tableName, int tableCount, int x) {
+    	
+    	mxICell table1Header = (mxICell)graph.insertVertex(tablesHeaderLane,  null, tableCount, x, 0, 50, 50, STYLE_WUQISPANK_TABLE_HEADER);
+    	mxICell table1Footer = (mxICell)graph.insertVertex(tablesFooterLane,  null, tableCount, x, 0, 50, 50, STYLE_WUQISPANK_TABLE_HEADER);
+    	mxICell table1HeaderLabel = (mxICell)graph.insertVertex(tablesHeaderLane, null, tableName, x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=30");
+    	mxICell table1FooterLabel = (mxICell)graph.insertVertex(tablesFooterLane, null, tableName, x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=30");
+		
+	}
+
+    private void renderRowGroups() throws WuqispankException {
+    	int count = 0;
+		for(IRowGroup rowGroup : getRowGroups() ) {
+			rowGroup.render(count++);
+		}
+	}
+	private List<IRowGroup> getRowGroups() {
+		return m_rowGroups;
+	}
+	/**
+     * Wuqispank aims to support the case of 100's/1000's of sql statements in a single request.
+     * When first rendered, the first "Row Group" of sql stmts will be expanded, all others collapsed (Using mxGraph swimlanes).
+     * RowGroups will have X SqlStatements in them.
+     * X = IConfig#getRowCountOfHeterogenousGroup(),
+     * unless there is a large batch of contiguous equivalent sql statements.
+     * In this case, many more will be packed into a single group.
+     * How many more?  IConfig#getRowCountOfHomogeneousGroup().
+     * What determines sql statement equivalence?  ISqlModel#equivalent().
+     * 
+     * Default values for these parameters: I'm imaging 50 for hetergeneous and 500 for homogeneous.
+     */
+	private void createRowGroups() {
+    	int totalSqlCount = 0;
+    	int equivalentStreak = 0;
+    	
+    	IRowGroup rowGroup = DefaultFactory.getFactory().createRowGroup( ctx(), getRequestWrapper().getUniqueId() );
+    	add(rowGroup);
+    	ISqlWrapper previousSql = null;
+    	for( ISqlWrapper sql : getRequestWrapper().getSql()) {
+    		if (previousSql!=null && previousSql.getSqlModel().matchesTablesOf(sql.getSqlModel()))
+    			equivalentStreak++;
+    		else
+    			equivalentStreak = 0;
+    		
+    		if (equivalentStreak != 0 && equivalentStreak < ctx().getConfig().getMaxRowCountOfHomogeneousGroup()) {
+    			rowGroup.add(sql);
+    		} else if (rowGroup.count() < ctx().getConfig().getMaxRowCountOfHeterogenousGroup())
+    			rowGroup.add(sql);
+    		else {
+    			
+    			rowGroup = DefaultFactory.getFactory().createRowGroup( ctx(), getRequestWrapper().getUniqueId() );
+    			rowGroup.add(sql);
+    			this.add(rowGroup);
+    		}
+    		previousSql = sql;
+    	}
+	}
+	private void add(IRowGroup rowGroup) {
+		m_rowGroups.add(rowGroup);
+	}
+	private void setStyleSheet(mxGraph graph) {
 
         Hashtable<String, Object> style;
         mxStylesheet stylesheet = graph.getStylesheet();
@@ -151,18 +301,31 @@ public class TableCountGraph extends WebMarkupContainer {
         // custom vertex style
         style = new Hashtable<String, Object>(baseStyle);
         style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_SWIMLANE);
-        stylesheet.putCellStyle(WUQISPANK_SWIMLANE, style);
+        stylesheet.putCellStyle(STYLE_WUQISPANK_SWIMLANE, style);
 
+        /*
+         * alternating odd-even rows
+         */
+        style = new Hashtable<String, Object>(baseStyle);
+        style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+        stylesheet.putCellStyle(STYLE_WUQISPANK_ROW_ODD, style);
+        
+        
+        /*
+         * looks like this black is never filled anywhere, but doc for mxConstants.STYLE_GRADIENTCOLOR says I need to set some value,
+         * so I chose this which his in my draw.io example
+         */
+        style = new Hashtable<String, Object>(baseStyle);
+        style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+        stylesheet.putCellStyle(STYLE_WUQISPANK_ROW_ODD, style);
+
+        style = new Hashtable<String, Object>(baseStyle);
+        style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+        style.put(mxConstants.STYLE_FILLCOLOR, "FFFFFF"); 
+        style.put(mxConstants.STYLE_GRADIENTCOLOR, "CCE5FF"); //This is the blue I had in my Draw.io example
+        style.put(mxConstants.STYLE_GRADIENT_DIRECTION, mxConstants.DIRECTION_EAST);
+        stylesheet.putCellStyle(STYLE_WUQISPANK_ROW_EVEN, style);
 
     }
-
-    
-	private String getSwimlaneGraphXml() throws IOException {
-		StringBuilder sw = new StringBuilder();
-		
-		//drawTableHeader(sw);
-		
-		return sw.toString();
-	}
 
 }

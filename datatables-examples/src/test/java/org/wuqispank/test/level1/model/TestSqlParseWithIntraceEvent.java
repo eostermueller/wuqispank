@@ -11,9 +11,11 @@ import org.intrace.client.model.ITraceEventParser;
 import org.intrace.client.request.IRequest;
 import org.junit.Before;
 import org.junit.Test;
+import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlModel;
+import org.wuqispank.model.ISqlStatsObserver;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.ITable;
 
@@ -74,6 +76,24 @@ public class TestSqlParseWithIntraceEvent {
 		assertEquals( "Couldn't parse table name from SELECT statement", "EVENT", myTable.getName().toUpperCase() );
 	}
 	@Test
+	public void canCollectStatsFrom_SELECT_loadedFromInTraceEvent() throws WuqispankException {
+		IRequestWrapper rq = getRequestWrapper(m_selectSqlEvent);
+
+		List<ISqlWrapper> sqlStatements = rq.getSql();
+		ISqlWrapper sqlStatement = sqlStatements.get(0);
+		ISqlModel model = sqlStatement.getSqlModel();
+		assertEquals("SQL parser didn't find enough table names in the SELECT SQL statement", 1, model.getTableCount() );
+		ITable myTable = model.getTable(0);
+		
+		assertEquals( "Couldn't parse table name from SELECT statement", "EVENT", myTable.getName().toUpperCase() );
+		
+		ISqlStatsObserver stats = rq.getSqlStats();
+		
+		ITable tableLocation = DefaultFactory.getFactory().getTable();
+		tableLocation.setName("event");
+		assertEquals("stats didn't compute -- no table count",1,stats.getTableCount(tableLocation));
+	}
+	@Test
 	public void canParseTableNamesIntoModelFrom_DELETE() throws WuqispankException {
 		List<ISqlWrapper> sqlStatements = getRequestWrapper(m_deleteSqlEvent).getSql();
 		ISqlWrapper sqlStatement = sqlStatements.get(0);
@@ -95,14 +115,16 @@ public class TestSqlParseWithIntraceEvent {
 	
 	private IRequestWrapper getRequestWrapper(ITraceEvent event) throws WuqispankException {
 
+		IRequestWrapper requestWrapper = m_wuqiSpankFactory.getRequestWrapper();
+		
 		List<ITraceEvent> events = new ArrayList<ITraceEvent>();
 		events.add(t_enter);
 		events.add(event);
 		events.add(t_exit);
 		m_request.setEvents(events);
-		
-		IRequestWrapper requestWrapper = m_wuqiSpankFactory.getRequestWrapper();
+
 		requestWrapper.setRequest(m_request);
+		
 		return requestWrapper;
 	}
 	

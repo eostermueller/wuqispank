@@ -15,9 +15,16 @@ import org.wuqispank.model.ISqlStatsObserver;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.IStackTrace;
 import org.wuqispank.model.ITable;
+import org.wuqispank.model.ITableOrderMgr;
 import org.wuqispank.ta_OLD.ITableHeaderConfiguration;
 import org.wuqispank.ta_OLD.ITableHeaderRenderer;
 import org.wuqispank.web.msgs.IMessages;
+import org.wuqispank.web.tablecount.GraphContext;
+import org.wuqispank.web.tablecount.IRow;
+import org.wuqispank.web.tablecount.IRowGroup;
+import org.wuqispank.web.tablecount.ITableLaneMgr;
+
+import com.mxgraph.view.mxGraph;
 
 public interface IFactory {
 	IRequestExporter getRequestExporter() throws ParserConfigurationException;
@@ -36,7 +43,11 @@ public interface IFactory {
 	ITableHeaderConfiguration getTableHeaderConfiguration();
 	ITableHeaderRenderer getTableHeaderRenderer();
 	IBinaryOperatorExpression getBinaryOperatorExpression();
-	IModelObservationMgr getModelObservationMgr();
+	IModelObservationMgr getObservationMgr();
 	ISqlStatsObserver getSqlStatsCounter();
 	IRequestRepository createRepo();
+	ITableOrderMgr getTableOrderMgr();
+	ITableLaneMgr getTableLaneMgr();
+	IRowGroup createRowGroup(GraphContext val, String string);
+	IRow createRow(GraphContext ctx,ISqlWrapper sql, Object groupLane, String string, int i);
 }

@@ -446,14 +446,228 @@
 				
 				return null;
 			};
+			/** START OF HOVER ********************************************************/
+				// Changes fill color to red on mouseover
+				function updateStyle(state, hover)
+				{
+					if (hover)
+					{
+						//state.style[mxConstants.STYLE_FILLCOLOR] = '#ff0000';
+						  state.style[mxConstants.STYLE_FILLCOLOR] = '#EDEDED';
+					}
+					
+					// Sets rounded style for both cases since the rounded style
+					// is not set in the default style and is therefore inherited
+					// once it is set, whereas the above overrides the default value
+					state.style[mxConstants.STYLE_ROUNDED] = (hover) ? '1' : '0';
+					state.style[mxConstants.STYLE_STROKEWIDTH] = (hover) ? '10' : '1';
+
+
+					/* The following code worked nothing like I wanted.
+					 * When you hovered over something, then the entire tablecount graph disappered
+					 * and was replaced by a tiny little message box/windows.
+					 */
+					//var content = document.createElement('div');
+					//mxUtils.write(content, "This is my content");
+					
+					// Note that we're using the container scrollbars for the graph so that the
+					// container extends to the parent div inside the window
+					//var wnd = new mxWindow('Scrollable, resizable, given height', container, 50, 50, 220, 224, true, true);					
+				
+					//wnd = new mxWindow('Scrollable, resizable, auto height', content, 300, 50, 200, null, true, true);
+					//wnd.setMaximizable(true);
+					//wnd.setScrollable(true);
+					//wnd.setResizable(true);
+					//wnd.setVisible((hover) ? true : false);					
+					
+				};				
+				
+				graph.addMouseListener(
+				{
+				    currentState: null,
+				    previousStyle: null,
+				    mouseDown: function(sender, me)
+				    {
+				        if (this.currentState != null)
+				        {
+				        	this.dragLeave(me.getEvent(), this.currentState);
+				        	this.currentState = null;
+				        }
+				    },
+				    mouseMove: function(sender, me)
+				    {
+				        if (this.currentState != null && me.getState() == this.currentState)
+				        {
+				            return;
+				        }
+
+				        var tmp = graph.view.getState(me.getCell());
+
+				        // Ignores everything but vertices
+				        if (graph.isMouseDown || (tmp != null && !
+				            graph.getModel().isVertex(tmp.cell)))
+				        {
+				        	tmp = null;
+				        }
+
+				        if (tmp != this.currentState)
+				        {
+				            if (this.currentState != null)
+				            {
+				                this.dragLeave(me.getEvent(), this.currentState);
+				            }
+
+				            this.currentState = tmp;
+
+				            if (this.currentState != null)
+				            {
+				                this.dragEnter(me.getEvent(), this.currentState);
+				            }
+				        }
+				    },
+				    mouseUp: function(sender, me) { },
+				    dragEnter: function(evt, state)
+				    {
+				        if (state != null)
+				        {
+				        	this.previousStyle = state.style;
+				        	state.style = mxUtils.clone(state.style);
+				        	updateStyle(state, true);
+				        	state.shape.apply(state);
+				        	state.shape.reconfigure();
+				        }
+				    },
+				    dragLeave: function(evt, state)
+				    {
+				        if (state != null)
+				        {
+				        	state.style = this.previousStyle;
+				        	updateStyle(state, false);
+				        	state.shape.apply(state);
+				        	state.shape.reconfigure();
+				        }
+				    }
+				});
+			
+			
+			/** END   OF HOVER ********************************************************/
 			
 			// Gets the default parent for inserting new cells. This
 			// is normally the first child of the root (ie. layer 0).
 			var parent = graph.getDefaultParent();
 			loadSwimlaneXml(container, graph, xml);
+				// Implements a properties panel that uses
+				// mxCellAttributeChange to change properties
+				graph.getSelectionModel().addListener(mxEvent.CHANGE, function(sender, evt)
+				{
+					selectionChanged(graph);
+				});
+
+				selectionChanged(graph);
+
+
 
 		}
 	}
+			/**
+			 * Updates the properties panel
+			 */
+			function selectionChanged(graph)
+			{
+				var div = document.getElementById('properties');
+
+				// Forces focusout in IE
+				graph.container.focus();
+
+				// Clears the DIV the non-DOM way
+				div.innerHTML = '';
+
+				// Gets the selection cell
+				var cell = graph.getSelectionCell();
+
+				if (cell == null)
+				{
+					mxUtils.writeln(div, 'Nothing selected.');
+				}
+				else
+				{
+					// Writes the title
+					var center = document.createElement('center');
+					mxUtils.writeln(center, cell.value.nodeName + ' (' + cell.id + ')');
+					div.appendChild(center);
+					mxUtils.br(div);
+
+					// Creates the form from the attributes of the user object
+					var form = new mxForm();
+	
+					var attrs = cell.value.attributes;
+					
+					for (var i = 0; i < attrs.length; i++)
+					{
+						createTextField(graph, form, cell, attrs[i]);
+					}
+	
+					div.appendChild(form.getTable());
+					mxUtils.br(div);
+				}
+			}
+
+			/**
+			 * Creates the textfield for the given property.
+			 */
+			function createTextField(graph, form, cell, attribute)
+			{
+				var input = form.addText(attribute.nodeName + ':', attribute.nodeValue);
+
+				var applyHandler = function()
+				{
+					var newValue = input.value || '';
+					var oldValue = cell.getAttribute(attribute.nodeName, '');
+
+					if (newValue != oldValue)
+					{
+						graph.getModel().beginUpdate();
+                        
+                        try
+                        {
+                        	var edit = new mxCellAttributeChange(
+ 		                           cell, attribute.nodeName,
+ 		                           newValue);
+                           	graph.getModel().execute(edit);
+                           	graph.updateCellSize(cell);
+                        }
+                        finally
+                        {
+                            graph.getModel().endUpdate();
+                        }
+					}
+				}; 
+
+				mxEvent.addListener(input, 'keypress', function (evt)
+				{
+					// Needs to take shift into account for textareas
+					if (evt.keyCode == /*enter*/13 &&
+						!mxEvent.isShiftDown(evt))
+					{
+						input.blur();
+					}
+				});
+
+				if (mxClient.IS_IE)
+				{
+					mxEvent.addListener(input, 'focusout', applyHandler);
+				}
+				else
+				{
+					// Note: Known problem is the blurring of fields in
+					// Firefox by changing the selection, in which case
+					// no event is fired in FF and the change is lost.
+					// As a workaround you should use a local variable
+					// that stores the focused field and invoke blur
+					// explicitely where we do the graph.focus above.
+					mxEvent.addListener(input, 'blur', applyHandler);
+				}
+			}
 
 	/**  swimlaneSelectionEnabled
 		This shows an example of how to set it:

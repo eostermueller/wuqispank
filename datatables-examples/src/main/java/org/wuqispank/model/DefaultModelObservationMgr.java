@@ -8,7 +8,7 @@ import java.util.Observer;
  * @author erikostermueller
  *
  */
-public class DefaultModelObservationMgr implements IModelObservationMgr {
+public class DefaultModelObservationMgr implements IModelObservationMgr, java.io.Serializable {
 
 	private NewTableObservable m_newTableObservable = new NewTableObservable();
 	private NewJoinObservable m_newJoinObservable = new NewJoinObservable();
@@ -36,19 +36,19 @@ public class DefaultModelObservationMgr implements IModelObservationMgr {
 	public void registerNewJoinListener(Observer sqlStatsCounter) {
 		m_newJoinObservable.addObserver(sqlStatsCounter);
 	}
-	class NewTableObservable extends java.util.Observable {
+	class NewTableObservable extends java.util.Observable implements java.io.Serializable{
 		public void update(ITable table) {
 			this.setChanged();
 			this.notifyObservers(table);
 		}
 	}
-	class NewJoinObservable extends java.util.Observable {
+	class NewJoinObservable extends java.util.Observable implements java.io.Serializable {
 		public void update(IBinaryOperatorExpression joinExpression) {
 			this.setChanged();
 			this.notifyObservers(joinExpression);
 		}
 	}
-	class NewSqlObservable extends java.util.Observable {
+	class NewSqlObservable extends java.util.Observable implements java.io.Serializable {
 		public void newSql() {
 			this.setChanged();
 			this.notifyObservers();

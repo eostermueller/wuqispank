@@ -14,13 +14,13 @@ import org.wuqispank.DefaultFactory;
 public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	
 	private static final Logger log = LoggerFactory.getLogger(DefaultSqlModel.class);
-	private static final Object TABLE_LIST_DELIMETER = ",";
+	private static final String TABLE_LIST_DELIMETER = ", ";
 	private int m_columnCount;
 	private List<ITable> m_tables = new ArrayList<ITable>();
 	private IRequest m_request;
 	private List<IColumn> m_selectListColumns = new ArrayList<IColumn>();
 	private List<IBinaryOperatorExpression> m_binaryOperatorExpressions = new ArrayList<IBinaryOperatorExpression>();
-	private IModelObservationMgr m_observationMgr;
+	private IModelObservationMgr m_observationMgr = null;
 
 	private IModelObservationMgr getObservationMgr() {
 		
@@ -45,8 +45,8 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	
 	@Override
 	public void addTable(ITable val) {
-		IModelObservationMgr observationMgr = getObservationMgr();
-		observationMgr.addNewTable(val);
+		getObservationMgr().addNewTable(val);
+		
 		getTables().add(val);
 	}
 	@Override
@@ -88,11 +88,12 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	public void setColumnCount(int columnCount) {
 		this.m_columnCount = columnCount;
 	}
-	public String getTableNames() {
+	@Override
+	public String getHumanReadableTableNames() {
 		StringBuffer sb = new StringBuffer();
 		int count = 0;
 		for(ITable table : getTables() ) {
-			if (count>0) sb.append(TABLE_LIST_DELIMETER);
+			if (count++>0) sb.append(TABLE_LIST_DELIMETER);
 			sb.append(table.getName() );
 		}
 		
@@ -229,6 +230,54 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	@Override
 	public void setObservationMgr(IModelObservationMgr observationMgr) {
 		m_observationMgr = observationMgr;
+	}
+
+	@Override
+	public boolean matchesTablesOf(ISqlModel targetModel) {
+		
+		if (this.getTableCount() != targetModel.getTableCount())
+			return false;
+		
+		for(ITable table : getTables() ) {
+			if (!targetModel.tableExists(table))
+				return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean tableExists(ITable criteria) {
+		for(ITable table : getTables() ) {
+			if (table.equivalent(criteria))
+				return true;
+		}
+		return false;
+	}
+	private boolean tableExistsInJoin(ITable criteria) {
+		boolean ynFound = false;
+		for(IBinaryOperatorExpression join : this.getBinaryOperatorExpressions()) {
+			if (join.getLeftColumn().getTable().getName().equals(criteria.getName())) {
+				ynFound = true;
+				break;
+			}
+			if (join.getRightColumn().getTable().getName().equals(criteria.getName())) {
+				ynFound = true;
+				break;
+			}
+		}
+		return ynFound;
+	}
+
+	@Override
+	public ITable[] getTablesWithoutJoins() {
+		List<ITable> tablesWithoutJoins = new ArrayList<ITable>();
+		
+		for(ITable table : getTables() ) {
+			if (!tableExistsInJoin(table))
+				tablesWithoutJoins.add(table);
+		}
+		ITable[] prototype = {};
+		return tablesWithoutJoins.toArray(prototype);
 		
 	}
 

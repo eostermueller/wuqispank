@@ -7,6 +7,8 @@ import org.intrace.client.model.ITraceEvent;
 import org.intrace.client.model.ITraceEvent.EventType;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.model.IRequestWrapper;
+import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.ISqlWrapperFactory;
 import org.wuqispank.model.IStackTrace;
@@ -37,12 +39,16 @@ public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
 		m_events.add(iTraceEvent);
 	}
 
-	@Override
-	public ISqlWrapper createSqlWrapper() throws WuqispankException {
+	public ISqlWrapper createSqlWrapper(IRequestWrapper rqWrap) throws WuqispankException {
 		if (getList().size() != this.getNumEventsPerSql() ) {
 			throw new WuqispankException("Didn't receive that number of events I was looking for.");
 		}
-		ISqlWrapper dsw = DefaultFactory.getFactory().getSqlWrapper();
+		//ISqlWrapper dsw = DefaultFactory.getFactory().getSqlWrapper();
+		
+		//dsw.setSqlModel( iSqlModel);
+		
+		ISqlWrapper dsw = rqWrap.createBlankSqlWrapper();
+
 		ITraceEvent entryEvent = getList().get(0);
 		if (entryEvent.getEventType() != EventType.ENTRY) 
 			throw new WuqispankException("Error!  Was expecting an entry event but instead got [" + entryEvent.getRawEventData() + "]");
@@ -73,7 +79,6 @@ public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
 			throw new WuqispankException("Arg event class [" + sqlEvent.getClassName() + 
 					"] does not match Exit class name [" + exitEvent.getClassName() + "]");
 		}
-		
 		return dsw;
 	}
 
@@ -81,5 +86,6 @@ public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
 	public List<ITraceEvent> getList() {
 		return m_events;
 	}
+
 
 }
