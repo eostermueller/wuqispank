@@ -256,14 +256,18 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	private boolean tableExistsInJoin(ITable criteria) {
 		boolean ynFound = false;
 		for(IBinaryOperatorExpression join : this.getBinaryOperatorExpressions()) {
-			if (join.getLeftColumn().getTable().getName().equals(criteria.getName())) {
-				ynFound = true;
-				break;
-			}
-			if (join.getRightColumn().getTable().getName().equals(criteria.getName())) {
-				ynFound = true;
-				break;
-			}
+
+			if (join.getLeftColumn()!=null && join.getLeftColumn().getTable() !=null && join.getLeftColumn().getTable().getName() !=null)
+				if (join.getLeftColumn().getTable().getName().equals(criteria.getName())) {
+					ynFound = true;
+					break;
+				}
+			
+			if (join.getRightColumn()!=null && join.getRightColumn().getTable() !=null && join.getRightColumn().getTable().getName() !=null)
+				if (join.getRightColumn().getTable().getName().equals(criteria.getName())) {
+					ynFound = true;
+					break;
+				}
 		}
 		return ynFound;
 	}
