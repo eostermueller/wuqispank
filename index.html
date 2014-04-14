@@ -31,7 +31,8 @@
           <h3>
 <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>What is wuqiSpank?</h3>
 
-<p>wuqiSpank is a web app that traces and visualizes your app&#39;s JDBC activity</p>
+<p>wuqiSpank is a web app that traces and visualizes your app&#39;s JDBC activity.
+It was designed to help refactor your SQL/JDBC code to be more efficient.</p>
 
 
 <h3>
@@ -57,9 +58,10 @@
 
 <h3>
 <a name="joins" class="anchor" href="#joins"><span class="octicon octicon-link"></span></a>Missing JOINs</h3>
+<u>Best Practice</u>:  JOIN tables when appropriate to minimize the number of round trips to the database.<br/>
 The graph on the left, below, shows code with 7 SQL statements, each selecting data from just a single table.
 No JOINs are made, even though the data model supports joins.
-The graph on the right returns the exact same data, but with this single query:
+The graph of the refactored code, on the right, returns the exact same data, but more efficiently with this single query:
 <PRE>SELECT * FROM CUSTOMER C, ACCOUNT A WHERE C.CUST_ID = A.CUST_ID AND C.CUST_ID IN (SELECT CUST_REL_ID FROM CUST_CUST_REL
          WHERE CUST_ID = 'SPANK-001')
 </PRE>
@@ -68,8 +70,39 @@ The graph on the right returns the exact same data, but with this single query:
   
 </p>
 
+<h3>
+<a name="badCache" class="anchor" href="#badCache"><span class="octicon octicon-link"></span></a>Missing Caching</h3>
+<u>Best Practice</u>:  Use EHCache or similar to avoid the performance overhead of querrying for static data you've already retrieved. </br>
+The graph below shows SELECT statements pulling data from two tables whose contents change so rarely, their data should be cached at system startup.
+Wuqispank prominently displays the table names (PHYSICAL_PLANT and PRODUCT) near the circles at the time of the graph,
+so you can quickly determine whether the activity is appropriate for the give tables.
+<p>
+  <img src="images/uc2-bad.png"></img>
 
-        </section>
+</p>
+
+
+<h3>
+<a name="stackTrace" class="anchor" href="#stackTrace"><span class="octicon octicon-link"></span></a>Stack Traces</h3>
+Wuqispank shows the exact line number that a SQL statement was executed from.
+The blue rectangle acts like the MS-Excel cursor and the large window at the bottom displays the detail you can't see in a single table cell.
+<p>
+  <img src="images/stackTrace.png"></img>
+
+</p>
+
+<h3>
+<a name="pattern" class="anchor" href="#pattern"><span class="octicon octicon-link"></span></a>Patterns</h3>
+Wuqispank 'pattern highlighting' helps understand complex interactions. 
+<p>         
+  <img src="images/patterns_anonymous.png"></img>
+
+</p>
+
+
+
+
+		</section>
 
         <aside id="sidebar">
           <a href="" class="button">
