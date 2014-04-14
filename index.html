@@ -57,9 +57,14 @@
 
 <h3>
 <a name="joins" class="anchor" href="#joins"><span class="octicon octicon-link"></span></a>Missing JOINs</h3>
-
+The graph on the left, below, shows code with 7 SQL statements, each selecting data from just a single table.
+No JOINs are made, even though the data model supports joins.
+The graph on the right returns the exact same data, but with this single query:
+<PRE>SELECT * FROM CUSTOMER C, ACCOUNT A WHERE C.CUST_ID = A.CUST_ID AND C.CUST_ID IN (SELECT CUST_REL_ID FROM CUST_CUST_REL
+         WHERE CUST_ID = 'SPANK-001')
+</PRE>
 <p>
-  <img ref="images/uc1.png"></img>
+  <img src="images/uc1.png"></img>
   
 </p>
 
