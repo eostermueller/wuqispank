@@ -22,7 +22,32 @@
 			<email>bruno.borges at gmail.com</email>
 		</developer>
 	</developers>
-
+<!-- 
+	<build>
+		<plugins>
+		       <plugin>
+		         <groupId>org.codehaus.mojo</groupId>
+		         <artifactId>exec-maven-plugin</artifactId>
+		         <version>1.2.1</version>
+		         <executions>
+		           <execution>
+		             <goals>
+		               <goal>java</goal>
+		             </goals>
+		           </execution>
+		         </executions>
+		         <configuration>
+		           <mainClass>com.fisglobal.spe.xpressng.ifx.authenticator.Driver</mainClass>
+		           <arguments>
+		             <argument>foo</argument>
+		             <argument>bar</argument>
+		           </arguments>
+		         </configuration>
+		       </plugin>
+		</plugins>
+		
+	</build>
+	 -->
 	<dependencies>
 		<dependency>
 	                <groupId>${project.groupId}</groupId>

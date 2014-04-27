@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>datatables-examples</name>
-  <comment>See the child project &quot;datatables&quot; for a more complete description.  This
+	<name>datatables-examples</name>
+	<comment>See the child project &quot;datatables&quot; for a more complete description.  This
 		is the parent for the actual project and the examples. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
-  <projects/>
-  <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.jdt.core.javabuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>wicketbench.associatedMarkupAuditor</name>
-    </buildCommand>
-  </buildSpec>
-  <natures>
-    <nature>org.eclipse.jdt.core.javanature</nature>
-    <nature>wicketbench.wicketnature</nature>
-  </natures>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>wicketbench.associatedMarkupAuditor</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>wicketbench.wicketnature</nature>
+	</natures>
 </projectDescription>
