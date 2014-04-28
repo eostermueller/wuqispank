@@ -1,136 +1,160 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.wicketstuff</groupId>
+    <artifactId>datatables-parent</artifactId>
+    <version>6.12.0</version>
+  </parent>
+  <artifactId>datatables-examples</artifactId>
+  <packaging>war</packaging>
+  <name>DataTables jQuery Plugin Integration - Examples</name>
+  <developers>
+    <developer>
+      <id>brunoborges</id>
+      <name>Bruno Borges</name>
+      <email>bruno.borges at gmail.com</email>
+    </developer>
+  </developers>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.0</version>
+        <executions>
+          <execution>
+            <id>tomcat-run</id>
+            <goals>
+              <goal>exec-war-only</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <path>/wuqiSpank</path>
+              <enableNaming>false</enableNaming>
+              <finalName>wuqiSpank.jar</finalName>
+              <charset>utf-8</charset>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+                       <plugin>
+                         <groupId>org.codehaus.mojo</groupId>
+                         <artifactId>exec-maven-plugin</artifactId>
+                         <version>1.2.1</version>
+                         <executions>
+                           <execution>
+                             <goals>
+                               <goal>java</goal>
+                             </goals>
+                           </execution>
+                         </executions>
+                         <configuration>
+                           <mainClass>com.fisglobal.spe.xpressng.ifx.authenticator.Driver</mainClass>
+                           <arguments>
+                             <argument>foo</argument>
+                             <argument>bar</argument>
+                           </arguments>
+                         </configuration>
+                       </plugin>
+-->
+    </plugins>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>com.jgraph</groupId>
+      <artifactId>mxgraph-core</artifactId>
+      <version>2.4.0.4</version>
+    </dependency>
 
-	<parent>
-		<groupId>org.wicketstuff</groupId>
-		<artifactId>datatables-parent</artifactId>
-		<version>6.12.0</version>
-	</parent>
-
-	<artifactId>datatables-examples</artifactId>
-	<packaging>war</packaging>
-
-	<name>DataTables jQuery Plugin Integration - Examples</name>
-
-	<developers>
-		<developer>
-			<id>brunoborges</id>
-			<name>Bruno Borges</name>
-			<email>bruno.borges at gmail.com</email>
-		</developer>
-	</developers>
-<!-- 
-	<build>
-		<plugins>
-		       <plugin>
-		         <groupId>org.codehaus.mojo</groupId>
-		         <artifactId>exec-maven-plugin</artifactId>
-		         <version>1.2.1</version>
-		         <executions>
-		           <execution>
-		             <goals>
-		               <goal>java</goal>
-		             </goals>
-		           </execution>
-		         </executions>
-		         <configuration>
-		           <mainClass>com.fisglobal.spe.xpressng.ifx.authenticator.Driver</mainClass>
-		           <arguments>
-		             <argument>foo</argument>
-		             <argument>bar</argument>
-		           </arguments>
-		         </configuration>
-		       </plugin>
-		</plugins>
-		
-	</build>
-	 -->
-	<dependencies>
-		<dependency>
-	                <groupId>${project.groupId}</groupId>
-	                <artifactId>wicketstuff-datatables</artifactId>
-		<version>6.11.0</version>
-
-<!--          	        <version>${project.version}</version>  -->
-	        </dependency>
-		<dependency>
-		  <groupId>org.intrace</groupId>
-		  <artifactId>headlessInTraceClient</artifactId>
-		  <version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-auth-roles</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-request</artifactId>
-   	        <version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-core</artifactId>
-   	        <version>${project.version}</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.wicket</groupId>
-			<artifactId>wicket-extensions</artifactId>
-		</dependency>
-		<!-- Test -->
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<classifier>jdk15</classifier>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty.aggregate</groupId>
-			<artifactId>jetty-all-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.akiban</groupId>
-			<artifactId>akiban-sql-parser</artifactId>
-			<version>1.0.16</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wicketstuff</groupId>
-			<artifactId>wicketstuff-progressbar</artifactId>
-   	        <version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.wicketstuff</groupId>
-			<artifactId>wicketstuff-progressbar-spring</artifactId>
-   	        <version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.seleniumhq.selenium</groupId>
-			<artifactId>selenium-java</artifactId>
-			<version>2.37.1</version>
-		</dependency>
-            		
-	</dependencies>
+	<!-- The following is a transitive dependency to headlessInTraceClient-1.0.jar -->
+    <dependency>
+      <groupId>net.java.dev.glazedlists</groupId>
+      <artifactId>glazedlists_java15</artifactId>
+      <version>1.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>wicketstuff-datatables</artifactId>
+      <version>6.11.0</version>
+      <!--                    <version>${project.version}</version>  -->
+    </dependency>
+    <dependency>
+      <groupId>org.intrace</groupId>
+      <artifactId>headlessInTraceClient</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-auth-roles</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-request</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.wicket</groupId>
+      <artifactId>wicket-extensions</artifactId>
+    </dependency>
+    <!-- Test -->
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <classifier>jdk15</classifier>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty.aggregate</groupId>
+      <artifactId>jetty-all-server</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.akiban</groupId>
+      <artifactId>akiban-sql-parser</artifactId>
+      <version>1.0.16</version>
+    </dependency>
+    <dependency>
+      <groupId>org.wicketstuff</groupId>
+      <artifactId>wicketstuff-progressbar</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.wicketstuff</groupId>
+      <artifactId>wicketstuff-progressbar-spring</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>2.37.1</version>
+    </dependency>
+  </dependencies>
 </project>
-
