@@ -37,7 +37,7 @@ public class RunWebApp
 
 		WebAppContext context = new WebAppContext();
 		context.setServer(server);
-		context.setContextPath("/foobar");
+		context.setContextPath("/wuqiSpank");
 		context.setWar("src/main/webapp");
 
 		server.setHandler(context);

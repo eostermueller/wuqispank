@@ -41,37 +41,40 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
           </execution>
         </executions>
       </plugin>
-      <!--
-                       <plugin>
-                         <groupId>org.codehaus.mojo</groupId>
-                         <artifactId>exec-maven-plugin</artifactId>
-                         <version>1.2.1</version>
-                         <executions>
-                           <execution>
-                             <goals>
-                               <goal>java</goal>
-                             </goals>
-                           </execution>
-                         </executions>
-                         <configuration>
-                           <mainClass>com.fisglobal.spe.xpressng.ifx.authenticator.Driver</mainClass>
-                           <arguments>
-                             <argument>foo</argument>
-                             <argument>bar</argument>
-                           </arguments>
-                         </configuration>
-                       </plugin>
--->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>java</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <mainClass>org.wicketstuff.RunWebApp</mainClass>
+          <arguments>
+            <argument>foo</argument>
+            <argument>bar</argument>
+          </arguments>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.11</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>com.jgraph</groupId>
       <artifactId>mxgraph-core</artifactId>
       <version>2.4.0.4</version>
     </dependency>
-
-	<!-- The following is a transitive dependency to headlessInTraceClient-1.0.jar -->
+    <!-- The following is a transitive dependency to headlessInTraceClient-1.0.jar -->
     <dependency>
       <groupId>net.java.dev.glazedlists</groupId>
       <artifactId>glazedlists_java15</artifactId>
