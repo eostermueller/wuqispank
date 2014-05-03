@@ -2,6 +2,7 @@ package org.wuqispank.test.level1.model;
 
 import static org.junit.Assert.*;
 
+
 import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
@@ -10,8 +11,8 @@ import java.util.concurrent.CountDownLatch;
 import org.intrace.client.model.ITraceEvent;
 import org.intrace.client.request.IRequest;
 import org.intrace.client.request.IRequestSeparator;
-import org.intrace.client.test.TestUtil;
-import org.intrace.client.test.level1.request.TestMultiThreadedRequestSeparator;
+//import org.intrace.client.test.TestUtil;
+//import org.intrace.client.test.level1.request.TestMultiThreadedRequestSeparator;
 import org.junit.Test;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestRepository;
@@ -31,8 +32,10 @@ public class MultiThreadedRequestRepositoryTest {
 	public void test() {
 		IRequestRepository repo = new InMemoryRequstRepo();
 		
-		int numThreads = 51;
-		int iterations = 1013;		
+		//int numThreads = 51;
+		//int iterations = 1013;		
+		int numThreads = 20;
+		int iterations = 400;		
 	    int batchSize = 50;
 	     CountDownLatch startSignal = new CountDownLatch(1);
 	     CountDownLatch doneSignal = new CountDownLatch(numThreads);

@@ -12,7 +12,7 @@ import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.InMemoryRequstRepo;
 
-public class TestRequestRepository {
+public class RequestRepositoryTest {
 	private static final String SIMPLE_KEY_1 = "a";
 	private static final String SIMPLE_KEY_2 = "b";
 	private static final String SIMPLE_KEY_3 = "c";

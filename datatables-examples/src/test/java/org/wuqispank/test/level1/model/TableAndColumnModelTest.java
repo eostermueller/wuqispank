@@ -11,7 +11,7 @@ import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 import org.wuqispank.web.IFactory;
 
-public class TestTableAndColumnModel {
+public class TableAndColumnModelTest {
 	private IFactory factory = DefaultFactory.getFactory();
 	@Test
 	public void canAddFindTable_caseInsensitive() {

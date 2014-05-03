@@ -26,7 +26,7 @@ import org.wuqispank.model.ITable;
  * @author erikostermueller
  *
  */
-public class TestConvertingEventsIntoSql {
+public class ConvertingEventsIntoSqlTest {
 	ITraceEventParser parser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
 	List<ITraceEvent> myCriteriaList = new ArrayList<ITraceEvent>();
 	ITraceEvent e_entry = null;

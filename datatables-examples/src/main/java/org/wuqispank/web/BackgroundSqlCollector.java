@@ -1,6 +1,6 @@
 package org.wuqispank.web;
 
-import static org.junit.Assert.assertTrue;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,8 +39,6 @@ import org.intrace.client.request.ICompletedRequestCallback;
 import org.intrace.client.request.IRequest;
 import org.intrace.client.request.RequestConnection;
 import org.intrace.client.request.RequestWriter;
-import org.intrace.client.test.level2.connection.lowLevel.ConnectionTestUtils;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;

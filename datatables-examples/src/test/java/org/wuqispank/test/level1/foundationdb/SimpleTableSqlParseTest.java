@@ -13,7 +13,7 @@ import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 
-public class TestSimpleTableSqlParse {
+public class SimpleTableSqlParseTest {
 	private static String EVENT_INSERT_SQL = "INSERT INTO Event (name, description, date, location) VALUES(?, ?, ?, ?)"; 
 	private static String EVENT_SELECT_SQL = "SELECT name, description, date, location from Event where location = ?"; 
 	private static String EVENT_DELETE_SQL = "DELETE FROM Event WHERE name = ?"; 

@@ -17,7 +17,7 @@ import org.wuqispank.model.IColumn;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 
-public class TestSimpleJoin {
+public class SimpleJoinTest {
 	private static String TWO_TABLE_SELECT_SQL = "SELECT name, description, date from Event a, location b where a.location_id = b.loc_id and location_name = ?"; 
 	//private static String THREE_TABLE_SELECT_SQL = "SELECT name, description, date, location_id, loc_id, location_name, a.event_type, c.event_type from Event a, location b, pricing c where a.location_id = b.loc_id and b.location_name = ? and a.event_type = c.event_type";
 	private static String THREE_TABLE_SELECT_SQL_FULLY_QUALIFIED_JOIN_FIELDS = "SELECT name, description, date, location_id, loc_id, location_name, a.event_type, c.event_type from Event a, location b, pricing c where a.location_id = b.loc_id and a.event_type = c.event_type";

@@ -17,7 +17,7 @@ import org.wuqispank.model.IColumn;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 
-public class TestSqlGroupByParse {
+public class SqlGroupByParseTest {
 	private static String SQL_WITH_AGGREGATION = "select sum(this_.J_BGA_) as y0_, sum(this_.J_BGB_) as y1_," + 
 			" sum(this_.J_BGC_) as y2_, sum(this_.J_BGD_) as y3_, this_.J_BFBI as y4_, this_.J_BFMC as y5_ " + 
 			"from BSDTADLS.J_CALM this_ inner join BSDTADLS.J_CAMS fac1_ on this_.J_BFAI=fac1_.J_BAAI " + 

@@ -24,7 +24,7 @@ import org.wuqispank.model.ITable;
  * @author erikostermueller
  *
  */
-public class TestSqlParseWithIntraceEvent {
+public class SqlParseWithIntraceEventTest {
 	ITraceEvent m_insertSqlEvent = null;
 	private static String EVENT_INSERT_SQL = "[18:07:53.681]:[67]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Arg: INSERT INTO Event (name, description, date, location) VALUES(?, ?, ?, ?)"; 
 	ITraceEvent m_selectSqlEvent = null;

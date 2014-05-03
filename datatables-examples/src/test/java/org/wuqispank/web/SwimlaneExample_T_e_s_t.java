@@ -1,4 +1,4 @@
-package org.wuqispank.web.test.tablecount;
+package org.wuqispank.web;
 
 import java.util.regex.Pattern;
 import java.util.concurrent.TimeUnit;
@@ -11,8 +11,8 @@ import static org.hamcrest.CoreMatchers.*;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
-
-public class SwimlaneExample_test {
+@Ignore
+public class SwimlaneExample_T_e_s_t {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;

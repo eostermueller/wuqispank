@@ -19,7 +19,7 @@
 	</description>
 
 	<modules>
-		<module>datatables</module>
+		<!-- <module>datatables</module> -->
 		<module>datatables-examples</module>
 	</modules>
 

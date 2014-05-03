@@ -30,7 +30,7 @@ import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
 import org.xml.sax.SAXException;
 
-public class TestExporter {
+public class ExportTest {
 
 	private static final String EXPORT_ROOT_TAG_NAME = "WuqispankExport";
 	private static final String EXPORT_SINGLE_REQUEST_TAG_NAME = "Rq";

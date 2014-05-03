@@ -1,4 +1,4 @@
-package org.wuqispank.web.test.tablecount;
+package org.wuqispank.web;
 
 import java.util.regex.Pattern;
 
@@ -10,7 +10,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.Select;
 
-public class HardCodedTable_test {
+@Ignore
+public class XmlSwimlanes_1_Test {
   private WebDriver driver;
   private String baseUrl;
   private boolean acceptNextAlert = true;
@@ -24,19 +25,14 @@ public class HardCodedTable_test {
   }
 
   @Test
-  public void testHardCodedTable() throws Exception {
-    driver.get(baseUrl + "/wuqispank/test/org.wuqispank.web.test.tap.HardCodedTable");
-    assertEquals("CUST_CUST_REL", driver.findElement(By.xpath("//*[@id=\"label-74\"]")).getText());
-    assertEquals("CUST_CUST_REL", driver.findElement(By.cssSelector("#label-74 > g > text")).getText());
-    assertEquals("153", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(1)")).getAttribute("x"));
-    assertEquals("149", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(1)")).getAttribute("y"));
-    assertEquals("5", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(1)")).getAttribute("width"));
-    assertEquals("624", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(1)")).getAttribute("height"));
-    assertEquals("153", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(2)")).getAttribute("x"));
-    assertEquals("149", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(2)")).getAttribute("y"));
-    assertEquals("5", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(2)")).getAttribute("width"));
-    assertEquals("624", driver.findElement(By.cssSelector("#shape-70 > rect:nth-child(2)")).getAttribute("height"));
-    assertEquals("1", driver.findElement(By.cssSelector("text")).getText());
+  public void testXmlSwimlanes1() throws Exception {
+    driver.get(baseUrl + "/wuqispank/test/org.wuqispank.web.test.tap.XmlSwimlanes_1");
+    assertEquals("CUST_CUST_REL", driver.findElement(By.cssSelector("#label-9 > g > text")).getText());
+    assertEquals("ACCOUNT", driver.findElement(By.cssSelector("#label-12 > g > text")).getText());
+    assertEquals("ACCT_ACCT_REL", driver.findElement(By.cssSelector("#label-15 > g > text")).getText());
+    assertEquals("CUST_CUST_REL", driver.findElement(By.cssSelector("#label-10 > g > text")).getText());
+    assertEquals("ACCOUNT", driver.findElement(By.cssSelector("#label-13 > g > text")).getText());
+    assertEquals("ACCT_ACCT_REL", driver.findElement(By.cssSelector("#label-16 > g > text")).getText());
   }
 
   @After

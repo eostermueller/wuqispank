@@ -14,7 +14,7 @@ import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ISqlStatsObserver;
 import org.wuqispank.model.ITable;
 
-public class TestObservationManager {
+public class ObservationManagerTest {
 
 	@Test
 	public void canDetectSingleNewTable() {

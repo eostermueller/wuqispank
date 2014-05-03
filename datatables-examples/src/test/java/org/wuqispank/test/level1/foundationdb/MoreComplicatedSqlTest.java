@@ -9,7 +9,7 @@ import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 
-public class TestMoreComplicatedSql {
+public class MoreComplicatedSqlTest {
 
 	@Test
 	public void canParseSqlEndingInNewLineChar() throws SqlParseException {

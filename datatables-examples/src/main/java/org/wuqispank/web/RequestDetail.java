@@ -35,15 +35,7 @@ import org.apache.wicket.util.string.StringValue;
 import org.intrace.client.request.IRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.wicketstuff.datatables.DemoDatatable;
 import org.wicketstuff.datatables.JQueryDatatable;
-import org.wicketstuff.progressbar.ProgressBar;
-//import org.wicketstuff.progressbar.examples.TaskServiceProgressExamplePage.DummyTask;
-import org.wicketstuff.progressbar.spring.AsynchronousExecutor;
-import org.wicketstuff.progressbar.spring.ITaskService;
-import org.wicketstuff.progressbar.spring.Task;
-import org.wicketstuff.progressbar.spring.TaskProgressionModel;
-import org.wicketstuff.progressbar.spring.TaskService;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.IRequestExporter;
 import org.wuqispank.WuqispankException;
@@ -403,34 +395,6 @@ public class RequestDetail extends AuthenticatedWebPage {
 //			add(new Label("author", getBook().getAuthor()));
 //			add(new Label("fiction", Boolean.toString(getBook().getFiction())));
 
-		}
-
-	}
-	private static class DummyTask extends Task
-	{
-		private final int iterations;
-
-		public DummyTask(int iterations)
-		{
-			this.iterations = iterations;
-		}
-
-		@Override
-		protected void run()
-		{
-			for (int i = 0; i < iterations; i++)
-			{
-				try
-				{
-					Thread.sleep(1000);
-				}
-				catch (InterruptedException e)
-				{
-				}
-				updateProgress(i, iterations);
-				if (isCancelled())
-					return;
-			}
 		}
 	}
 
