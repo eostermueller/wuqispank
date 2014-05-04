@@ -1,4 +1,6 @@
 datatables/target/
+wuqiSpank/.extract/
+wuqiSpank/target
 *.class
 
 # Package Files #
