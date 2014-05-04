@@ -2,25 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
-
-	<parent>
-		<groupId>org.wicketstuff</groupId>
-		<artifactId>jdk-1.6-parent</artifactId>
-		<version>6.11.0</version>
-	</parent>
-
-	<artifactId>datatables-parent</artifactId>
+	<groupId>org.wuqiSpank</groupId>
+	<artifactId>wuqiSpank-parent</artifactId>
+	<version>0.0.1</version>
 	<packaging>pom</packaging>
 
-	<name>DataTables jQuery Plugin Integration - Parent</name>
+        <parent>
+                <groupId>org.wicketstuff</groupId>
+                <artifactId>jdk-1.6-parent</artifactId>
+                <version>6.11.0</version>
+        </parent>
+	<name>wuqiSpank Parent</name>
 	<description>
-		See the child project "datatables" for a more complete description.  This
-		is the parent for the actual project and the examples.
+		This is the maven project that is the parent of the wuqiSpank war.
 	</description>
 
 	<modules>
-		<!-- <module>datatables</module> -->
-		<module>datatables-examples</module>
+		<module>wuqiSpank</module>
 	</modules>
 
 </project>
