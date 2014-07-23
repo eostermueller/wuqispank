@@ -1,7 +1,15 @@
+export-dir/
 datatables/target/
 wuqiSpank/.extract/
 wuqiSpank/target
 *.class
+export-dir/
+wuqiSpank/.classpath
+wuqiSpank/.project
+wuqiSpank/.settings
+.classpath
+.project
+.settings
 
 # Package Files #
 *.jar
