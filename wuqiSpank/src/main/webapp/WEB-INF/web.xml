@@ -11,12 +11,21 @@
     </locale-encoding-mapping>
   </locale-encoding-mapping-list>
 	  <listener>
-	  	<listener-class>org.wuqispank.web.BackgroundSqlCollector</listener-class>
+	  	<listener-class>org.wuqispank.web.EventCollector</listener-class>
 	  </listener>
+	<context-param>
+        <param-name>nativeSQL</param-name>
+        <param-value>false</param-value>
+    </context-param>	
   
 	<context-param>
         <param-name>intrace-agent-host</param-name>
         <param-value>localhost</param-value>
+    </context-param>	
+	<context-param>
+        <param-name>org.intrace.jdbc.IJdbcProvider</param-name>
+        <!--  <param-value>org.intrace.jdbc.HsqldbProvider</param-value> -->
+        <param-value>org.intrace.jdbc.PostgresProvider</param-value>
     </context-param>	
 	<context-param>
         <param-name>export-dir</param-name>
@@ -24,7 +33,7 @@
     </context-param>	
 	<context-param>
         <param-name>intrace-agent-port</param-name>
-        <param-value>9125</param-value>
+        <param-value>9123</param-value>
     </context-param>	
 	<context-param>
         <param-name>circular-request-buffer-size</param-name>
@@ -64,19 +73,33 @@
     <session-timeout>50</session-timeout>
   </session-config>
   <servlet>
+  	<servlet-name>dynaTracePurePathImporter</servlet-name>
+  	<servlet-class>org.wuqispank.web.DynaTracePurePathServlet</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>status</servlet-name>
     <servlet-class>org.wuqispank.web.StatusServlet</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>SqlDetailRq</servlet-name>
+    <servlet-class>org.wuqispank.web.SqlDetailRqServlet</servlet-class>
   </servlet>
      <servlet>
                 <servlet-name>test</servlet-name>
                 <servlet-class>org.mortbay.jetty.servlet.Invoker</servlet-class>
         </servlet>
 
-
-
   <servlet-mapping>
     <servlet-name>status</servlet-name>
     <url-pattern>/status</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>dynaTracePurePathImporter</servlet-name>
+    <url-pattern>/dtAddPurePath</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SqlDetailRq</servlet-name>
+    <url-pattern>/SqlDetailRq</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
           <servlet-name>test</servlet-name>

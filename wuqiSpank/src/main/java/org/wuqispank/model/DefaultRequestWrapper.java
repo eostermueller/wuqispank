@@ -18,6 +18,7 @@ import org.wuqispank.jdbc.DefaultJdbcSqlWrapperFactory;
  */
 public class DefaultRequestWrapper implements IRequestWrapper {
 	private ISqlStatsObserver m_sqlStats = null;
+	private int m_sequence = 0;
 	@Override
 	public ISqlStatsObserver getSqlStats() {
 		return m_sqlStats;
@@ -58,6 +59,7 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 
 	private List<ISqlWrapper> m_sqlStatements = null;
 	private static final String TINY_ID_DELIM = "-";
+	private static final int INDEX_ERROR = -3;
 	private int aggregateTableCount = ISqlModel.NOT_INITIALIZED;
 	@Override
 	public String getTinyId() {
@@ -69,7 +71,7 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 	}
 	@Override
 	public int getTableCount() {
-		return aggregateTableCount;
+		return this.getSqlStats().getOrderedTables().size();
 	}
 	@Override
 	public void setTableCount(int aggregateTableCount) {
@@ -85,14 +87,10 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 	}
 	@Override
 	public void addSqlWrapper(ISqlWrapper val) throws WuqispankException {
-
-//		if (getSqlModel()==null)
-//			throw new WuqispankException("found null sql model");
+		val.setSequence(m_sequence++);
 
 		if (getObservationMgr()==null)
 			throw new WuqispankException("found null sql observation mgr");
-		
-		//val.getSqlModel().setObservationMgr( this.getObservationMgr() );
 
 		getSql().add(val);
 		getObservationMgr().addNewSql();
@@ -100,7 +98,7 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 	}
 	@Override
 	public int getSqlStatementCount() {
-		return 42;
+		return this.getSqlCount();
 	}
 
 	private int aggregateColumnCount = ISqlModel.NOT_INITIALIZED;
@@ -127,42 +125,57 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 		calculateStats();
 	}
 
+	/**
+	 * Expecting nice, clean lists of events, each with matching ENTRY and EXIT.
+	 * There should not be any \"nested\" events.  ContiguousEventFilter should have gotten rid of all of those.
+	 * 
+	 * @param allEvents
+	 * @throws WuqispankException
+	 */
 	private void loadEvents(List<ITraceEvent> allEvents) throws WuqispankException {
 		
-		for(int i = 0; i < allEvents.size(); /* inline increment, below */) {
+		int firstEntry = INDEX_ERROR;
+		int firstExit = INDEX_ERROR;
+		for(int i = 0; i < allEvents.size(); /* increment below */) {
 			
-			ISqlWrapperFactory sqlWrapperFactory = getSqlWrapperFactory(allEvents,i);
-			
-			if (sqlWrapperFactory!=null) {
-				if ( allEvents.size() >= i+ sqlWrapperFactory.getNumEventsPerSql() ) {
-					for (int j=0; j < sqlWrapperFactory.getNumEventsPerSql(); j++ )
-						sqlWrapperFactory.add(allEvents.get(i+j));
-					
-					//ISqlModel model = DefaultFactory.getFactory().getSqlModel();
-					//model.setObservationMgr(this.getObservationMgr());
-					
+			firstEntry = getIndexOfNext(EventType.ENTRY,allEvents,i);
+			if (firstEntry!=INDEX_ERROR) {
+				firstExit = getIndexOfNext(EventType.EXIT,allEvents,firstEntry, allEvents.get(firstEntry).getMethodName());
+				if (firstExit!=INDEX_ERROR) {
+					ISqlWrapperFactory sqlWrapperFactory = new DefaultJdbcSqlWrapperFactory();
+					for(int j = firstEntry; j <=firstExit; j++) {
+						sqlWrapperFactory.add(allEvents.get(j));
+					}
 					addSqlWrapper(sqlWrapperFactory.createSqlWrapper( this ) );
-					//getSql().add( sqlWrapperFactory.createSqlWrapper() );
-					i+=sqlWrapperFactory.getNumEventsPerSql();
-				} else
-					throw new WuqispankException("Factory [" + sqlWrapperFactory.getClass().getName() + "] was selected to parse event [" + allEvents.get(i).getRawEventData() + "] but the remaining number of events [" + allEvents.size() + "] wasnt' enough [" + i+ sqlWrapperFactory.getNumEventsPerSql() + "] to create an sql object");
-			} else
-				i++;//silently ignore unrecognized event, because future enhancements may display non-sql events.
+					i = firstExit+1;
+				} else {
+					throw new WuqispankException("Unmatched Event Error.  Can\"t find EXIT event. firstEntry [" + firstEntry + "] total event count [" + allEvents.size() + "] all event dump [" + allEvents.toString() + "]");
+				}
+			} else {
+				throw new WuqispankException("Unmatched Event Error.  Can\"t find ENTRY event. firstExit [" + firstExit + "] total event count [" + allEvents.size() + "] all event dump [" + allEvents.toString() + "]");
+			}
+		}	
+	}
+	private int getIndexOfNext(EventType eventType, List<ITraceEvent> allEvents,
+			int firstEntry, String methodName) {
+		int rc = INDEX_ERROR;
+		for(int i = firstEntry; i < allEvents.size();i++) {
+			if (allEvents.get(i).getEventType()==eventType && allEvents.get(i).getMethodName().equals(methodName))  {
+				rc = i;
+				break;
+			}
 		}
-//			if (allEvents.get(i).getEventType().equals(EventType.ENTRY)) {
-//				
-//				if (allEvents.size() >= i+3) {
-//					ISqlWrapper sql =  createSqlWrapper(allEvents.get(i), allEvents.get(i+1), allEvents.get(i+2) );
-//					getSql().add(sql);
-//					i+=3;
-//				} else {
-//					throw new WuqispankException("Found an ENTRY event and expecting two additional events but did not find those two i[" + i + "] allEvents.size [" + allEvents.size() + "]");
-//				}
-//				
-//			} else {
-//				i++;
-//			}
-		
+		return rc;
+	}
+	private int getIndexOfNext(EventType eventType, List<ITraceEvent> events, int current) {
+		int rc = INDEX_ERROR;
+		for(int i = current; i < events.size();i++) {
+			if (events.get(i).getEventType()==eventType ){ 
+				rc = i;
+				break;
+			}
+		}
+		return rc;
 	}
 	private ISqlWrapperFactory getSqlWrapperFactory(List<ITraceEvent> allEvents, int i) {
 		ISqlWrapperFactory rc = null;

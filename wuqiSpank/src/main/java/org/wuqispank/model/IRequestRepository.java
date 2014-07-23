@@ -20,7 +20,7 @@ import java.util.Iterator;
  * be re-factored when we back the repository with persistence.
  * 
  * The in-memory implementation will need to behave like a "circular buffer",
- * where older requests are deleted.  The methods in this interface don't provide
+ * where older requests are deleted.  The methods in this interface don\"t provide
  * any of that functionality.
  * 
  * The implementors of this will need some load testing to insure thread safety.

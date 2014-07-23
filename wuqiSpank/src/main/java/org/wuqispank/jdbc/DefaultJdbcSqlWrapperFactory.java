@@ -20,7 +20,7 @@ import org.wuqispank.model.IStackTrace;
  * Why?
  * 
  * 1) Minimize wuqispank dependencies on intrace.
- * 2) Don't want to persist/export event details (like class names) that get outdated as JDBC drivers mature over time.
+ * 2) Don\"t want to persist/export event details (like class names) that get outdated as JDBC drivers mature over time.
  *    To avoid persisting such details, they are purged from the object graphs in this and other ISqlWrapperFactory implementors.
  * 
  * @author erikostermueller
@@ -30,8 +30,8 @@ public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
 	List<ITraceEvent> m_events = new ArrayList<ITraceEvent>();
 
 	@Override
-	public int getNumEventsPerSql() {
-		return 3;//Which 3? Entry, Arg, Exit.
+	public int getMinNumEventsPerSql() {
+		return 4;//Which 3? Entry, Arg, Return, Exit.
 	}
 
 	@Override
@@ -39,13 +39,25 @@ public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
 		m_events.add(iTraceEvent);
 	}
 
+	/**
+	 * SQL text is taken from the first ARG event in the given IRequestWrapper.
+	 * The following are not currently supported:
+	 * <ul>
+	 * 			<li><a href="http://docs.oracle.com/javase/7/docs/api/java/sql/Connection.html#prepareCall(java.lang.String)">Connection#prepareCall()</a>.  There are a few overloaded versions of this -- none of them are supported.</li>
+     *          <li><a href="http://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html#executeBatch()">java.sql.Statement#executeBatch()</a></li>
+	 * </ul>
+	 * The following methods are all supported.
+	 * <ul>
+	 *      <li>java.sql.Connection#prepareStatement(...).  All overloaded versions of this method are supported.</li>
+	 *      <li>java.sql.Statement#execute(...).  All overloaded versions of this method are supported.</li>
+	 *      <li>java.sql.Statement#executeQuery(...).  All overloaded versions of this method are supported.</li>
+	 *      <li>java.sql.Statement#executeUpdate(...).  All overloaded versions of this method are supported.</li>
+	 * </ul>
+	 */
 	public ISqlWrapper createSqlWrapper(IRequestWrapper rqWrap) throws WuqispankException {
-		if (getList().size() != this.getNumEventsPerSql() ) {
-			throw new WuqispankException("Didn't receive that number of events I was looking for.");
+		if (getList().size() < this.getMinNumEventsPerSql() ) {
+			throw new WuqispankException("Error.  Expected to find at least [" + this.getMinNumEventsPerSql() + "] events for SQL but only found [" + getList().size() + "] to make up a sql statement.");
 		}
-		//ISqlWrapper dsw = DefaultFactory.getFactory().getSqlWrapper();
-		
-		//dsw.setSqlModel( iSqlModel);
 		
 		ISqlWrapper dsw = rqWrap.createBlankSqlWrapper();
 
@@ -55,11 +67,16 @@ public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
 		
 		ITraceEvent sqlEvent = getList().get(1);
 		if (sqlEvent.getEventType() != EventType.ARG) 
-			throw new WuqispankException("Error!  Was expecting an ARG event but instead got [" + sqlEvent.getRawEventData() + "]");
-		
-		ITraceEvent exitEvent = getList().get(2);
-		if (exitEvent.getEventType() != EventType.EXIT) 
-			throw new WuqispankException("Error!  Was expecting an exit event but instead got [" + entryEvent.getRawEventData() + "]");
+			throw new WuqispankException("Error!  Was expecting the first ARG event but instead got [" + sqlEvent.getRawEventData() + "]");
+
+		ITraceEvent exitEvent = getList().get(getList().size()-1);
+		if (exitEvent==null || EventType.EXIT != exitEvent.getEventType()) {
+			String raw = "Last event was null";
+			if (exitEvent!=null)  {
+				raw = exitEvent.getRawEventData();
+			}
+			throw new WuqispankException("Error!  Was expecting an EXIT.  Total event count[" + getList().size() + "] Raw event [" + raw + "] Full Event dump for this SQL [" + getList().toString() +  "]");
+		}
 		
 		dsw.setSqlText( sqlEvent.getValue() );
 		dsw.setAgentEntryTimeMillis(entryEvent.getAgentTimeMillis());

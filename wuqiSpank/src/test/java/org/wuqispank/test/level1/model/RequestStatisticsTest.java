@@ -34,6 +34,7 @@ public class RequestStatisticsTest {
 	private org.wuqispank.web.IFactory m_wuqiSpankFactory = org.wuqispank.DefaultFactory.getFactory();	
 	IRequest m_request = null;
 	ITraceEvent t_enter = null;
+	ITraceEvent t_return = null;
 	ITraceEvent t_exit = null;
 	@Before
 	public void setupEvents() throws IntraceException {
@@ -48,6 +49,7 @@ public class RequestStatisticsTest {
 		m_updateSqlEvent = eventParser.createEvent(EVENT_UPDATE_SQL,0);
 
 			t_enter = eventParser.createEvent("[15:41:05.294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: {",0);
+			t_return = eventParser.createEvent("[15:41:05.294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Return: FOO",0);
 			t_exit = eventParser.createEvent("[15:41:05.294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: }",0);
 		
 	}
@@ -61,6 +63,7 @@ public class RequestStatisticsTest {
 		List<ITraceEvent> list = new ArrayList<ITraceEvent>();
 		list.add(t_enter);
 		list.add(e);
+		list.add(t_return);
 		list.add(t_exit);
 		return list;
 	}

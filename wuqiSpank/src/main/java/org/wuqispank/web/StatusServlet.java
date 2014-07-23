@@ -34,7 +34,7 @@ public class StatusServlet extends HttpServlet {
 		out.close();
 	}
 	private void dispConnection(PrintWriter out, IConnection conn) {
-		out.println("<div style='margin-left: 4em;'>");
+		out.println("<div style=\"margin-left: 4em;\">");
 		out.println("<p>"); out.println("======================");
 		out.println("<p>"); out.println(" connection:" + conn.getHostPort());
 		out.println("<p>"); out.println(" is connected?:" + conn.isConnected());

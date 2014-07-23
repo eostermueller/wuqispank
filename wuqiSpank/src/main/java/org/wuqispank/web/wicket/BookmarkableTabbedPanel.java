@@ -115,7 +115,7 @@ public class BookmarkableTabbedPanel<T> extends TabbedPanel<ITab> {
                     link = new BookmarkablePageLink(
                             linkId, getPage().getClass(), pageParameters);
 
-                    /* Overwrite parameters only used for link cunstruction, but doesn't
+                    /* Overwrite parameters only used for link cunstruction, but doesn\"t
                      * reflect the actual state.
                      */
                     if (index != getSelectedTab())        

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.wuqispank.web.test.tablecount.MXGraphHtmlLoader;
+import org.wuqispank.web.test.tableaccesstimeline.MXGraphHtmlLoader;
 
 /**
  * This is old-style, before swim lanes.

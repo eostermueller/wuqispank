@@ -18,9 +18,11 @@ package org.wuqispank.web;
 
 import javax.servlet.ServletContext;
 
+
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.wuqispank.model.IRequestRepository;
+import org.wuqispank.web.EventCollector;
 
 public class WuqispankApp extends WebApplication
 {
@@ -44,9 +46,9 @@ public class WuqispankApp extends WebApplication
 	public static IRequestRepository getRepo() {
 		ServletContext servletContext = WebApplication.get().getServletContext();
 		
-		BackgroundSqlCollector bsc = (BackgroundSqlCollector)servletContext.getAttribute(BackgroundSqlCollector.WUQISPANK_REPO);
+		EventCollector eventCollector = (EventCollector)servletContext.getAttribute(EventCollector.WUQISPANK_REPO);
 		
-		return bsc.getRepo();
+		return eventCollector.getRepo();
 	}
 	
 }

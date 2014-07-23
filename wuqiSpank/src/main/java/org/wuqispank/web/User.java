@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.wicket.util.io.IClusterable;
 
 public class User implements IClusterable {
-	// The user's name
+	// The user\"s name
 	private String name;
 
 	/**

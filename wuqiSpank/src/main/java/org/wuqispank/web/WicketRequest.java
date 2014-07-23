@@ -37,4 +37,37 @@ public class WicketRequest implements IRequest, IClusterable {
 	public WicketRequest(IRequest request) {
 		m_request = request;
 	}
+
+	@Override
+	public String getUrl() {
+		return m_request.getUrl();
+	}
+
+	@Override
+	public void setUrl(String val) {
+		m_request.setUrl(val);
+		
+	}
+
+	@Override
+	public String getHttpResponseCode() {
+		return m_request.getHttpResponseCode();
+	}
+
+	@Override
+	public void setHttpResponseCode(String val) {
+		m_request.setHttpResponseCode(val);
+	}
+
+	@Override
+	public boolean isInitialized() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setInitialized(boolean val) {
+		// TODO Auto-generated method stub
+		
+	}
 }

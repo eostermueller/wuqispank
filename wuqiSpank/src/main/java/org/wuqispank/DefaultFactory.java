@@ -2,6 +2,7 @@ package org.wuqispank;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.intrace.jdbc.IJdbcProvider;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
 import org.wuqispank.model.CenterHeavyTableOrderMgr;
@@ -34,15 +35,13 @@ import org.wuqispank.web.IConfig;
 import org.wuqispank.web.IFactory;
 import org.wuqispank.web.msgs.AmericanEnglishMessages;
 import org.wuqispank.web.msgs.IMessages;
-import org.wuqispank.web.tablecount.DefaultRow;
-import org.wuqispank.web.tablecount.DefaultRowGroup;
-import org.wuqispank.web.tablecount.DefaultTableLaneMgr;
-import org.wuqispank.web.tablecount.IRow;
-import org.wuqispank.web.tablecount.IRowGroup;
-import org.wuqispank.web.tablecount.ITableLaneMgr;
-import org.wuqispank.web.tablecount.GraphContext;
-
-import com.mxgraph.view.mxGraph;
+import org.wuqispank.web.tableaccesstimeline.DefaultRow;
+import org.wuqispank.web.tableaccesstimeline.DefaultRowGroup;
+import org.wuqispank.web.tableaccesstimeline.DefaultTableLaneMgr;
+import org.wuqispank.web.tableaccesstimeline.GraphContext;
+import org.wuqispank.web.tableaccesstimeline.IRow;
+import org.wuqispank.web.tableaccesstimeline.IRowGroup;
+import org.wuqispank.web.tableaccesstimeline.ITableLaneMgr;
 
 
 /**
@@ -63,7 +62,7 @@ import com.mxgraph.view.mxGraph;
    </PRE>
  * Then, subsequent calls to DefaultFactory.getFactory() will return myCustomFactory.
  * USE CASE:  the headless InTrace client relies on the text of an event to be formatted in a very specific way.
- * Let's say that multiple text formats must be supported.  If so, just create the necessary implementation of ITraceEventParser
+ * Let\"s say that multiple text formats must be supported.  If so, just create the necessary implementation of ITraceEventParser
  * and configure the right one (as described above) at startup.
  * @author erikostermueller
  *
@@ -73,6 +72,7 @@ public class DefaultFactory implements IFactory {
 	private static IMessages msgs = new AmericanEnglishMessages();
 	private static IConfig m_config = null;
 	private static IFactory INSTANCE = new DefaultFactory();
+	private IJdbcProvider m_jdbcProvider;
 	
 	@Override
 	public IRequestWrapper getRequestWrapper() {
@@ -176,8 +176,8 @@ public class DefaultFactory implements IFactory {
 		return new DefaultRequestExporter();
 	}
 	@Override
-	public IRequestImporter getRequestImporter() throws ParserConfigurationException {
-		return new DefaultRequestImporter();
+	public IRequestImporter getDynaTracePurePathImporter() throws ParserConfigurationException {
+		return new DynaTracePurePathImporter();
 	}
 	@Override
 	public ITableOrderMgr getTableOrderMgr() {
@@ -197,5 +197,39 @@ public class DefaultFactory implements IFactory {
 	public IRowGroup createRowGroup(GraphContext val, String string) {
 		
 		return new DefaultRowGroup(val, string);
+	}
+	
+	@Override 
+	public IJdbcProvider getJdbcProvider() throws WuqispankException {
+		if (m_jdbcProvider==null) {
+			IJdbcProvider newInstance = null;
+			String jdbcProviderClassName = null;
+			try {
+				jdbcProviderClassName = this.getConfig().getJdbcProvider();
+				if ("org.wuqispank.web.WebXmlConfigImpl".equals(jdbcProviderClassName)) {
+					newInstance = (IJdbcProvider) this.getConfig();
+				} else {
+					newInstance = (IJdbcProvider) Class.forName( jdbcProviderClassName ).newInstance();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new WuqispankException(this.getMessages().getJdbcConfigurationError(jdbcProviderClassName) ,e );
+			}
+			m_jdbcProvider = newInstance;
+		}
+		return m_jdbcProvider;
+	}
+	@Override 
+	public  void setJdbcProvider(IJdbcProvider val) {
+		m_jdbcProvider = val;
+	}
+	@Override
+	public IReconnector getReconnector() {
+		return new DefaultReconnector();
+	}
+	@Override
+	public IRequestImporter getRequestImporter()
+			throws ParserConfigurationException {
+		return new DefaultRequestImporter();
 	}
 }

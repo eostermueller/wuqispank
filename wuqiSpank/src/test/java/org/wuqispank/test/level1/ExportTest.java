@@ -33,6 +33,7 @@ import org.xml.sax.SAXException;
 public class ExportTest {
 
 	private static final String EXPORT_ROOT_TAG_NAME = "WuqispankExport";
+	private static final String SQL_DETAIL_RS_ROOT_TAG_NAME = "WsSqlDetailRs";
 	private static final String EXPORT_SINGLE_REQUEST_TAG_NAME = "Rq";
 	private static final String EXPORT_STACK_TRACE_TAG_NAME = "StackTrace";
 	private static final String EXPORT_ID_TAG_NAME = "id";
@@ -77,24 +78,96 @@ public class ExportTest {
 			NodeList eventList = eElement.getElementsByTagName(EXPORT_SQL_TAG_NAME);
 			assertEquals("didn't get the right number of [" + EXPORT_SQL_TAG_NAME + "] nodes",1,eventList.getLength());
 			
-			validateSql(eventList);
+			validateSql(eventList,true);
 			
 			
 		} else
 			fail("Did not find [" + EXPORT_SINGLE_REQUEST_TAG_NAME + "]");
 		
 	}
+	/**
+	 * 
+	 * 
+Expected output:
+    <Sql entryTimeMs="23770916" exitTimeMs="23770918"
+    lousyDateTimeMs="1395747370968" seq="8">
+      <StmtText>select acbscustom0_.J_MRUI as J1_0_, acbscustom0_.J_MRVT as J2_0_, acbscustom0_.J_MRWT as J3_0_, acbscustom0_.J_RAPI as J4_0_, acbscustom0_.J_MSZI as J5_0_, acbscustom0_.J_MSCI as J6_0_, acbscustom0_.J_CVAC as J7_0_, acbscustom0_.J_MSGL as J8_0_, '10' as formula0_, acbscustom0_.J_MSCI as formula1_ from BSDTADLS.J_CUMS acbscustom0_ where acbscustom0_.J_MRUI in ('00001356') order by acbscustom0_.J_MRVT||acbscustom0_.J_MRWT
+      </StmtText>
+      <StackTrace>
+      [org.hsqldb.jdbc.jdbcConnection.prepareStatement(UnknownSource),
+      org.apache.commons.dbcp.DelegatingConnection.prepareStatement(DelegatingConnection.java:281),
+      org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper.prepareStatement(PoolingDataSource.java:313),
+      sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source),
+      org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)]</StackTrace>
+    </Sql>
+
+	 * 
+	 * 
+	 * @throws WuqispankException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 * @throws TransformerException
+	 * @throws IntraceException
+	 */
+	@Test 
+	public void canSerializeOneSqlToXml() throws WuqispankException, ParserConfigurationException, SAXException, IOException, TransformerException, IntraceException {
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		IRequestExporter re = DefaultFactory.getFactory().getRequestExporter();
+		re.setOutputStream(baos);
+		re.export( getRequestWrapper("a","05"), 0 );
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(new ByteArrayInputStream(baos.toByteArray()));
+		doc.getDocumentElement().normalize();
+		Element root = doc.getDocumentElement();
+		
+		assertEquals("Root tag name of exported file is wrong", SQL_DETAIL_RS_ROOT_TAG_NAME, root.getNodeName());
+		NodeList nList = root.getElementsByTagName(EXPORT_SQL_TAG_NAME);
+		assertEquals("didn't get the right number of [" + EXPORT_SQL_TAG_NAME + "] nodes",1,nList.getLength());
+		 
+			
+		validateSql(nList,true);
+			
+		
+	}
+	@Test 
+	public void canSerializeOneSqlWithoutStackTraceToXml() throws WuqispankException, ParserConfigurationException, SAXException, IOException, TransformerException, IntraceException {
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		IRequestExporter re = DefaultFactory.getFactory().getRequestExporter();
+		re.setOutputStream(baos);
+		re.export( getRequestWrapperWithoutStackTrace("a","05"), 0 );
+
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(new ByteArrayInputStream(baos.toByteArray()));
+		doc.getDocumentElement().normalize();
+		Element root = doc.getDocumentElement();
+		
+		assertEquals("Root tag name of exported file is wrong", SQL_DETAIL_RS_ROOT_TAG_NAME, root.getNodeName());
+		NodeList nList = root.getElementsByTagName(EXPORT_SQL_TAG_NAME);
+		assertEquals("didn't get the right number of [" + EXPORT_SQL_TAG_NAME + "] nodes",1,nList.getLength());
+		 
+			
+		validateSql(nList,false);
+			
+		
+	}
 	
-	private void validateSql(NodeList eventList) {
+	private void validateSql(NodeList eventList, boolean validateStackTrace) {
 		
 		for(int i = 0; i< eventList.getLength();i++) {
 			Node eventNode = eventList.item(i);
 			if (eventNode.getNodeType() == Node.ELEMENT_NODE) {
 				Element eElement = (Element) eventNode;
 
-				assertEquals(
-						"couldn't find stack trace in exported xml", Arrays.toString(m_expectedStackTraceElements),
-						eElement.getElementsByTagName(EXPORT_STACK_TRACE_TAG_NAME).item(0).getTextContent() );
+				if (validateStackTrace)
+					assertEquals(
+							"couldn't find stack trace in exported xml", Arrays.toString(m_expectedStackTraceElements),
+							eElement.getElementsByTagName(EXPORT_STACK_TRACE_TAG_NAME).item(0).getTextContent() );
 				
 				assertEquals(
 						"couldn't find sql statement in exported xml", EXPECTED_SQL,
@@ -139,9 +212,32 @@ public class ExportTest {
 		List<ITraceEvent> myCriteriaList = new ArrayList<ITraceEvent>();
 		ITraceEvent t0 = parser.createEvent("[15:41:" + second + ".294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: {",0);
 		ITraceEvent t1 = parser.createEvent("[15:41:" + second + ".532]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Arg: " + EXPECTED_SQL, 0);
+		ITraceEvent t1_5 = parser.createEvent("[15:41:" + second + ".532]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Return: INSERT INTO Event (name, description, date, location) VALUES(?, ?, ?, ?)",0);
 		ITraceEvent t2 = parser.createEvent("[15:41:" + second + ".639]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: }~org.hsqldb.jdbc.jdbcConnection.getAutoCommit(Unknown Source),org.apache.commons.dbcp.DelegatingConnection.getAutoCommit(DelegatingConnection.java:337),org.apache.commons.dbcp.PoolableConnectionFactory.passivateObject(PoolableConnectionFactory.java:688),org.apache.commons.pool.impl.GenericObjectPool.addObjectToPool(GenericObjectPool.java:1379),org.apache.commons.pool.impl.GenericObjectPool.returnObject(GenericObjectPool.java:1342),org.apache.commons.dbcp.PoolableConnection.close(PoolableConnection.java:90),org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper.close(PoolingDataSource.java:191),org.springframework.jdbc.datasource.DataSourceUtils.doReleaseConnection(DataSourceUtils.java:333),org.springframework.jdbc.datasource.DataSourceUtils.releaseConnection(DataSourceUtils.java:294),org.springframework.jdbc.datasource.DataSourceTransactionManager.doCleanupAfterCompletion(DataSourceTransactionManager.java:324),org.springframework.transaction.support.AbstractPlatformTransactionManager.cleanupAfterCompletion(AbstractPlatformTransactionManager.java:1011),org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:804),org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:723),org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:393),org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:120),org.springpringframework.jdbc.datasource.DataSourceTransactionManager.doCleanupAfterCompletion(DataSourceTransactionManager.java:324),org.springframework.transaction.support.AbstractPlatformTransactionManager.cleanupAfterCompletion(AbstractPlatformTransactionManager.java:1011),org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:804),org.springframework.transaction.support.AbstractPlatformTransactionManager.commit(AbstractPlatformTransactionManager.java:723),org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:393),org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:120),org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:172),org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:202),$Proxy6.save(Unknown Source),example.webapp.servlet.HelloWorld.doGet(HelloWorld.java:34),javax.servlet.http.HttpServlet.service(HttpServlet.java:668),javax.servlet.http.HttpServlet.service(HttpServlet.java:770),org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:669),org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:455),org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137),org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:560),org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231),org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1072),org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:382),org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193),org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1006),org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135),org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116),org.eclipse.jetty.server.Server.handle(Server.java:365),org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:485),org.eclipse.jetty.server.BlockingHttpConnection.handleRequest(BlockingHttpConnection.java:53),org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:926),org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:988),org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:635),org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235),org.eclipse.jetty.server.BlockingHttpConnection.handle(BlockingHttpConnection.java:72),org.eclipse.jetty.server.bio.SocketConnector$ConnectorEndPoint.run(SocketConnector.java:264),org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608),org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)",0);
-		ITraceEvent t3_requestCompletion = parser.createEvent("[15:41:" + second + ".999]:[203]:example.webapp.servlet.HelloWorld:doGet: }:50", 0);
-		myCriteriaList.add(t0);myCriteriaList.add(t1);myCriteriaList.add(t2);myCriteriaList.add(t3_requestCompletion);
+		//ITraceEvent t3_requestCompletion = parser.createEvent("[15:41:" + second + ".999]:[203]:example.webapp.servlet.HelloWorld:doGet: }:50", 0);
+		
+		myCriteriaList.add(t0);myCriteriaList.add(t1);myCriteriaList.add(t1_5);myCriteriaList.add(t2);
+		//myCriteriaList.add(t3_requestCompletion);
+		
+		req.setEvents(myCriteriaList);
+		rw.setRequest(req);
+		
+		return rw;
+	}
+	private IRequestWrapper getRequestWrapperWithoutStackTrace(String uniqueId, String second) throws WuqispankException, IntraceException {
+		IRequestWrapper rw = DefaultFactory.getFactory().getRequestWrapper();
+		
+		IRequest req = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		req.setThreadId("myThreadId");
+		req.setUniqueId(uniqueId);
+		ITraceEventParser parser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+		List<ITraceEvent> myCriteriaList = new ArrayList<ITraceEvent>();
+		ITraceEvent t0 = parser.createEvent("[15:41:" + second + ".294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: {",0);
+		ITraceEvent t1 = parser.createEvent("[15:41:" + second + ".532]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Arg: " + EXPECTED_SQL, 0);
+		ITraceEvent t1_5 = parser.createEvent("[15:41:" + second + ".532]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Return: INSERT INTO Event (name, description, date, location) VALUES(?, ?, ?, ?)",0);
+		ITraceEvent t2 = parser.createEvent("[15:41:" + second + ".639]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: }",0);
+		
+		myCriteriaList.add(t0);myCriteriaList.add(t1);myCriteriaList.add(t1_5);myCriteriaList.add(t2);
 		
 		req.setEvents(myCriteriaList);
 		rw.setRequest(req);

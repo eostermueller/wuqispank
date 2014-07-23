@@ -21,6 +21,8 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	private List<IColumn> m_selectListColumns = new ArrayList<IColumn>();
 	private List<IBinaryOperatorExpression> m_binaryOperatorExpressions = new ArrayList<IBinaryOperatorExpression>();
 	private IModelObservationMgr m_observationMgr = null;
+	private SqlType m_sqlType;
+	private Throwable m_parseException;
 
 	private IModelObservationMgr getObservationMgr() {
 		
@@ -55,7 +57,7 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	}
 	/**
 	 * Start with list of columns (mostly) unassociated with any table.
-	 * Then, if a column was assigned to a table alias (as in 'a.myColumn' or 'foo.yourColumn'), 
+	 * Then, if a column was assigned to a table alias (as in \"a.myColumn\" or \"foo.yourColumn\"), 
 	 * then associate that column with the corresponding table.
 	 */
     private void resolveColumnAliases() {
@@ -103,9 +105,9 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 		return m_tables;
 	}
 	/**
-	 * The parser hasn't done to work to associate the column with the table that owns it.
+	 * The parser hasn\"t done to work to associate the column with the table that owns it.
 	 * At best, the parser provides the alias for the table.  
-	 * 'a' and 'b', below, are table aliases.
+	 * \"a\" and \"b\", below, are table aliases.
 	 * <PRE>
 	 *   select a.PRODUCT_DESCR, b.PRODUCT_ID from PRODUCTS a, ORDERS b where .....
 	 * </PRE>
@@ -148,7 +150,7 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 		
 		ITable rc = null;
 		for(ITable t : getTables()) {
-			if (t==null || t.getAlias().equals(ISqlModel.NOT_SPECIFIED) || t.getAlias()==null)
+			if (t==null || t.getAlias()==null || t.getAlias().equals(ISqlModel.NOT_SPECIFIED))
 				continue;
 			log.debug("Looking for table [" + aliasCriteria + "] comparing to table [" + t.getAlias() + "]");
 			if (aliasCriteria.toLowerCase().equals(t.getAlias().toLowerCase())) {
@@ -208,7 +210,7 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 		return result;
 	}
 	/**
-	 * Find any columns in the "Select list" that haven't already been linked to a table.
+	 * Find any columns in the "Select list" that haven\"t already been linked to a table.
 	 * 
 	 * @param columnNameCriteria
 	 * @return
@@ -256,13 +258,29 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	private boolean tableExistsInJoin(ITable criteria) {
 		boolean ynFound = false;
 		for(IBinaryOperatorExpression join : this.getBinaryOperatorExpressions()) {
-			if (join.getLeftColumn().getTable().getName().equals(criteria.getName())) {
-				ynFound = true;
-				break;
+			
+			if (join.getLeftColumn()!=null
+					&& join.getLeftColumn().getTable()!=null) {
+				if (join
+						.getLeftColumn()
+						.getTable()
+						.getName()
+						.equals(criteria.getName())) {
+					ynFound = true;
+					break;
+				}
+				
 			}
-			if (join.getRightColumn().getTable().getName().equals(criteria.getName())) {
-				ynFound = true;
-				break;
+			if (join.getRightColumn()!=null
+					&& join.getRightColumn().getTable()!=null) {
+				if (join
+						.getRightColumn()
+						.getTable()
+						.getName()
+						.equals(criteria.getName())) {
+					ynFound = true;
+					break;
+				}
 			}
 		}
 		return ynFound;
@@ -279,6 +297,29 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 		ITable[] prototype = {};
 		return tablesWithoutJoins.toArray(prototype);
 		
+	}
+
+	@Override
+	public SqlType getSqlType() {
+		return m_sqlType;
+	}
+	@Override
+	public void setSqlType(SqlType val) {
+		m_sqlType = val;
+	}
+
+	@Override
+	public boolean isParsedSuccessfully() {
+		return this.getParseException()==null;
+	}
+
+	@Override
+	public void setParseException(Throwable val) {
+		m_parseException = val;
+	}
+	@Override
+	public Throwable getParseException() {
+		return m_parseException;
 	}
 
 }

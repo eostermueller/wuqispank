@@ -9,7 +9,7 @@ public interface ISqlWrapperFactory {
 
 	List<ITraceEvent> getList();
 	
-	int getNumEventsPerSql();
+	int getMinNumEventsPerSql();
 
 	void add(ITraceEvent iTraceEvent);
 

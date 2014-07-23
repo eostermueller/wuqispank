@@ -13,6 +13,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+
+This was the old color (orange):
+E9601A
+
  */
 body {
 	background-color: white;
@@ -27,7 +31,7 @@ body {
 }
 
 h1,h2,h3,h4,h5,h6,h7,h8 {
-	color: #E9601A;
+	color: #005493;
 	font-weight: normal;
 }
 
@@ -39,7 +43,7 @@ h1,h2 {
 #extitle {
 	font-size: 12pt;
 	font-weight: bold;
-	color: #E9601A;
+	color: #005493;
 	padding: 10px 10px 10px 10px;
 }
 
@@ -70,7 +74,7 @@ h1,h2 {
 .blockWithBorder {
 	border-width: thin;
 	border-style: dotted;
-	border-color: #E9601A;
+	border-color: #005493;
 }
 
 #hellomessage {
@@ -97,7 +101,7 @@ h3 {
 }
 
 a {
-	color: #E9601A;
+	color: #005493;
 	font-weight: bold;
 	text-decoration: none;
 }

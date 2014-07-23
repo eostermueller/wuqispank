@@ -18,12 +18,12 @@ import org.wuqispank.model.ISqlWrapper;
 
 /**
  * <WuqispankExport>
- * 		<Rq id='a3f20' threadId='myThreadId' >
- * 			<Sql seq='0' beginTs="" endTs="">
+ * 		<Rq id=\"a3f20\" threadId=\"myThreadId\" >
+ * 			<Sql seq=\"0\" beginTs="" endTs="">
  * 					<StmtText/>
  * 					<StackTrace/>
  * 			</Sql>
- * 			<Sql seq='1' beginTs="" endTs="">
+ * 			<Sql seq=\"1\" beginTs="" endTs="">
  * 					<StmtText/>
  * 					<StackTrace/>
  * 			</Sql>
@@ -35,37 +35,56 @@ import org.wuqispank.model.ISqlWrapper;
 public class DefaultRequestExporter implements IRequestExporter {
 	DocumentBuilderFactory m_docFactory = null;
 	DocumentBuilder m_docBuilder = null;
-	Document m_doc = null;
+	Document m_sqlDetailsDoc = null;
 	private OutputStream m_outputStream = null;
 
 	public DefaultRequestExporter() throws ParserConfigurationException {
 		m_docFactory = DocumentBuilderFactory.newInstance();
 		m_docBuilder = m_docFactory.newDocumentBuilder();
-		// root elements
-		m_doc = m_docBuilder.newDocument();
-		Element rootElement = m_doc.createElement(EXPORT_ROOT_TAG_NAME);
-		m_doc.appendChild(rootElement);		
 	}
 
 	@Override
 	public void export(IRequestWrapper rw) throws TransformerException  {
+		Document doc = m_docBuilder.newDocument();
+		Element rootElement = doc.createElement(EXPORT_ROOT_TAG_NAME);
+		doc.appendChild(rootElement);		
 
-		Element requestElement = m_doc.createElement(EXPORT_SINGLE_REQUEST_TAG_NAME);
-		m_doc.getDocumentElement().appendChild(requestElement);		
+		Element requestElement = doc.createElement(EXPORT_SINGLE_REQUEST_TAG_NAME);
+		doc.getDocumentElement().appendChild(requestElement);		
 		
 		requestElement.setAttribute(EXPORT_ATTRIBUTE_ID_TAG_NAME, rw.getUniqueId());
 		requestElement.setAttribute(EXPORT_ATTRIBUTE_THREAD_ID_TAG_NAME, rw.getRequest().getThreadId());
 		
 		for(ISqlWrapper sql : rw.getSql())
-			writeSql(requestElement, sql);
+			writeSql(doc, requestElement, sql);
 		
-		writeToOutput();
+		writeToOutput(doc);
 	} 
-	private void writeToOutput() throws TransformerException {
+	/**
+	 * Retrieve detail for a single SQL statement (sql text and stack trace).
+	 * This avoids overhead of transmitting large number (perhaps 1000 or more) SQL and stack traces.
+	 */
+	@Override
+	public void export(IRequestWrapper rw, int sqlSequence) throws TransformerException  {
+
+		Document sqlDetailsDoc = m_docBuilder.newDocument();
+		sqlDetailsDoc.appendChild( sqlDetailsDoc.createElement(this.SQL_DETAIL_RS_ROOT_TAG_NAME) );		
+		
+		Element requestElement = sqlDetailsDoc.createElement(EXPORT_SINGLE_REQUEST_TAG_NAME);
+		sqlDetailsDoc.getDocumentElement().appendChild(requestElement);		
+		
+		requestElement.setAttribute(EXPORT_ATTRIBUTE_ID_TAG_NAME, rw.getUniqueId());
+		requestElement.setAttribute(EXPORT_ATTRIBUTE_THREAD_ID_TAG_NAME, rw.getRequest().getThreadId());
+		
+		writeSql(sqlDetailsDoc, requestElement,rw.getSql().get(sqlSequence));
+		
+		writeToOutput(sqlDetailsDoc);
+	} 
+	private void writeToOutput(Document doc) throws TransformerException {
 		// write the content into xml file
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(m_doc);
+		DOMSource source = new DOMSource(doc);
 		StreamResult result = new StreamResult(getOutputStream());
  
 		// Output to console for testing
@@ -74,9 +93,9 @@ public class DefaultRequestExporter implements IRequestExporter {
 		transformer.transform(source, result);		
 	}
 
-	private void writeSql(Element requestEle, ISqlWrapper sqlModel) {
+	private void writeSql(Document doc, Element requestEle, ISqlWrapper sqlModel) {
 		
-		Element sqlEle = m_doc.createElement(EXPORT_SQL_TAG_NAME);
+		Element sqlEle = doc.createElement(EXPORT_SQL_TAG_NAME);
 		requestEle.appendChild(sqlEle);
 		
 		sqlEle.setAttribute(ATTRIBUTE_NAME_SEQUENCE, String.valueOf(sqlModel.getSequence()));
@@ -84,15 +103,18 @@ public class DefaultRequestExporter implements IRequestExporter {
 		sqlEle.setAttribute(ATTRIBUTE_NAME_EXIT_TIME, String.valueOf(sqlModel.getAgentExitTimeMillis()));
 		sqlEle.setAttribute(ATTRIBUTE_NAME_CLIENT_DATE_TIME, String.valueOf(sqlModel.getLousyDateTimeMillis()));
 		
-		Element sqlStmt = m_doc.createElement(EXPORT_SQL_STMT_TAG_NAME);
-		sqlStmt.appendChild(m_doc.createTextNode(sqlModel.getSqlText()));
+		Element sqlStmt = doc.createElement(EXPORT_SQL_STMT_TAG_NAME);
+		sqlStmt.appendChild(doc.createTextNode(sqlModel.getSqlText()));
 		sqlEle.appendChild(sqlStmt);
 
-		Element stackTraceEle = m_doc.createElement(EXPORT_STACK_TRACE_TAG_NAME);
+		Element stackTraceEle = doc.createElement(EXPORT_STACK_TRACE_TAG_NAME);
 		//String stackTrace = Arrays.toString(sqlModel.getExitEvent().getStackTrace());
-		String stackTrace = Arrays.toString(sqlModel.getStackTrace().getStackTraceElements());
-		stackTraceEle.appendChild(m_doc.createTextNode(stackTrace));
-		sqlEle.appendChild(stackTraceEle);
+		//String stackTrace = Arrays.toString(sqlModel.getStackTrace().getStackTraceElements());
+		if (sqlModel.getStackTrace() !=null) {
+			String stackTrace = Arrays.toString(sqlModel.getStackTrace().getStackTraceElements());
+			stackTraceEle.appendChild(doc.createTextNode(stackTrace));
+			sqlEle.appendChild(stackTraceEle);
+		}
 	}
 
 	@Override

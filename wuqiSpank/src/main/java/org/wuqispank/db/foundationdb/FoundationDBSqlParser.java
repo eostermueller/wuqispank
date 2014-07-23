@@ -17,30 +17,28 @@ import org.wuqispank.model.IBinaryOperatorExpression;
 import org.wuqispank.model.IColumn;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
+import org.wuqispank.model.SqlType;
 import org.wuqispank.web.RequestDetail;
 
-import com.akiban.sql.StandardException;
-import com.akiban.sql.parser.BinaryOperatorNode;
-import com.akiban.sql.parser.ColumnReference;
-import com.akiban.sql.parser.CursorNode;
-import com.akiban.sql.parser.FromBaseTable;
-import com.akiban.sql.parser.FromList;
-import com.akiban.sql.parser.FromTable;
-import com.akiban.sql.parser.GroupByColumn;
-import com.akiban.sql.parser.NodeTypes;
-import com.akiban.sql.parser.OrderByColumn;
-import com.akiban.sql.parser.QueryTreeNode;
-import com.akiban.sql.parser.ResultColumnList;
-import com.akiban.sql.parser.SQLParser;
-import com.akiban.sql.parser.SQLParserContext;
-import com.akiban.sql.parser.SQLParserContext.IdentifierCase;
-import com.akiban.sql.parser.SelectNode;
-import com.akiban.sql.parser.StatementNode;
-import com.akiban.sql.parser.TableName;
-import com.akiban.sql.parser.ValueNode;
-import com.akiban.sql.parser.Visitable;
-import com.akiban.sql.parser.Visitor;
-import com.akiban.sql.parser.JoinNode;
+import com.foundationdb.sql.StandardException;
+import com.foundationdb.sql.parser.BinaryOperatorNode;
+import com.foundationdb.sql.parser.ColumnReference;
+import com.foundationdb.sql.parser.CursorNode;
+import com.foundationdb.sql.parser.FromBaseTable;
+import com.foundationdb.sql.parser.FromList;
+import com.foundationdb.sql.parser.FromTable;
+import com.foundationdb.sql.parser.JoinNode;
+import com.foundationdb.sql.parser.NodeTypes;
+import com.foundationdb.sql.parser.QueryTreeNode;
+import com.foundationdb.sql.parser.SQLParser;
+import com.foundationdb.sql.parser.SQLParserContext;
+import com.foundationdb.sql.parser.SelectNode;
+import com.foundationdb.sql.parser.StatementNode;
+import com.foundationdb.sql.parser.TableName;
+import com.foundationdb.sql.parser.ValueNode;
+import com.foundationdb.sql.parser.Visitable;
+import com.foundationdb.sql.parser.Visitor;
+
 
 
 /**
@@ -57,54 +55,51 @@ public class FoundationDBSqlParser implements ISqlParser {
 	@Override
 	public void parse(String sqlText) throws SqlParseException {
 		init();
+		if (sqlText==null || "".equals(sqlText.trim())) {
+			throw new SqlParseException(DefaultFactory.getFactory().getMessages().getMissingSqlText() );
+		}
 		
 	    CustomSQLParser parser = new CustomSQLParser();
+	    //SQLParser parser = new SQLParser();
 	    
         ColumnNamePrinter printer = new ColumnNamePrinter();
-        parser.setIdentifierCase(SQLParserContext.IdentifierCase.PRESERVE);
+//July1        parser.setIdentifierCase(SQLParserContext.IdentifierCase.PRESERVE);
         StatementNode stmt;
 		try {
 			stmt = parser.parseStatement(sqlText);
 			stmt.accept(new ColumnNamePrinter());
-			log.debug("Result type [" + stmt.getClass().getName() + "]");
+			log.debug("Result type [" + stmt.getClass().getName() + "] ["  + stmt.statementToString() + "]");
+			this.getSqlModel().setSqlType( SqlType.valueOf( stmt.statementToString() ) );
 			if (stmt instanceof CursorNode) {
 				CursorNode cursorNode = (CursorNode)stmt;
 				 SelectNode sn = (SelectNode)cursorNode.getResultSetNode(); 
-				 System.out.println("From");
+				 //System.out.println("From");
 				 if (sn !=null) {
 					 ValueNode whereClause = sn.getWhereClause();
 					 if (whereClause!=null) {
 						 log.debug("WHERE CLAUSE table name [" + whereClause.getTableName() + "]");
 						 log.debug("WHERE CLAUSE is Constant Expr [" + whereClause.isConstantExpression() + "]");
 						 log.debug("WHERE CLAUSE getUserData() [" + whereClause.getUserData() + "]");
-						 for(FromTable f : sn.getFromList()) 
-							 	System.out.println("  " + f.getTableName()); 
-//						 StringWriter sw = new StringWriter();
-//						 Writer oldWriter = whereClause.getDebugOutput();
-//						 whereClause.setDebugOutput(sw);
-//						 //whereClause.debugPrint("DEBUG PRINT WHERE CLAUSE");
-//						 log.debug("WHERE CLAUSE treePrint [" + sw.toString() + "]");
-//						 whereClause.setDebugOutput(oldWriter);
-						 
-//						 System.out.println("GroupBy"); 
-//						 for(GroupByColumn g : sn.getGroupByList()) 
-//						        System.out.println("  " + g.getColumnName()); 
 					 }
 					 
 				 }
-//				 System.out.println("OrderBy"); 
-//				 for(OrderByColumn o : cursorNode.getOrderByList()) 
-//				      System.out.println("  " + o.getExpression().getColumnName()); 				
 			}
 			getSqlModel().postProcess();
-		} catch (StandardException e1) {
-			SqlParseException spe = new SqlParseException(e1);
+		} catch ( RuntimeException e) {
+			
+			SqlParseException spe = new SqlParseException(e);
 			spe.setSql(sqlText);
+			getSqlModel().setParseException(spe);
+			throw spe;
+		} catch (StandardException e) {
+			
+			SqlParseException spe = new SqlParseException(e);
+			spe.setSql(sqlText);
+			getSqlModel().setParseException(spe);
 			throw spe;
 		}
 
-//		if (log.isDebugEnabled()) {
- 		if (true) {
+		if (log.isDebugEnabled()) {
 			log.debug("Sql statement [" + sqlText + "]");
 			stmt.treePrint();		
 		}
@@ -121,7 +116,7 @@ public class FoundationDBSqlParser implements ISqlParser {
             	}
             }
             
-            System.out.println("#!# Found node type [" +  node.getNodeType() + "] user data[" + text + "]");
+            //System.out.println("#!# Found node type [" +  node.getNodeType() + "] user data[" + text + "]");
     		ITable myTable = DefaultFactory.getFactory().getTable();
             switch(node.getNodeType()) {
             	case NodeTypes.FROM_LIST:
@@ -162,15 +157,15 @@ public class FoundationDBSqlParser implements ISqlParser {
             		break;
             	case NodeTypes.COLUMN_REFERENCE:
                     ColumnReference ref = (ColumnReference)node;
-                    System.out.println("  ~*" + ref.getColumnName());
+                    //System.out.println("  ~*" + ref.getColumnName());
                     if (ref.getTableNameNode()!=null) {
-                        System.out.println("  ~!" + ref.getTableNameNode().getFullTableName());
-                        System.out.println("  ~#" + ref.getTableNameNode().getTableName());
+                        //System.out.println("  ~!" + ref.getTableNameNode().getFullTableName());
+                        //System.out.println("  ~#" + ref.getTableNameNode().getTableName());
                     } else {
-                    	System.out.println("Found null table");
+                    	//System.out.println("Found null table");
                     }
-                    System.out.println("  ~%" + ref.getSQLColumnName());
-                    System.out.println("  ~&" + ref.getTableName());
+                    //System.out.println("  ~%" + ref.getSQLColumnName());
+                    //System.out.println("  ~&" + ref.getTableName());
                     
                     getSqlModel().addSelectListColumn(ref.getTableName(), ref.getColumnName());
             		break;
@@ -244,6 +239,24 @@ public class FoundationDBSqlParser implements ISqlParser {
             }
             return visitable;
         }
+
+		@Override
+		public boolean skipChildren(Visitable arg0) throws StandardException {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean stopTraversal() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean visitChildrenFirst(Visitable arg0) {
+			// TODO Auto-generated method stub
+			return false;
+		}
  
 
 //		private List<ITable> getTables() {
@@ -251,14 +264,6 @@ public class FoundationDBSqlParser implements ISqlParser {
 //		}
 
 
-		@Override
-        public boolean visitChildrenFirst(Visitable node) { return false; }
- 
-        @Override
-        public boolean stopTraversal() { return false; }
- 
-        @Override
-        public boolean skipChildren(Visitable node) { return false; }
     }
  
     public class CustomSQLParser extends SQLParser {

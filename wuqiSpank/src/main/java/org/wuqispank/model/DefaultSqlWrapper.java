@@ -57,15 +57,18 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 		m_sqlText = val.replace("\n"," ").replace("\r"," ").trim();
 //		if (getSqlModel()==null)
 //			setSqlModel(DefaultFactory.getFactory().getSqlModel());
-		getSqlModel().setColumnCount(17);
+		//getSqlModel().setColumnCount(17);
 
 		ISqlParser parser = DefaultFactory.getFactory().getSqlParser();
 		try {
 			parser.setSqlModel(getSqlModel());
 			parser.parse(m_sqlText);
 		} catch (SqlParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e.getLocalizedMessage());
+			if (e.getCause()!=null)
+				e.getCause().printStackTrace();
+			else
+				e.printStackTrace();
 		}
 	}
 

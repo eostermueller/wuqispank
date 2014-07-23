@@ -25,5 +25,19 @@ public interface IMessages {
 
 	String getEmptySqlError(String sql, String uniqueId, int sequence);
 	
+	String getJdbcConfigurationError(String  propertyVal);
+
+	String getFailureLoadingExportFiles();
+
+	String getInvalidReconnectInterval(Exception e,
+			String reconnectIntervalInSeconds, String webXmlReconnectInterval,
+			String canonicalName);
+
+	Object getSQL();
+
+	Object getStackTrace();
+
+	String getMissingSqlText();
+	
 
 }

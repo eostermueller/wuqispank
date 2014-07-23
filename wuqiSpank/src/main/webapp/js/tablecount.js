@@ -551,67 +551,116 @@
 			
 			
 			/** END   OF HOVER ********************************************************/
-			
+				// Installs a handler for click events in the graph
+				// that toggles the overlay for the respective cell
+				graph.addListener(mxEvent.CLICK, function(sender, evt)
+				{
+					var cell = evt.getProperty('cell');
+					
+					if (cell != null)
+					{
+						var myStackTrace = cell.value.indexOf('stack');
+						if (cell.value=='SQL' || myStackTrace==0) {
+						
+							var overlays = graph.getCellOverlays(cell);
+						
+							if (overlays == null)
+							{
+									var myCombinedId = cell.parent.id;
+									mxLog.show();
+									var output = null;
+									if (myStackTrace==0) {
+									    output = WsGetStackTrace(myCombinedId);
+									} else if (cell.value=='SQL') {
+										output = WsGetSql(myCombinedId);
+									}
+									mxLog.debug( output );
+							}
+							else
+							{
+								graph.removeCellOverlays(cell);
+							}						
+						}
+					}
+				});			
 			// Gets the default parent for inserting new cells. This
 			// is normally the first child of the root (ie. layer 0).
 			var parent = graph.getDefaultParent();
 			loadSwimlaneXml(container, graph, xml);
-				// Implements a properties panel that uses
-				// mxCellAttributeChange to change properties
-				graph.getSelectionModel().addListener(mxEvent.CHANGE, function(sender, evt)
-				{
-					selectionChanged(graph);
-				});
-
-				selectionChanged(graph);
-
-
-
 		}
 	}
-			/**
-			 * Updates the properties panel
-			 */
-			function selectionChanged(graph)
-			{
-				var div = document.getElementById('properties');
 
-				// Forces focusout in IE
-				graph.container.focus();
-
-				// Clears the DIV the non-DOM way
-				div.innerHTML = '';
-
-				// Gets the selection cell
-				var cell = graph.getSelectionCell();
-
-				if (cell == null)
-				{
-					mxUtils.writeln(div, 'Nothing selected.');
-				}
-				else
-				{
-					// Writes the title
-					var center = document.createElement('center');
-					mxUtils.writeln(center, cell.value.nodeName + ' (' + cell.id + ')');
-					div.appendChild(center);
-					mxUtils.br(div);
-
-					// Creates the form from the attributes of the user object
-					var form = new mxForm();
+	function WsGetSql(myCombinedId) {
+		var sql = WsGetRq(myCombinedId,'SQL');
+		return '###   ###   ###   ###\n' + vkbeautify.sql(sql );
+	}
 	
-					var attrs = cell.value.attributes;
-					
-					for (var i = 0; i < attrs.length; i++)
-					{
-						createTextField(graph, form, cell, attrs[i]);
-					}
+	function WsGetStackTrace(myCombinedId) {
+		var myStackTrace = WsGetRq(myCombinedId,'stacktrace');
+		var pretty = myStackTrace.replace(/,/g,"\n");
+		return '@@@   @@@   @@@   @@@\n' + pretty;
+	}
 	
-					div.appendChild(form.getTable());
-					mxUtils.br(div);
-				}
-			}
+	function WsGetRq(myCombinedId, myDataType) {
+		var rq = WsGetCachedRq(myCombinedId);
+		if (rq == null) {
+			rq = WsRetrieveRq(myCombinedId);
+			WsPutCachedRq(rq);
+		}
+		
+		var rc = null;
+		var myNodeList = null;
+		var lookingForNode = null;
+		if (myDataType=='SQL') {
+			lookingForNode = "StmtText";
+		} else if (myDataType=='stacktrace') {
+		    lookingForNode = "StackTrace";
+		}
+		myNodeList = rq.getElementsByTagName(lookingForNode);
+		rc = myNodeList[0].firstChild.data;
+		
+		return rc;
+	}
+	function WsGetCachedRq(myCombinedId) {
+		return null;
+	}
+	function getBaseUrl() {
+		//window.location.protocol
+		//window.location.host
+		//window.location.pathname
+		
+		var rc = window.location.protocol 
+			+ "//" + window.location.host 
+			+ "/" + window.location.pathname.split('/')[1];
+		return rc;
+			
+	}
+	/** Given this: ce23db0a-fb2b-49fa-a2b3-62ff831eedb0~8
+	  * Submit request to this url: http://localhost:8082/wuqiSpank/SqlDetailRq?rqid=ce23db0a-fb2b-49fa-a2b3-62ff831eedb0&sqlseq=8
+	  *
+	  *
+	  *
+	  */
+	function WsRetrieveRq(myCombinedId) {
+//		var myXml = '<?xml version="1.0" encoding="UTF-8"?><WsSqlDetailRs><Rq id="ce23db0a-fb2b-49fa-a2b3-62ff831eedb0" threadId=""><Sql entryTimeMs="1395747370968" exitTimeMs="1395747370968" lousyDateTimeMs="1395747370968" seq="16"><StmtText>select acbsloanes0_.DSCUPI as DSCUPI19_0_, acbsloanes0_.DSCUQI as DSCUQI19_0_, acbsloanes0_.DSCVMA as DSCVMA19_0_ from BSDTADLS.DSCLLE acbsloanes0_ where acbsloanes0_.DSCUPI="RS" and acbsloanes0_.DSCUQI="000089551"</StmtText><StackTrace>[[org.hsqldb.jdbc.jdbcConnection.prepareStatement(UnknownSource), org.apache.commons.dbcp.DelegatingConnection.prepareStatement(DelegatingConnection.java:281), org.apache.commons.dbcp.PoolingDataSource$PoolGuardConnectionWrapper.prepareStatement(PoolingDataSource.java:313), sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source), org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)]</StackTrace></Sql></Rq></WsSqlDetailRs>';
+		var twoParts = myCombinedId.split("~");
+		var myRqId = twoParts[0];
+		var mySqlSeq = twoParts[1];
+		//var url = 'http://localhost:8082/wuqiSpank/SqlDetailRq';
+		var url = getBaseUrl() + '/SqlDetailRq';
+		var params = 'rqid=' + myRqId + '&sqlseq=' + mySqlSeq;
+		//var req = new mxXmlRequest(url, 'rqid=ce23db0a-fb2b-49fa-a2b3-62ff831eedb0&sqlseq=8', 'POST', false);
+		var req = new mxXmlRequest(url, params, 'POST', false);
+		req.send();
+//		mxUtils.alert(req.getDocumentElement());
 
+
+		var myDom = req.getDocumentElement();
+		//var myDom = mxUtils.parseXml(myXml);
+		return myDom;
+	}
+	function WsPutCachedRq(obj) {
+	}
 			/**
 			 * Creates the textfield for the given property.
 			 */

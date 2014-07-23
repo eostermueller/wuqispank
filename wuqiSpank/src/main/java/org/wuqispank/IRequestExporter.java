@@ -11,6 +11,7 @@ import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.web.IConfig;
 
 public interface IRequestExporter {
+	static final String SQL_DETAIL_RS_ROOT_TAG_NAME = "WsSqlDetailRs";
 	static final String EXPORT_ROOT_TAG_NAME = "WuqispankExport";
 	static final String EXPORT_SINGLE_REQUEST_TAG_NAME = "Rq";
 	static final String EXPORT_SQL_TAG_NAME = "Sql";
@@ -28,5 +29,6 @@ public interface IRequestExporter {
 	void export(IRequestWrapper val) throws TransformerException;
 	OutputStream getOutputStream();
 	void setOutputStream(OutputStream val);
+	void export(IRequestWrapper rw, int sqlSequence) throws TransformerException;
 
 }

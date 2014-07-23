@@ -28,6 +28,7 @@ public class SimpleTableSqlParseTest {
 		assertEquals("Count of SQL tables incorrect when parsing the simplest SQL statement ever", 1, model.getTableCount() );
 		ITable shouldBeUsa = model.getTable(0);
 		assertEquals("SQL table name incorrectly parsed for simplest SQL statement ever", "USA".toLowerCase(), shouldBeUsa.getName() );
+		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
 	}
 	@Test
 	public void canParseTwoTableNames() throws SqlParseException {
@@ -42,6 +43,8 @@ public class SimpleTableSqlParseTest {
 
 		ITable shouldBeDenmark = model.getTable(1);
 		assertEquals("SQL table name incorrectly parsed for simplest SQL statement ever", "Denmark".toLowerCase(), shouldBeDenmark.getName() );
+		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
+		assertNull("Whoops.  Found a parse exception for a valid SQL",model.getParseException());
 	}
 
 	@Test
@@ -58,6 +61,7 @@ public class SimpleTableSqlParseTest {
 		ITable shouldBeDenmark = model.getTable(1);
 		assertEquals("SQL table name incorrectly parsed for simplest SQL statement ever", "Denmark".toLowerCase(), shouldBeDenmark.getName() );
 		
+		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
 	}
 	@Test
 	public void canParseTableNameFor_INSERT () throws SqlParseException {
@@ -70,6 +74,7 @@ public class SimpleTableSqlParseTest {
 		ITable shouldBe_EVENT = model.getTable(0);
 		assertEquals("SQL table name incorrectly parsed for simplest INSERT SQL statement ever", "Event".toLowerCase(), shouldBe_EVENT.getName() );
 		
+		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
 	}
 	@Test
 	public void canParseTableNameFor_DELETE () throws SqlParseException {
@@ -82,6 +87,7 @@ public class SimpleTableSqlParseTest {
 		ITable shouldBe_EVENT = model.getTable(0);
 		assertEquals("SQL table name incorrectly parsed for simplest DELETE SQL statement ever", "Event".toLowerCase(), shouldBe_EVENT.getName() );
 		
+		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
 	}
 	@Test
 	public void canParseTableNameFor_UPDATE() throws SqlParseException {
@@ -94,6 +100,7 @@ public class SimpleTableSqlParseTest {
 		ITable shouldBe_EVENT = model.getTable(0);
 		assertEquals("SQL table name incorrectly parsed for simplest UPDATE SQL statement ever", "Event".toLowerCase(), shouldBe_EVENT.getName() );
 		
+		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
 	}
 	@Test
 	public void canParseTableNameFor_SELECT() throws SqlParseException {
@@ -106,5 +113,20 @@ public class SimpleTableSqlParseTest {
 		ITable shouldBe_EVENT = model.getTable(0);
 		assertEquals("SQL table name incorrectly parsed for simplest SELECT SQL statement ever", "Event".toLowerCase(), shouldBe_EVENT.getName() );
 		
+		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
+	}
+	@Test
+	public void canDetectFailedParse() {
+		final String INVALID_SQL = "ELECT name, description, date, location from Event where location = ?";
+		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
+		parser.setSqlModel(model);
+		try {
+			parser.parse(INVALID_SQL);
+		} catch (SqlParseException e) {
+			assertEquals("Failed SQL parse was not correctly flagged", false, model.isParsedSuccessfully());
+			assertNotNull("Whoops, exception was not saved for an parse of invalid SQL", model.getParseException());
+			assertTrue("Whoops, didn't receive the correct exception",model.getParseException().getMessage().contains("Was expecting one of"));
+		}
 	}
 }

@@ -27,15 +27,15 @@ public class MXGraph extends WebMarkupContainer {
 	{
 		renderDemoCSS(response);
 		renderBasicJS(response);
-		//window.onload = function () {var foo='" + bar + "'}"
+		//window.onload = function () {var foo=\"" + bar + "\"}"
 		StringBuilder js = new StringBuilder();
-		js.append("mxBasePath = '../../mxGraph-2_4_0_4';");
+		js.append("mxBasePath = \"../../mxGraph-2_4_0_4\";");
 		response.render(JavaScriptHeaderItem.forScript(js, getId() + "_mxGraph1"));
 
 		js = new StringBuilder();
 		//js.append("");
 		//response.re
-		response.render(OnLoadHeaderItem.forScript("main(document.getElementById('graphContainer'));"));
+		response.render(OnLoadHeaderItem.forScript("main(document.getElementById(\"graphContainer\"));"));
 	}
 	private void renderDemoCSS(IHeaderResponse response)
 	{

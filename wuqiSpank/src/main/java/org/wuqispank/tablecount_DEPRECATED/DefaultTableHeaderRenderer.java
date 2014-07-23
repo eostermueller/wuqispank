@@ -75,15 +75,15 @@ public class DefaultTableHeaderRenderer implements ITableHeaderRenderer {
 		int idFooterCircle = getGraphContext().incrementAndGetId();
 		int idEdge = getGraphContext().incrementAndGetId();
 		
-		writer.write("    <mxCell id='"+idHeaderCircle+"' value='"  + getTable().getName() + "' style='state' vertex='1' connectable='0' parent='"+getParentId_2()+"'>");
-		writer.write("      <mxGeometry x='" + String.valueOf(tableHeaderX) + "' y='30' width='60' height='60' as='geometry'/>");
+		writer.write("    <mxCell id=\""+idHeaderCircle+"\" value=\""  + getTable().getName() + "\" style=\"state\" vertex=\"1\" connectable=\"0\" parent=\""+getParentId_2()+"\">");
+		writer.write("      <mxGeometry x=\"" + String.valueOf(tableHeaderX) + "\" y=\"30\" width=\"60\" height=\"60\" as=\"geometry\"/>");
 		writer.write("    </mxCell>");
 		
-		writer.write("    <mxCell id='"+idFooterCircle+"' value='"  + getTable().getName() + "' style='state' vertex='1' connectable='0' parent='7'>");
-		writer.write("      <mxGeometry x='" + String.valueOf(tableHeaderX) + "' y='30' width='60' height='60' as='geometry'/>");
+		writer.write("    <mxCell id=\""+idFooterCircle+"\" value=\""  + getTable().getName() + "\" style=\"state\" vertex=\"1\" connectable=\"0\" parent=\"7\">");
+		writer.write("      <mxGeometry x=\"" + String.valueOf(tableHeaderX) + "\" y=\"30\" width=\"60\" height=\"60\" as=\"geometry\"/>");
 		writer.write("    </mxCell>");
-		writer.write("    <mxCell id='"+idEdge+"' style='endArrow=none;' edge='1' parent='"+getParentId_1()+"' source='"+idHeaderCircle+"' target='"+idFooterCircle+"'>");
-		writer.write("      <mxGeometry relative='1' as='geometry'/>");
+		writer.write("    <mxCell id=\""+idEdge+"\" style=\"endArrow=none;\" edge=\"1\" parent=\""+getParentId_1()+"\" source=\""+idHeaderCircle+"\" target=\""+idFooterCircle+"\">");
+		writer.write("      <mxGeometry relative=\"1\" as=\"geometry\"/>");
 		writer.write("    </mxCell>");
 		
 		//getWriter().flush();

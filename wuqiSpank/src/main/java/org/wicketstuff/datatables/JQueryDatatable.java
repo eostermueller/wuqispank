@@ -37,14 +37,14 @@ public class JQueryDatatable extends WebMarkupContainer
 		StringBuilder js = new StringBuilder();
 		js.append("$(document).ready( function() {\n");
 		//js.append("	debugger;");
-		js.append("	var oTable = $('#" + getMarkupId() + "').dataTable( {\n");
+		js.append("	var oTable = $(\"#" + getMarkupId() + "\").dataTable( {\n");
 		//js.append("		\"bJQueryUI\": true,\n");
 		js.append( horizontalScrollConfiguration() );
 		js.append( columnConfiguration() );
 //		js.append("		\"sPaginationType\": \"full_numbers\"\n");
 		js.append("	} );\n");
 		js.append("var keys = new KeyTable( {");
-		js.append("\"table\": document.getElementById('" + getMarkupId() + "'),");
+		js.append("\"table\": document.getElementById(\"" + getMarkupId() + "\"),");
 		js.append("\"datatable\": oTable");
 		js.append("} );");
 
@@ -53,7 +53,7 @@ public class JQueryDatatable extends WebMarkupContainer
 		js.append("	keys.event.focus( null, null, function( nNode, x, y) {");
 		
 		    
-		js.append("    fnMessage( 'data:'+getText(nNode) );");
+		js.append("    fnMessage( \"data:\"+getText(nNode) );");
 		js.append("	} );");				
 		
 		
@@ -62,7 +62,7 @@ public class JQueryDatatable extends WebMarkupContainer
 		/*
 		  <pre> 
 		  var keys = new KeyTable( {
-					"table": document.getElementById('example'),
+					"table": document.getElementById(\"example\"),
 					"datatable": oTable
 				} );
 		  </pre>

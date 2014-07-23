@@ -48,6 +48,7 @@ public class SqlParseWithStatsTest {
 	public void canCollectStatsFromSqlImport() throws ParserConfigurationException, SAXException, IOException, WuqispankException {
 		
 		ByteArrayInputStream bais = new ByteArrayInputStream(getXml().getBytes());
+		//IRequestImporter ri = DefaultFactory.getFactory().getDynaTracePurePathImporter();
 		IRequestImporter ri = DefaultFactory.getFactory().getRequestImporter();
 		ri.setInputStream(bais);
 		IRequestWrapper[] requests = ri.importRq();

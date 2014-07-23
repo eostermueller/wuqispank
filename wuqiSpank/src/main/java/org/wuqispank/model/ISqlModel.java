@@ -7,7 +7,7 @@ public interface ISqlModel {
 	public static String NOT_SPECIFIED = "<notspecified>";
 	public static int NOT_INITIALIZED = -1;
 
-	
+	public boolean isParsedSuccessfully();
 	void setTables(List<ITable> t);
 
 	void setColumnCount(int columnCount);
@@ -40,4 +40,10 @@ public interface ISqlModel {
 	boolean tableExists(ITable table);
 
 	ITable[] getTablesWithoutJoins();
+
+	SqlType getSqlType();
+
+	void setSqlType(SqlType val);
+	Throwable getParseException();
+	void setParseException(Throwable val);
 }

@@ -42,7 +42,7 @@ import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.web.msgs.IMessages;
-import org.wuqispank.web.tablecount.TableCountGraph;
+import org.wuqispank.web.tableaccesstimeline.TableAccessTimeline;
 
 public class RequestDetail extends AuthenticatedWebPage {
 //	ProgressBar bar = null;
@@ -206,7 +206,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 //				// Hide progress bar after finish
 //				setVisible(false);
 //				// Add some JavaScript after finish
-//				target.appendJavaScript("alert('Task done and finished!')");
+//				target.appendJavaScript("alert(\"Task done and finished!\")");
 //
 //				// re-enable button
 //				//Component button = form.get("submit");
@@ -429,7 +429,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 				LOG.error("Error.  In TabPanel1 ctor for id [" + id + "], and no request found.");
 			} else {
 				LOG.debug("Found unique id in tab panel 1 [" + request.getUniqueId() + "]");
-				WebMarkupContainer tableCountGraph = new TableCountGraph("tableCountGraph", getRequestWrapper());
+				WebMarkupContainer tableCountGraph = new TableAccessTimeline("tableCountGraph", getRequestWrapper());
 				
 				
 				//WebMarkupContainer table = new DemoDatatable("sqlTable");

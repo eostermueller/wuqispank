@@ -118,7 +118,7 @@ public class DefaultSqlStatsObserver implements ISqlStatsObserver, java.io.Seria
 						tableStats1.getAverageJoinsPerSql(),
 						tableStats2.getAverageJoinsPerSql()
 						);
-				//Doc says there can't be any ties in a comparator, so the table name should be the decider.
+				//Doc says there can\"t be any ties in a comparator, so the table name should be the decider.
 				if (compare==0) {
 					compare = tableStats1.getTable().getName().compareTo(tableStats2.getTable().getName());
 					//compare *= -1;

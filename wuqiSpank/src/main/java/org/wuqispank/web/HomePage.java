@@ -48,14 +48,13 @@ public class HomePage extends BasePage
 	 * is a circular buffer.
 	 * 
 	 * But when we move to requests persisted on the hard disk,
-	 * we'll be able to store many more requests than can fit into memory.
+	 * we\"ll be able to store many more requests than can fit into memory.
 	 */
 	public HomePage()
 	{
 		WebMarkupContainer table = new DemoDatatable("table");
 		add(table);
 
-		//List<IRequestWrapper> rows = BackgroundSqlCollector.getCircularRequestBuffer();
 		Iterator<IRequestWrapper> itr = WuqispankApp.getRepo().getIterator();
 		List<IRequestWrapper> rows = new ArrayList<IRequestWrapper>();
 		
@@ -75,11 +74,8 @@ public class HomePage extends BasePage
 				item.add(new Label("col.table.count", 	new PropertyModel(request,"tableCount" ) ));
 				item.add(new Label("col.column.count", 	new PropertyModel(request,"columnCount" ) ));
 				item.add(new Label("col.thread.id", 	new PropertyModel(request,"request.threadId" ) ));
-				
+				item.add(new Label("col.url", 	        new PropertyModel(request,"request.url" ) ));
 
-//				item.add(new Label("colThreadId", request.getRequest().getThreadId()));
-//				item.add(new Label("colSqlCount", ""+request.getSqlStatementCount()));
-//				item.add(new Label("colUniqueId", request.getRequest().getUniqueId()));
 			}
 		};
 

@@ -76,17 +76,19 @@ public class DefaultRequestImporter implements IRequestImporter {
 				}
 				
 				String myStackTrace = extractTextChildren((Element)eElement.getElementsByTagName(IRequestExporter.EXPORT_STACK_TRACE_TAG_NAME).item(0));
-				if (myStackTrace.charAt(0)=='[')
-					myStackTrace = myStackTrace.substring(1);
-				
-				if (myStackTrace.charAt(myStackTrace.length()-1)==']')
-					myStackTrace = myStackTrace.substring(0,myStackTrace.length()-1);
-				
-				ITraceEventParser eventParser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
-				StackTraceElement[] arraySte = eventParser.parseStackTrace(myStackTrace);
-				IStackTrace modelStackTrace = DefaultFactory.getFactory().getStackTrace(); 
-				modelStackTrace.setStackTraceElements(arraySte);
-				sqlWrapper.setStackTrace(modelStackTrace);
+				if (myStackTrace !=null && myStackTrace.trim().length()>0) {
+					if (myStackTrace.charAt(0)=='[')
+						myStackTrace = myStackTrace.substring(1);
+					
+					if (myStackTrace.charAt(myStackTrace.length()-1)==']')
+						myStackTrace = myStackTrace.substring(0,myStackTrace.length()-1);
+					
+					ITraceEventParser eventParser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+					StackTraceElement[] arraySte = eventParser.parseStackTrace(myStackTrace);
+					IStackTrace modelStackTrace = DefaultFactory.getFactory().getStackTrace(); 
+					modelStackTrace.setStackTraceElements(arraySte);
+					sqlWrapper.setStackTrace(modelStackTrace);
+				}
 
 				String sql = extractTextChildren((Element)eElement.getElementsByTagName(IRequestExporter.EXPORT_SQL_STMT_TAG_NAME).item(0));
 				//String sql = eElement.getElementsByTagName(IRequestExporter.EXPORT_SQL_STMT_TAG_NAME).item(0).getTextContent();
@@ -156,5 +158,6 @@ public class DefaultRequestImporter implements IRequestImporter {
 		IRequestWrapper prototype[]={};
 		return results.toArray(prototype);
 	}
+
 
 }

@@ -18,6 +18,7 @@ import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ISqlStatsObserver;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.ITable;
+import org.wuqispank.model.SqlType;
 
 /**
  * TODO:  currently, this test starts with data from hsqldb events.....need to support other DB's
@@ -36,6 +37,7 @@ public class SqlParseWithIntraceEventTest {
 	private org.wuqispank.web.IFactory m_wuqiSpankFactory = org.wuqispank.DefaultFactory.getFactory();	
 	IRequest m_request = null;
 	ITraceEvent t_enter = null;
+	ITraceEvent t_return = null;
 	ITraceEvent t_exit = null;
 	@Before
 	public void setupEvents() throws IntraceException {
@@ -50,6 +52,8 @@ public class SqlParseWithIntraceEventTest {
 		m_updateSqlEvent = eventParser.createEvent(EVENT_UPDATE_SQL,0);
 		
 		t_enter = eventParser.createEvent("[15:41:05.294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: {",0);
+		
+		t_return = eventParser.createEvent("[15:41:05.294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Return: FOO",0);
 		t_exit = eventParser.createEvent("[15:41:05.294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: }",0);
 		
 			
@@ -112,6 +116,33 @@ public class SqlParseWithIntraceEventTest {
 		
 		assertEquals( "Couldn't parse table name from UPDATE statement", "EVENT", myTable.getName().toUpperCase() );
 	}
+	@Test
+	public void canDetectStatementType() throws WuqispankException {
+		// U P D A T E
+		List<ISqlWrapper> sqlStatements = getRequestWrapper(m_updateSqlEvent).getSql();
+		ISqlWrapper sqlStatement = sqlStatements.get(0);
+		
+		assertEquals("SQL parser couldn't detect statement type of UPDATE", SqlType.UPDATE, sqlStatement.getSqlModel().getSqlType() );
+
+		// I N S E R T
+		sqlStatements = getRequestWrapper(m_insertSqlEvent).getSql();
+		sqlStatement = sqlStatements.get(0);
+		
+		assertEquals("SQL parser couldn't detect statement type of INSERT", SqlType.INSERT, sqlStatement.getSqlModel().getSqlType() );
+		
+		// D E L E T E
+		sqlStatements = getRequestWrapper(m_deleteSqlEvent).getSql();
+		sqlStatement = sqlStatements.get(0);
+		
+		assertEquals("SQL parser couldn't detect statement type of DELETE", SqlType.DELETE, sqlStatement.getSqlModel().getSqlType() );
+		
+		// S E L E C T
+		sqlStatements = getRequestWrapper(m_selectSqlEvent).getSql();
+		sqlStatement = sqlStatements.get(0);
+		
+		assertEquals("SQL parser couldn't detect statement type of SELECT", SqlType.SELECT, sqlStatement.getSqlModel().getSqlType() );
+		
+	}
 	
 	private IRequestWrapper getRequestWrapper(ITraceEvent event) throws WuqispankException {
 
@@ -120,6 +151,7 @@ public class SqlParseWithIntraceEventTest {
 		List<ITraceEvent> events = new ArrayList<ITraceEvent>();
 		events.add(t_enter);
 		events.add(event);
+		events.add(t_return);
 		events.add(t_exit);
 		m_request.setEvents(events);
 
