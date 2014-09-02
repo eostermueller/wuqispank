@@ -14,10 +14,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.intrace.client.IntraceException;
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEventParser;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.IntraceException;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEventParser;
+import org.headlessintrace.client.request.IRequest;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -205,10 +205,10 @@ Expected output:
 	private IRequestWrapper getRequestWrapper(String uniqueId, String second) throws WuqispankException, IntraceException {
 		IRequestWrapper rw = DefaultFactory.getFactory().getRequestWrapper();
 		
-		IRequest req = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest req = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		req.setThreadId("myThreadId");
 		req.setUniqueId(uniqueId);
-		ITraceEventParser parser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+		ITraceEventParser parser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 		List<ITraceEvent> myCriteriaList = new ArrayList<ITraceEvent>();
 		ITraceEvent t0 = parser.createEvent("[15:41:" + second + ".294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: {",0);
 		ITraceEvent t1 = parser.createEvent("[15:41:" + second + ".532]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Arg: " + EXPECTED_SQL, 0);
@@ -227,10 +227,10 @@ Expected output:
 	private IRequestWrapper getRequestWrapperWithoutStackTrace(String uniqueId, String second) throws WuqispankException, IntraceException {
 		IRequestWrapper rw = DefaultFactory.getFactory().getRequestWrapper();
 		
-		IRequest req = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest req = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		req.setThreadId("myThreadId");
 		req.setUniqueId(uniqueId);
-		ITraceEventParser parser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+		ITraceEventParser parser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 		List<ITraceEvent> myCriteriaList = new ArrayList<ITraceEvent>();
 		ITraceEvent t0 = parser.createEvent("[15:41:" + second + ".294]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: {",0);
 		ITraceEvent t1 = parser.createEvent("[15:41:" + second + ".532]:[97]:org.hsqldb.jdbc.jdbcConnection:prepareStatement: Arg: " + EXPECTED_SQL, 0);

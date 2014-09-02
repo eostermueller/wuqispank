@@ -2,7 +2,7 @@ package org.wuqispank.web;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.intrace.jdbc.IJdbcProvider;
+import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.IReconnector;
 import org.wuqispank.IRequestExporter;
 import org.wuqispank.IRequestImporter;

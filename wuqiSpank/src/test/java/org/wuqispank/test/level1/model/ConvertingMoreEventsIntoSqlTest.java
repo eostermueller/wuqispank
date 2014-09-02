@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.intrace.client.IntraceException;
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEventParser;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.IntraceException;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEventParser;
+import org.headlessintrace.client.request.IRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.wuqispank.DefaultFactory;
@@ -27,7 +27,7 @@ import org.wuqispank.model.ITable;
  *
  */
 public class ConvertingMoreEventsIntoSqlTest {
-	ITraceEventParser m_eventParser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+	ITraceEventParser m_eventParser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 	List<ITraceEvent> myCriteriaList = new ArrayList<ITraceEvent>();
 	ITraceEvent e_entry = null;
 	ITraceEvent e_arg = null;
@@ -84,7 +84,7 @@ public class ConvertingMoreEventsIntoSqlTest {
 	@Test
 	public void canAssembleEventsIntoRequest() throws WuqispankException, IntraceException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		request.setEvents( getTestEvents(m_oneRequest) );
 		try {
 			requestWrapper.setRequest(request);
@@ -103,7 +103,7 @@ public class ConvertingMoreEventsIntoSqlTest {
 	@Test
 	public void canCopeWithEmbeddedEvents() throws WuqispankException, IntraceException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		request.setEvents( getTestEvents(this.m_embeddedAndUnwantedEvents) );
 		requestWrapper.setRequest(request);
 		

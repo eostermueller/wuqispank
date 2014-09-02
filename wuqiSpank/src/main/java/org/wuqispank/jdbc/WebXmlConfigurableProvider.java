@@ -1,6 +1,6 @@
 package org.wuqispank.jdbc;
 
-import org.intrace.jdbc.IJdbcProvider;
+import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.web.IConfig;
 
 public class WebXmlConfigurableProvider implements IJdbcProvider {

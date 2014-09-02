@@ -8,11 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.request.IRequest;
-import org.intrace.client.request.IRequestSeparator;
-//import org.intrace.client.test.TestUtil;
-//import org.intrace.client.test.level1.request.TestMultiThreadedRequestSeparator;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.request.IRequest;
+import org.headlessintrace.client.request.IRequestSeparator;
+//import org.headlessintrace.client.test.TestUtil;
+//import org.headlessintrace.client.test.level1.request.TestMultiThreadedRequestSeparator;
 import org.junit.Test;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestRepository;
@@ -100,7 +100,7 @@ class RequestWrapperGenerator implements Runnable {
 	}
 	
 	public static IRequestWrapper createRequest(String key) throws WuqispankException {
-		IRequest rq = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest rq = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		rq.setUniqueId(key);
 		
 		IRequestWrapper rqWrap = org.wuqispank.DefaultFactory.getFactory().getRequestWrapper();

@@ -2,7 +2,7 @@ package org.wuqispank;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.intrace.jdbc.IJdbcProvider;
+import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
 import org.wuqispank.model.CenterHeavyTableOrderMgr;

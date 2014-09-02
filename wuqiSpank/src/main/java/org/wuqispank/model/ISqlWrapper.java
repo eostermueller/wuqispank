@@ -2,7 +2,7 @@ package org.wuqispank.model;
 
 import java.util.List;
 
-import org.intrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEvent;
 import org.wuqispank.WuqispankException;
 
 public interface ISqlWrapper {

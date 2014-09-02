@@ -2,7 +2,7 @@ package org.wuqispank.web.msgs;
 
 import java.io.Serializable;
 
-import org.intrace.client.connection.HostPort;
+import org.headlessintrace.client.connection.HostPort;
 
 public interface IMessages {
 	String getInvalidAgentHostName(String value, String parmName, String className);

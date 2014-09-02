@@ -1,9 +1,9 @@
 package org.wuqispank;
 
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEvent.EventType;
-import org.intrace.client.request.ICompletedRequestCallback;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEvent.EventType;
+import org.headlessintrace.client.request.ICompletedRequestCallback;
+import org.headlessintrace.client.request.IRequest;
 
 public class UrlExtractor implements ICompletedRequestCallback {
 

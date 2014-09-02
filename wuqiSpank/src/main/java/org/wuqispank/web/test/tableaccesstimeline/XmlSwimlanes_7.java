@@ -20,7 +20,7 @@ import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.view.mxSwimlaneManager;
-//import org.intrace.client.DefaultFactory;
+//import org.headlessintrace.client.DefaultFactory;
 
 /**
  * Expand/collapse works!

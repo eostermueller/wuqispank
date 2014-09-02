@@ -8,14 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.intrace.client.ITraceWriter;
-import org.intrace.client.connection.DefaultConnectionList;
-import org.intrace.client.connection.IConnection;
-import org.intrace.client.connection.IConnectionList;
-import org.intrace.client.request.DefaultRequestSeparator;
-import org.intrace.client.request.IRequest;
-import org.intrace.client.request.RequestConnection;
-import org.intrace.client.request.RequestWriter;
+import org.headlessintrace.client.ITraceWriter;
+import org.headlessintrace.client.connection.DefaultConnectionList;
+import org.headlessintrace.client.connection.IConnection;
+import org.headlessintrace.client.connection.IConnectionList;
+import org.headlessintrace.client.request.DefaultRequestSeparator;
+import org.headlessintrace.client.request.IRequest;
+import org.headlessintrace.client.request.RequestConnection;
+import org.headlessintrace.client.request.RequestWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

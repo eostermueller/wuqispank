@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.intrace.client.DefaultFactory;
-import org.intrace.client.model.ITraceEvent;
+import org.headlessintrace.client.DefaultFactory;
+import org.headlessintrace.client.model.ITraceEvent;
 import org.junit.Test;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.SqlParseException;

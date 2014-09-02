@@ -96,9 +96,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <!--                    <version>${wicket.version}</version>  -->
     </dependency>
     <dependency>
-      <groupId>org.intrace</groupId>
+      <groupId>com.github.eostermueller</groupId>
       <artifactId>headlessInTraceClient</artifactId>
-      <version>1.0</version>
+      <version>0.0.2</version>
     </dependency>
     <dependency>
       <groupId>org.apache.wicket</groupId>

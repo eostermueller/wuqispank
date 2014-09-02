@@ -14,7 +14,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.request.IRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -128,7 +128,7 @@ public class DynaTracePurePathImporter implements IRequestImporter {
 		doc.getDocumentElement().normalize();
 		Element root = doc.getDocumentElement();
 		
-		IRequest rq = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest rq = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		IRequestWrapper rqWrapper = DefaultFactory.getFactory().getRequestWrapper();
 		rqWrapper.setRequest(rq);
 		

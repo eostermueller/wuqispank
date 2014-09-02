@@ -2,8 +2,8 @@ package org.wuqispank.web;
 
 import java.io.File;
 
-import org.intrace.client.connection.HostPort;
-import org.intrace.jdbc.IJdbcProvider;
+import org.headlessintrace.client.connection.HostPort;
+import org.headlessintrace.jdbc.IJdbcProvider;
 
 public interface IConfig {
 	HostPort getInTraceAgent();

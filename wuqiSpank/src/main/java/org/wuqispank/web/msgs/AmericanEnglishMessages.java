@@ -3,7 +3,7 @@ package org.wuqispank.web.msgs;
 import java.io.File;
 import java.io.Serializable;
 
-import org.intrace.client.connection.HostPort;
+import org.headlessintrace.client.connection.HostPort;
 
 
 public class AmericanEnglishMessages implements IMessages, java.io.Serializable {
@@ -56,10 +56,10 @@ public class AmericanEnglishMessages implements IMessages, java.io.Serializable 
 	public String getJdbcConfigurationError(String propertyVal) {
 		String error = null;
 		if (propertyVal == null || propertyVal.trim().equals("")) {
-			error = "In web.xml, found property named  <param-name>org.intrace.jdbc.IJdbcProvider</param-name> with null or empty value\n" +
-					"Was expecting something like <param-value>org.intrace.jdbc.HsqldbProvider</param-value>";
+			error = "In web.xml, found property named  <param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name> with null or empty value\n" +
+					"Was expecting something like <param-value>org.headlessintrace.jdbc.HsqldbProvider</param-value>";
 		} else {
-			error = "In web.xml, found property named  <param-name>org.intrace.jdbc.IJdbcProvider</param-name> with value [" + propertyVal + "]\n" + 
+			error = "In web.xml, found property named  <param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name> with value [" + propertyVal + "]\n" + 
 					"Unable able to load java class [" + propertyVal + "].  Probably a classpath issue.";
 		}
 		return error;

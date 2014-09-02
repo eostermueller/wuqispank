@@ -16,26 +16,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.intrace.client.IntraceException;
-import org.intrace.client.connection.Callback;
-import org.intrace.client.connection.ConnectionException;
-import org.intrace.client.connection.ConnectionTimeout;
-import org.intrace.client.connection.DefaultCallback;
-import org.intrace.client.connection.DefaultConnectionList;
-import org.intrace.client.connection.IConnectionStateCallback;
-import org.intrace.client.connection.command.ClassInstrumentationCommand;
-import org.intrace.client.connection.command.IAgentCommand;
-import org.intrace.client.filter.ContiguousEventFilter;
-import org.intrace.client.filter.ITraceFilterExt;
-import org.intrace.client.filter.IncludeAnyOfTheseEventsFilterExt;
-import org.intrace.client.filter.IncludeThisMethodFilterExt;
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEventParser;
-import org.intrace.client.request.BadCompletedRequestListener;
-import org.intrace.client.request.ICompletedRequestCallback;
-import org.intrace.client.request.IRequest;
-import org.intrace.client.request.RequestConnection;
-import org.intrace.jdbc.IJdbcProvider;
+import org.headlessintrace.client.IntraceException;
+import org.headlessintrace.client.connection.Callback;
+import org.headlessintrace.client.connection.ConnectionException;
+import org.headlessintrace.client.connection.ConnectionTimeout;
+import org.headlessintrace.client.connection.DefaultCallback;
+import org.headlessintrace.client.connection.DefaultConnectionList;
+import org.headlessintrace.client.connection.IConnectionStateCallback;
+import org.headlessintrace.client.connection.command.ClassInstrumentationCommand;
+import org.headlessintrace.client.connection.command.IAgentCommand;
+import org.headlessintrace.client.filter.ContiguousEventFilter;
+import org.headlessintrace.client.filter.ITraceFilterExt;
+import org.headlessintrace.client.filter.IncludeAnyOfTheseEventsFilterExt;
+import org.headlessintrace.client.filter.IncludeThisMethodFilterExt;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEventParser;
+import org.headlessintrace.client.request.BadCompletedRequestListener;
+import org.headlessintrace.client.request.ICompletedRequestCallback;
+import org.headlessintrace.client.request.IRequest;
+import org.headlessintrace.client.request.RequestConnection;
+import org.headlessintrace.jdbc.IJdbcProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
@@ -45,6 +45,7 @@ import org.wuqispank.IRequestImporter;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
+import org.wuqispank.web.IFactory;
 
 
 public class EventCollector implements ServletContextListener, ICompletedRequestCallback {
@@ -55,7 +56,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	ITraceEventParser m_parser = null;
 	
 	public EventCollector() throws IntraceException {
-		m_parser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+		m_parser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 		m_requestStart = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: {:50", 0);
 		m_requestCompletion = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: }:250", 0);
 	}
@@ -80,7 +81,9 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	public void contextDestroyed(ServletContextEvent arg0) {
 		System.out.println("ServletContextListener destroyed");
 	}
- 
+	/**
+	 * All connections to the SUT (system under test), even the very first, are made by the DefaultConnector
+	 */
 	protected void initReconnector() {
 		
 		GroupNameThreadFactory threadFactory = new GroupNameThreadFactory("wuqiSpankReconnector");
@@ -117,7 +120,6 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 					rc = false;
 				return rc;
 			}
-			
 		};
 		return filter;
 	}

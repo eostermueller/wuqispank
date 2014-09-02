@@ -5,14 +5,14 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intrace.client.DefaultFactory;
-import org.intrace.client.IntraceException;
-import org.intrace.client.filter.ContiguousEventFilter;
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEvent.EventType;
-import org.intrace.client.model.ITraceEventParser;
-import org.intrace.client.request.ICompletedRequestCallback;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.DefaultFactory;
+import org.headlessintrace.client.IntraceException;
+import org.headlessintrace.client.filter.ContiguousEventFilter;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEvent.EventType;
+import org.headlessintrace.client.model.ITraceEventParser;
+import org.headlessintrace.client.request.ICompletedRequestCallback;
+import org.headlessintrace.client.request.IRequest;
 import org.junit.Before;
 import org.junit.Test;
 

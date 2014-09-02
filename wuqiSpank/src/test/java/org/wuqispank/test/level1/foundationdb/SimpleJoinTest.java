@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.intrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEvent;
 import org.junit.Test;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.db.ISqlParser;

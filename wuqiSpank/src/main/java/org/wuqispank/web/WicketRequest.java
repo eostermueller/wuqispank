@@ -3,8 +3,8 @@ package org.wuqispank.web;
 import java.util.List;
 
 import org.apache.wicket.util.io.IClusterable;
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.request.IRequest;
 
 public class WicketRequest implements IRequest, IClusterable {
 

@@ -3,7 +3,7 @@ package org.wuqispank.model;
 import java.io.Serializable;
 import java.util.List;
 
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.request.IRequest;
 import org.wuqispank.WuqispankException;
 
 public interface IRequestWrapper extends Serializable {

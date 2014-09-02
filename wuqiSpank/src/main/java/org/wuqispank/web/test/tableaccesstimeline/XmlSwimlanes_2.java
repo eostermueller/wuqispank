@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.wuqispank.DefaultFactory;
-//import org.intrace.client.DefaultFactory;
+//import org.headlessintrace.client.DefaultFactory;
 import org.wuqispank.model.ITable;
 import org.wuqispank.ta_OLD.ITableHeaderRenderer;
 import org.wuqispank.tablecount_DEPRECATED.DefaultTableHeaderRenderer;

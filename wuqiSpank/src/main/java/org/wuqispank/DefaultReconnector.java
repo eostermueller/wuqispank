@@ -1,11 +1,11 @@
 package org.wuqispank;
 
-import org.intrace.client.connection.ConnectionException;
-import org.intrace.client.connection.ConnectionTimeout;
-import org.intrace.client.connection.DefaultConnectionList;
-import org.intrace.client.connection.IConnection;
-import org.intrace.client.request.BadCompletedRequestListener;
-import org.intrace.client.request.RequestConnection;
+import org.headlessintrace.client.connection.ConnectionException;
+import org.headlessintrace.client.connection.ConnectionTimeout;
+import org.headlessintrace.client.connection.DefaultConnectionList;
+import org.headlessintrace.client.connection.IConnection;
+import org.headlessintrace.client.request.BadCompletedRequestListener;
+import org.headlessintrace.client.request.RequestConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.web.EventCollector;

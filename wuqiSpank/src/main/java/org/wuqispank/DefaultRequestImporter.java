@@ -11,8 +11,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.intrace.client.model.ITraceEventParser;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.model.ITraceEventParser;
+import org.headlessintrace.client.request.IRequest;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -83,7 +83,7 @@ public class DefaultRequestImporter implements IRequestImporter {
 					if (myStackTrace.charAt(myStackTrace.length()-1)==']')
 						myStackTrace = myStackTrace.substring(0,myStackTrace.length()-1);
 					
-					ITraceEventParser eventParser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+					ITraceEventParser eventParser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 					StackTraceElement[] arraySte = eventParser.parseStackTrace(myStackTrace);
 					IStackTrace modelStackTrace = DefaultFactory.getFactory().getStackTrace(); 
 					modelStackTrace.setStackTraceElements(arraySte);
@@ -135,7 +135,7 @@ public class DefaultRequestImporter implements IRequestImporter {
 			//System.out.println("\nCurrent Element :" + nNode.getNodeName());
 	 
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-				IRequest rq = org.intrace.client.DefaultFactory.getFactory().getRequest();
+				IRequest rq = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 				IRequestWrapper rqWrapper = DefaultFactory.getFactory().getRequestWrapper();
 				rqWrapper.setRequest(rq);
 				

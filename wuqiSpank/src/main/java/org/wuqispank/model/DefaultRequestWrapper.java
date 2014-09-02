@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEvent.EventType;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEvent.EventType;
+import org.headlessintrace.client.request.IRequest;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.jdbc.DefaultJdbcSqlWrapperFactory;

@@ -22,14 +22,23 @@
         <param-name>intrace-agent-host</param-name>
         <param-value>localhost</param-value>
     </context-param>	
-	<context-param>
-        <param-name>org.intrace.jdbc.IJdbcProvider</param-name>
-        <!--  <param-value>org.intrace.jdbc.HsqldbProvider</param-value> -->
-        <param-value>org.intrace.jdbc.PostgresProvider</param-value>
-    </context-param>	
-	<context-param>
+  <context-param>
+        <param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name>
+        <!--  <param-value>org.headlessintrace.jdbc.HsqldbProvider</param-value> -->
+        <!-- <param-value>org.headlessintrace.jdbc.PostgresProvider</param-value> -->
+        <param-value>org.wuqispank.web.WebXmlConfigImpl</param-value>
+    </context-param>
+    <context-param>
+        <param-name>java.sql.Statement.implementors</param-name>
+        <param-value>oracle.jdbc.OracleStatement</param-value>
+    </context-param>
+    <context-param>
+        <param-name>java.sql.Connection.implementors</param-name>
+        <param-value>oracle.jdbc.driver.PhysicalConnection</param-value>
+        <!-- <param-value>oracle.jdbc.driver.OracleConnection</param-value> -->
+    </context-param>	<context-param>
         <param-name>export-dir</param-name>
-        <param-value>/Users/erikostermueller/Documents/src/jsource/wuqispank-parent/export-dir</param-value>
+        <param-value>./export-dir</param-value>
     </context-param>	
 	<context-param>
         <param-name>intrace-agent-port</param-name>

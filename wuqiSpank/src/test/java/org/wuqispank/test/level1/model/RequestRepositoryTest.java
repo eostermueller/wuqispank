@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Iterator;
 
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.request.IRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.wuqispank.WuqispankException;
@@ -81,7 +81,7 @@ public class RequestRepositoryTest {
 		
 	}
 	public static IRequestWrapper createRequest(String key) throws WuqispankException {
-		IRequest rq = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest rq = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		rq.setUniqueId(key);
 		
 		IRequestWrapper rqWrap = org.wuqispank.DefaultFactory.getFactory().getRequestWrapper();

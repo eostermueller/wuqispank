@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intrace.client.IntraceException;
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEventParser;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.IntraceException;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEventParser;
+import org.headlessintrace.client.request.IRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.wuqispank.WuqispankException;
@@ -39,7 +39,7 @@ public class RequestStatisticsTest {
 	@Before
 	public void setupEvents() throws IntraceException {
 		ITraceEventParser eventParser = null;
-		org.intrace.client.IFactory inTraceFactory = org.intrace.client.DefaultFactory.getFactory();
+		org.headlessintrace.client.IFactory inTraceFactory = org.headlessintrace.client.DefaultFactory.getFactory();
 		org.wuqispank.web.IFactory wuqiSpankFactory = org.wuqispank.DefaultFactory.getFactory();
 		m_request = inTraceFactory.getRequest();
 		eventParser = inTraceFactory.getEventParser();

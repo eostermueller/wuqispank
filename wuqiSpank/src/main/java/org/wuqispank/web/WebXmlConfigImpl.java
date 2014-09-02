@@ -2,10 +2,11 @@ package org.wuqispank.web;
 
 import java.io.File;
 
+
 import javax.servlet.ServletContext;
 
-import org.intrace.client.connection.HostPort;
-import org.intrace.jdbc.IJdbcProvider;
+import org.headlessintrace.client.connection.HostPort;
+import org.headlessintrace.jdbc.IJdbcProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
@@ -203,17 +204,17 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 
 	@Override
 	/**
-		<param-name>org.intrace.jdbc.IJdbcProvider</param-name>
-		<param-value>org.intrace.jdbc.HsqldbProvider</param-value>
+		<param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name>
+		<param-value>org.headlessintrace.jdbc.HsqldbProvider</param-value>
 	 * 
 	 */
 	public String getJdbcProvider() {
-		String  jdbcProviderName = getServletContext().getInitParameter("org.intrace.jdbc.IJdbcProvider");
+		String  jdbcProviderName = getServletContext().getInitParameter("org.headlessintrace.jdbc.IJdbcProvider");
 		if (jdbcProviderName==null)
 			//throw new RuntimeException(this.msgs.getJdbcConfigurationError(jdbcProviderName) );
 			throw new WebXmlConfigurationException(this.msgs.getJdbcConfigurationError(jdbcProviderName) );
 		
-		LOG.debug("org.intrace.jdbc.IJdbcProvider is [" + jdbcProviderName + "] from input parameter [" + jdbcProviderName + "]");
+		LOG.debug("org.headlessintrace.jdbc.IJdbcProvider is [" + jdbcProviderName + "] from input parameter [" + jdbcProviderName + "]");
 		return jdbcProviderName;
 	}
 
@@ -247,7 +248,7 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 
 	@Override
 	public String getVersion() {
-		final String parmName = "org.intrace.jdbc.IJdbcProvider.version";
+		final String parmName = "org.headlessintrace.jdbc.IJdbcProvider.version";
 		String  rc = getServletContext().getInitParameter(parmName);
 		LOG.debug("Found value [" + rc + " for param [" + parmName + "]");
 		return rc;

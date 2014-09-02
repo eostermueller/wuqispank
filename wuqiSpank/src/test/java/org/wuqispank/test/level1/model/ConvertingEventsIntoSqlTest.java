@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.intrace.client.IntraceException;
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEventParser;
-import org.intrace.client.request.IRequest;
+import org.headlessintrace.client.IntraceException;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEventParser;
+import org.headlessintrace.client.request.IRequest;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,7 +28,7 @@ import org.wuqispank.model.ITable;
  *
  */
 public class ConvertingEventsIntoSqlTest {
-	ITraceEventParser parser = org.intrace.client.DefaultFactory.getFactory().getEventParser();
+	ITraceEventParser parser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 	List<ITraceEvent> myCriteriaList = new ArrayList<ITraceEvent>();
 	ITraceEvent e_entry = null;
 	ITraceEvent e_arg = null;
@@ -51,7 +51,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canAssembleEventsIntoRequest() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		request.setEvents( Arrays.asList(e_entry, e_arg, e_return, e_exit));
 		try {
 			requestWrapper.setRequest(request);
@@ -70,7 +70,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canAssembleEventsIntoRequest_leadingUnknownEvent() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		request.setEvents( Arrays.asList(e_exit_other,e_entry, e_arg, e_return, e_exit));
 		try {
 			requestWrapper.setRequest(request);
@@ -96,7 +96,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Ignore
 	public void canAssembleEventsIntoRequest_trailingUnknownEvent() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		request.setEvents( Arrays.asList(e_entry, e_arg, e_return, e_exit, e_exit_other));
 		try {
 			requestWrapper.setRequest(request);
@@ -114,7 +114,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canAssembleTwoEventsIntoRequest() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		request.setEvents( Arrays.asList(e_entry, e_arg, e_return, e_exit,e_entry, e_arg, e_return, e_exit));
 		try {
 			requestWrapper.setRequest(request);
@@ -134,7 +134,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canCaptureMoreThanOneArgumentWithoutBreaking() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		request.setEvents( Arrays.asList(
 				e_entry, 
 				e_arg, //First argument of a method
@@ -153,7 +153,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canDetectEventOrderProblem_extraEntry() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		Exception yepExceptionWasThrown = null;
 		request.setEvents( Arrays.asList(
 				e_entry, 
@@ -172,7 +172,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canDetectEventOrderProblem_extraExitMissingArg() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		Exception yepExceptionWasThrown = null;
 		request.setEvents( Arrays.asList(
 				e_entry, 
@@ -191,7 +191,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canDetectEventOrderProblem_tooFewEvents_1() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		Exception yepExceptionWasThrown = null;
 		request.setEvents( Arrays.asList( e_entry ));
 		
@@ -208,7 +208,7 @@ public class ConvertingEventsIntoSqlTest {
 	@Test
 	public void canDetectEventOrderProblem_tooFewEvents_2() throws WuqispankException {
 		IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
-		IRequest request = org.intrace.client.DefaultFactory.getFactory().getRequest();
+		IRequest request = org.headlessintrace.client.DefaultFactory.getFactory().getRequest();
 		Exception yepExceptionWasThrown = null;
 		request.setEvents( Arrays.asList(
 				e_entry, 

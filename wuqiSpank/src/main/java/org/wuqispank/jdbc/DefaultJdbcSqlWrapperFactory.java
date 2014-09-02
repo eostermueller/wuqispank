@@ -3,8 +3,8 @@ package org.wuqispank.jdbc;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.intrace.client.model.ITraceEvent;
-import org.intrace.client.model.ITraceEvent.EventType;
+import org.headlessintrace.client.model.ITraceEvent;
+import org.headlessintrace.client.model.ITraceEvent.EventType;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
