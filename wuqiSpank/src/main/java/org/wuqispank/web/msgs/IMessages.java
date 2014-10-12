@@ -38,6 +38,8 @@ public interface IMessages {
 	Object getStackTrace();
 
 	String getMissingSqlText();
+
+	String getImportExportInitError();
 	
 
 }

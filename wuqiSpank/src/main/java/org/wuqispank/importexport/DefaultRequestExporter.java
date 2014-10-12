@@ -1,4 +1,4 @@
-package org.wuqispank;
+package org.wuqispank.importexport;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -27,6 +27,7 @@ import org.wuqispank.model.ISqlWrapper;
  * 					<StmtText/>
  * 					<StackTrace/>
  * 			</Sql>
+ *       </Rq>
  * </WuqispankExport>
  * 
  * @author erikostermueller

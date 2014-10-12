@@ -1,8 +1,9 @@
-package org.wuqispank;
+package org.wuqispank.importexport;
 
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,25 +18,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.wuqispank.DefaultFactory;
+import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
-import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.IStackTrace;
 import org.xml.sax.SAXException;
 
-public class DefaultRequestImporter implements IRequestImporter {
+public class DefaultRequestImporter extends AbstractRequestImporter implements IRequestImporter {
+	
 
-	private InputStream m_wuqiSpankExportXml;
+	public static final String FILE_EXTENSION = ".ws";
 
-	@Override
-	public InputStream getInputStream() {
-		return m_wuqiSpankExportXml;
-	}
-
-	@Override
-	public void setInputStream(InputStream val) {
-		m_wuqiSpankExportXml = val;
-	}
 	private void importSql(IRequestWrapper rqWrap, NodeList sqlList) throws WuqispankException {
 		
 		for(int i = 0; i< sqlList.getLength();i++) {
@@ -157,6 +151,16 @@ public class DefaultRequestImporter implements IRequestImporter {
 		}
 		IRequestWrapper prototype[]={};
 		return results.toArray(prototype);
+	}
+
+	@Override
+	public boolean isRuntimeImporter() {
+		return false;
+	}
+
+	@Override
+	public String getPathMatcherText() {
+		return "glob:**" + FILE_EXTENSION;
 	}
 
 

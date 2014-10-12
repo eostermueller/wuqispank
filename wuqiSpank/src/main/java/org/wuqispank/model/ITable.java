@@ -19,6 +19,9 @@ public interface ITable extends IBaseTable {
 	void addColumn(IColumn val);
 
 	int getWhereClauseColumnCount();
+	
+	public boolean shouldBeCached();
+	public void setShouldBeCached(boolean val);
 
 	public abstract IColumn getColumn(int val);
 	

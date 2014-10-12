@@ -25,8 +25,8 @@
   <context-param>
         <param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name>
         <!--  <param-value>org.headlessintrace.jdbc.HsqldbProvider</param-value> -->
-        <!-- <param-value>org.headlessintrace.jdbc.PostgresProvider</param-value> -->
-        <param-value>org.wuqispank.web.WebXmlConfigImpl</param-value>
+        <param-value>org.headlessintrace.jdbc.PostgresProvider</param-value>
+        <!-- <param-value>org.wuqispank.web.WebXmlConfigImpl</param-value> -->
     </context-param>
     <context-param>
         <param-name>java.sql.Statement.implementors</param-name>
@@ -63,6 +63,10 @@
     <param-value>development</param-value>
   </context-param>
   <!--  org.wuqispank.web.StatusServlet -->
+	<context-param>
+        <param-name>cached-tables</param-name>
+        <param-value>pgbench_accounts</param-value>
+    </context-param>	
 
   <filter>
     <filter-name>MyApplication</filter-name>

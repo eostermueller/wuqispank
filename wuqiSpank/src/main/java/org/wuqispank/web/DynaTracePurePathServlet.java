@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.wuqispank.DefaultFactory;
-import org.wuqispank.DynaTracePurePathImporter;
-import org.wuqispank.IRequestImporter;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.importexport.DynaTracePurePathImporter;
+import org.wuqispank.importexport.IRequestImporter;
 import org.wuqispank.model.IRequestWrapper;
 import org.xml.sax.SAXException;
 

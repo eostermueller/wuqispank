@@ -93,8 +93,8 @@ public class SqlParseWithIntraceEventTest {
 		
 		ISqlStatsObserver stats = rq.getSqlStats();
 		
-		ITable tableLocation = DefaultFactory.getFactory().getTable();
-		tableLocation.setName("event");
+		ITable tableLocation = DefaultFactory.getFactory().getTable("event");
+		
 		assertEquals("stats didn't compute -- no table count",1,stats.getTableCount(tableLocation));
 	}
 	@Test

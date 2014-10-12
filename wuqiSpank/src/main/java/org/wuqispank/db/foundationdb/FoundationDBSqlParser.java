@@ -117,7 +117,8 @@ public class FoundationDBSqlParser implements ISqlParser {
             }
             
             //System.out.println("#!# Found node type [" +  node.getNodeType() + "] user data[" + text + "]");
-    		ITable myTable = DefaultFactory.getFactory().getTable();
+    		//ITable myTable = DefaultFactory.getFactory().getTable();
+            ITable myTable = null;
             switch(node.getNodeType()) {
             	case NodeTypes.FROM_LIST:
             		log.debug("FROM_LIST type [" + node.getClass().getName() + "]");
@@ -131,7 +132,8 @@ public class FoundationDBSqlParser implements ISqlParser {
     							log.debug("From FROM_TABLE getExposedName     [" + fromTable.getExposedName() + "]");
     	            			log.debug("From FROM_TABLE getOrigTableName   [" + fromTable.getOrigTableName() + "]");
     	            			log.debug("From FROM_TABLE getTableName       [" + fromTable.getTableName() + "]");
-    	            			myTable.setName(fromTable.getTableName().toString());
+    	            			myTable = DefaultFactory.getFactory().getTable(fromTable.getTableName().toString());
+    	            			
     	                		myTable.setAlias(fromTable.getCorrelationName());
     	                		getSqlModel().addTable(myTable);
     						} catch (StandardException e) {
@@ -174,7 +176,8 @@ public class FoundationDBSqlParser implements ISqlParser {
                 		FromBaseTable fromBaseTable = (FromBaseTable)node;
                 		try {
                 			TableName unkTableName = fromBaseTable.getOrigTableName();
-                    		myTable.setName(unkTableName.getTableName());
+                			myTable = DefaultFactory.getFactory().getTable(unkTableName.getTableName());
+                    		//myTable.setName(unkTableName.getTableName());
                 		} catch (Exception e) {
                 			
                 		}
@@ -184,7 +187,8 @@ public class FoundationDBSqlParser implements ISqlParser {
             		break;
             	case NodeTypes.TABLE_NAME:
             		TableName unk2TableName = (TableName)node;
-            		myTable.setName(unk2TableName.getTableName());
+            		myTable = DefaultFactory.getFactory().getTable(unk2TableName.getTableName());
+            		//myTable.setName(unk2TableName.getTableName());
             		log.debug("What does this table name look like.  Does it contain the schema?  The alias? [" + unk2TableName.getFullTableName() + "]");
             		getSqlModel().addTable(myTable);
             		break;

@@ -26,8 +26,8 @@ public class ObservationManagerTest {
 		ISqlModel sqlModel1 = DefaultFactory.getFactory().getSqlModel();
 		sqlModel1.setObservationMgr(observationMgr);
 		
-		ITable table1_1 = DefaultFactory.getFactory().getTable();
-		table1_1.setName("table1_1");
+		ITable table1_1 = DefaultFactory.getFactory().getTable("table1_1");
+		
 		sqlModel1.addTable(table1_1);
 		assertEquals(
 				"SqlStatsCounter didn't tally the correct number of tables added", 
@@ -44,8 +44,8 @@ public class ObservationManagerTest {
 		ISqlModel sqlModel1 = DefaultFactory.getFactory().getSqlModel();
 		sqlModel1.setObservationMgr(observationMgr);
 		
-		ITable table1_1 = DefaultFactory.getFactory().getTable();
-		table1_1.setName("table1_1");
+		ITable table1_1 = DefaultFactory.getFactory().getTable("table1_1");
+		
 		sqlModel1.addTable(table1_1);
 		assertEquals(
 				"SqlStatsCounter didn't tally the correct number of tables added", 
@@ -88,13 +88,13 @@ public class ObservationManagerTest {
 		ISqlModel sqlModel1 = DefaultFactory.getFactory().getSqlModel();
 		sqlModel1.setObservationMgr(observationMgr);
 		
-		ITable leftTable = DefaultFactory.getFactory().getTable();
-		leftTable.setName("leftTable");
+		ITable leftTable = DefaultFactory.getFactory().getTable("leftTable");
+		
 		IColumn leftColumn = DefaultFactory.getFactory().getColumn();
 		leftColumn.setTable(leftTable);
 
-		ITable rightTable = DefaultFactory.getFactory().getTable();
-		rightTable.setName("rightTable");
+		ITable rightTable = DefaultFactory.getFactory().getTable("rightTable");
+		
 		IColumn rightColumn = DefaultFactory.getFactory().getColumn();
 		rightColumn.setTable(rightTable);
 		
@@ -120,13 +120,13 @@ public class ObservationManagerTest {
 		ISqlModel sqlModel1 = DefaultFactory.getFactory().getSqlModel();
 		sqlModel1.setObservationMgr(observationMgr);
 		
-		ITable leftTable = DefaultFactory.getFactory().getTable();
-		leftTable.setName("leftTable");
+		ITable leftTable = DefaultFactory.getFactory().getTable("leftTable");
+		
 		IColumn leftColumn = DefaultFactory.getFactory().getColumn();
 		leftColumn.setTable(leftTable);
 
-		ITable rightTable = DefaultFactory.getFactory().getTable();
-		rightTable.setName("rightTable");
+		ITable rightTable = DefaultFactory.getFactory().getTable("rightTable");
+		
 		IColumn rightColumn = DefaultFactory.getFactory().getColumn();
 		rightColumn.setTable(rightTable);
 		
@@ -174,8 +174,8 @@ public class ObservationManagerTest {
 		ISqlStatsObserver sqlStatsObserver = DefaultFactory.getFactory().getSqlStatsCounter();
 		observationMgr.registerNewTableListener(sqlStatsObserver);
 		
-		ITable table1_1 = DefaultFactory.getFactory().getTable();
-		table1_1.setName("table1_1");
+		ITable table1_1 = DefaultFactory.getFactory().getTable("table1_1");
+		
 		assertEquals(
 				"SqlStatsCounter didn't tally the correct number of tables added", 
 				0, 
@@ -361,13 +361,12 @@ public class ObservationManagerTest {
 	}
 	private void createJoin(ISqlModel sqlModel, String leftTableName, String rightTableName ,int numJoins) {
 
-		ITable leftTable = DefaultFactory.getFactory().getTable();
-		leftTable.setName(leftTableName);
+		ITable leftTable = DefaultFactory.getFactory().getTable(leftTableName);
+		
 		IColumn leftColumn = DefaultFactory.getFactory().getColumn();
 		leftColumn.setTable(leftTable);
 
-		ITable rightTable = DefaultFactory.getFactory().getTable();
-		rightTable.setName(rightTableName);
+		ITable rightTable = DefaultFactory.getFactory().getTable(rightTableName);
 		IColumn rightColumn = DefaultFactory.getFactory().getColumn();
 		rightColumn.setTable(rightTable);
 		

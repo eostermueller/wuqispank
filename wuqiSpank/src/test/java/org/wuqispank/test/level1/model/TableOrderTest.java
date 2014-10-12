@@ -224,13 +224,13 @@ public class TableOrderTest {
 	}
 	private void createJoin(ISqlModel sqlModel, String leftTableName, String rightTableName ,int numJoins) {
 
-		ITable leftTable = DefaultFactory.getFactory().getTable();
-		leftTable.setName(leftTableName);
+		ITable leftTable = DefaultFactory.getFactory().getTable(leftTableName);
+		
 		IColumn leftColumn = DefaultFactory.getFactory().getColumn();
 		leftColumn.setTable(leftTable);
 
-		ITable rightTable = DefaultFactory.getFactory().getTable();
-		rightTable.setName(rightTableName);
+		ITable rightTable = DefaultFactory.getFactory().getTable(rightTableName);
+		
 		IColumn rightColumn = DefaultFactory.getFactory().getColumn();
 		rightColumn.setTable(rightTable);
 		

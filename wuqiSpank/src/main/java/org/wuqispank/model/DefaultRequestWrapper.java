@@ -63,7 +63,10 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 	private int aggregateTableCount = ISqlModel.NOT_INITIALIZED;
 	@Override
 	public String getTinyId() {
-		return getRequest().getUniqueId().substring(0,3) + TINY_ID_DELIM + getRequest().getUniqueId().substring(getRequest().getUniqueId().length()-4); 
+		String rc = getRequest().getUniqueId();
+		if (rc.length() >7)
+			rc = getRequest().getUniqueId().substring(0,3) + TINY_ID_DELIM + getRequest().getUniqueId().substring(getRequest().getUniqueId().length()-4);
+		return  rc;
 	}
 	@Override
 	public String getUniqueId() {

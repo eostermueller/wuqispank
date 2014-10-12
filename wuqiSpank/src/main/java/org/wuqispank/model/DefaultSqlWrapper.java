@@ -1,6 +1,7 @@
 package org.wuqispank.model;
 
 import org.slf4j.Logger;
+
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.db.ISqlParser;

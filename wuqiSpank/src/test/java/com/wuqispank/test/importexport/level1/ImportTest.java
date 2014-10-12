@@ -1,4 +1,4 @@
-package org.wuqispank.test.level1;
+package com.wuqispank.test.importexport.level1;
 
 import static org.junit.Assert.*;
 
@@ -10,8 +10,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Test;
 import org.wuqispank.DefaultFactory;
-import org.wuqispank.IRequestImporter;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.importexport.IRequestImporter;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlWrapper;
 import org.xml.sax.SAXException;

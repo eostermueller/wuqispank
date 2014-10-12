@@ -1,7 +1,9 @@
 package org.wuqispank.web;
 
 import java.io.File;
-
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -13,13 +15,22 @@ import org.wuqispank.DefaultFactory;
 import org.wuqispank.web.msgs.IMessages;
 
 public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcProvider {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	static Logger LOG = LoggerFactory.getLogger(WebXmlConfigImpl.class);
 	
 	private static final String WEB_XML_INTRACE_AGENT_HOST = "intrace-agent-host";
 	private static final String WEB_XML_INTRACE_AGENT_PORT = "intrace-agent-port";
+	private static final String WEB_XML_CSV_TABLES_THAT_SHOULD_BE_CACHED = "csv-tables-that-should-be-cached";
 	private static final String WEB_XML_CIRCULAR_REQUEST_BUFFER_SIZE = "circular-request-buffer-size";
 	public static final String WEB_XML_EXPORT_DIR = "export-dir";
 	private static final String WEB_XML_RECONNECT_INTERVAL = "reconnect-interval-seconds";
+	private static final String WEB_XML_EXPORT_DIR_LISTENER_INTERVAL = "export-dir-listener-interval-seconds";
+	public static final String WEB_XML_RAW_SQL_REQUEST_DELIMITER = "raw-sql-request-delimiter";
+	public static final String WEB_XML_RAW_SQL_STMT_DELIMITER = "raw-sql-stmt-delimiter";
 	private IMessages msgs = null;
 	private IMessages getMsgs() {
 		return msgs;
@@ -31,8 +42,18 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 
 	private static final int DEFAULT_CIRCULAR_BUFFER_SIZE = 10000;
 
+	public static final String WEB_XML_CACHED_TABLES = "cached-tables";
+
+	public static final String RAW_SQL_REQUEST_DELIMITER = "~";
+
+	public static final String RAW_SQL_STMT_DELIMITER = ";";
+
+
+
 	
 	private transient ServletContext m_servletContext;
+
+	private Map<String, Object> m_namesOfTablesThatShouldBeCached = new Hashtable<String,Object>();
 
 	private ServletContext getServletContext() {
 		return m_servletContext;
@@ -45,6 +66,21 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 	public WebXmlConfigImpl(ServletContext servletContext) {
 		setMsgs(org.wuqispank.DefaultFactory.getFactory().getMessages());
 		this.m_servletContext = servletContext;
+		
+		initCachedTables();
+	}
+
+
+	private void initCachedTables() {
+		String temp = this.getServletContext().getInitParameter(WEB_XML_CACHED_TABLES);
+		if (temp!=null && temp.trim().length()> 0) {
+			String[] tablesThatShouldBeCached = temp.split(",");
+			for(String oneTableName : tablesThatShouldBeCached) {
+				this.setTableShouldBeCached(oneTableName.trim());
+				LOG.info("Web.xml parameter [" + WEB_XML_CACHED_TABLES + "].  Table [" + oneTableName + "] will be marked as 'should be cached.'");
+			}
+		}
+		
 	}
 
 	@Override
@@ -254,6 +290,48 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 		return rc;
 	}
 
+	@Override
+	public void setTableShouldBeCached(String tableName) {
+		this.m_namesOfTablesThatShouldBeCached.put(tableName, tableName);
+	}
+	@Override
+	public boolean shouldTableBeCached(String tableName) {
+		return this.m_namesOfTablesThatShouldBeCached.containsKey(tableName);
+	}
 
+	@Override
+	public String getRawSqlStmtDelimiter() {
+		final String parmName = WEB_XML_RAW_SQL_STMT_DELIMITER;
+		String  rc = getServletContext().getInitParameter(parmName);
+		if (rc==null || rc.trim().equals(""))
+				rc = RAW_SQL_STMT_DELIMITER;
+		LOG.debug("Found value [" + rc + " for param [" + parmName + "]");
+		return rc;
+	}
+
+	@Override
+	public String getRawSqlRequestDelimiter() {
+		final String parmName = WEB_XML_RAW_SQL_REQUEST_DELIMITER;
+		String  rc = getServletContext().getInitParameter(parmName);
+		if (rc==null || rc.trim().equals(""))
+			rc = RAW_SQL_REQUEST_DELIMITER;
+		LOG.debug("Found value [" + rc + " for param [" + parmName + "]");
+		return rc;
+	}
+
+	@Override
+	public long getExportDirListenerIntervalInSeconds() {
+		int intListenerIntervalSeconds = 1;//default
+		String reconnectIntervalInSeconds = getServletContext().getInitParameter(this.WEB_XML_EXPORT_DIR_LISTENER_INTERVAL);
+		
+		if (reconnectIntervalInSeconds !=null && !"".trim().equals(reconnectIntervalInSeconds)) {
+			try {
+				intListenerIntervalSeconds = Integer.parseInt(reconnectIntervalInSeconds);
+			} catch(Exception e) {
+				throw new WebXmlConfigurationException(msgs.getInvalidReconnectInterval(e, reconnectIntervalInSeconds, WEB_XML_EXPORT_DIR_LISTENER_INTERVAL, this.getClass().getCanonicalName()));
+			}
+		}
+		return intListenerIntervalSeconds;
+	}
 
 }

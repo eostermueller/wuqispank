@@ -28,4 +28,9 @@ public interface IConfig {
 	String getJdbcProvider();
 	boolean isNativeSQL();
 	int getReconnectIntervalInSeconds();
+	boolean shouldTableBeCached(String tableName);
+	void setTableShouldBeCached(String tableName);
+	String getRawSqlStmtDelimiter();
+	String getRawSqlRequestDelimiter();
+	long getExportDirListenerIntervalInSeconds();
 }

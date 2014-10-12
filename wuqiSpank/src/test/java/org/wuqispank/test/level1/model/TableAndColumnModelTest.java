@@ -16,8 +16,7 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canAddFindTable_caseInsensitive() {
 		ISqlModel sqlModel = factory.getSqlModel();
-		ITable table = factory.getTable();
-		table.setName("USA");
+		ITable table = factory.getTable("USA");
 		sqlModel.addTable(table);
 		
 		ITable shouldBeUSA = sqlModel.findTable("uSa");
@@ -30,6 +29,12 @@ public class TableAndColumnModelTest {
 		ITable shouldBeNull = sqlModel.findTable("uSa");
 		assertNull("'find' operation should have returned null when searching for non-existent table",shouldBeNull); 
 	}
+	@Test
+	public void canFlagTableAsShouldBeCached() {
+		ITable table = DefaultFactory.getFactory().getTable("name doesn't Matter");
+		table.setShouldBeCached(true);
+		assertTrue("Just flagged that this table should be cached, but it didnt' work", table.shouldBeCached());
+	}
 	
 	/**
 	 * Create a model for this SQL, and validate the parts of the model assembled under the covers.
@@ -38,8 +43,8 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canUseTableAliasToAssociateColumnWithTable() {
 		ISqlModel sqlModel = factory.getSqlModel();
-		ITable table = factory.getTable();
-		table.setName("USA");
+		ITable table = factory.getTable("USA");
+		
 		table.setAlias("S");
 		sqlModel.addTable(table);
 		sqlModel.addSelectListColumn("S","SanFrancisco");
@@ -68,14 +73,14 @@ public class TableAndColumnModelTest {
 		sqlModel_1.setObservationMgr(obs);
 		
 		
-		ITable table_1 = factory.getTable();
-		table_1.setName("USA");
+		ITable table_1 = factory.getTable("USA");
+		
 		sqlModel_1.addTable(table_1);
 
 		ISqlModel sqlModel_2 = factory.getSqlModel();
 		sqlModel_2.setObservationMgr(obs);
-		ITable table_2 = factory.getTable();
-		table_2.setName("USA");
+		ITable table_2 = factory.getTable("USA");
+		
 		sqlModel_2.addTable(table_2);
 		
 		assertTrue("Unable to dectect that two sql stmts used same set of tables",sqlModel_1.matchesTablesOf(sqlModel_2));
@@ -85,13 +90,12 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetermineWhetherTwoSqlHitSameTables_caseDifferences() {
 		ISqlModel sqlModel_1 = factory.getSqlModel();
-		ITable table_1 = factory.getTable();
-		table_1.setName("USA");
+		ITable table_1 = factory.getTable("USA");
+		
 		sqlModel_1.addTable(table_1);
 
 		ISqlModel sqlModel_2 = factory.getSqlModel();
-		ITable table_2 = factory.getTable();
-		table_2.setName("usA");
+		ITable table_2 = factory.getTable("usA");
 		sqlModel_2.addTable(table_2);
 		
 		assertTrue("Unable to dectect that two sql stmts used same set of tables",sqlModel_1.matchesTablesOf(sqlModel_2));
@@ -101,19 +105,19 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetermineWhetherTwoSqlHitSameTables_multipleTables() {
 		ISqlModel sqlModel_a = factory.getSqlModel();
-		ITable table_a1 = factory.getTable();
-		table_a1.setName("USA");
+		ITable table_a1 = factory.getTable("USA");
+		
 		sqlModel_a.addTable(table_a1);
-		ITable table_a2 = factory.getTable();
-		table_a2.setName("Mexico");
+		ITable table_a2 = factory.getTable("Mexico");
+		
 		sqlModel_a.addTable(table_a2);
 
 		ISqlModel sqlModel_b = factory.getSqlModel();
-		ITable table_b1 = factory.getTable();
-		table_b1.setName("USA");
+		ITable table_b1 = factory.getTable("USA");
+		
 		sqlModel_b.addTable(table_b1);
-		ITable table_b2 = factory.getTable();
-		table_b2.setName("Mexico");
+		ITable table_b2 = factory.getTable("Mexico");
+		
 		sqlModel_b.addTable(table_b2);
 		
 		assertTrue("Unable to dectect that two sql stmts used same set of tables",sqlModel_a.matchesTablesOf(sqlModel_b));
@@ -122,19 +126,17 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetermineWhetherTwoSqlHitDifferentTables_multipleTables() {
 		ISqlModel sqlModel_a = factory.getSqlModel();
-		ITable table_a1 = factory.getTable();
-		table_a1.setName("USA");
+		ITable table_a1 = factory.getTable("USA");
+		
 		sqlModel_a.addTable(table_a1);
-		ITable table_a2 = factory.getTable();
-		table_a2.setName("Mexico");
+		ITable table_a2 = factory.getTable("Mexico");
+		
 		sqlModel_a.addTable(table_a2);
 
 		ISqlModel sqlModel_b = factory.getSqlModel();
-		ITable table_b1 = factory.getTable();
-		table_b1.setName("USA");
+		ITable table_b1 = factory.getTable("USA");
 		sqlModel_b.addTable(table_b1);
-		ITable table_b2 = factory.getTable();
-		table_b2.setName("Canada");
+		ITable table_b2 = factory.getTable("Canada");
 		sqlModel_b.addTable(table_b2);
 		
 		assertFalse("Unable to dectect that two sql stmts used different set of tables",sqlModel_a.matchesTablesOf(sqlModel_b));
@@ -143,13 +145,12 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetermineWhetherTwoSqlHitDifferentTables() {
 		ISqlModel sqlModel_1 = factory.getSqlModel();
-		ITable table_1 = factory.getTable();
-		table_1.setName("venus");
+		ITable table_1 = factory.getTable("venus");
 		sqlModel_1.addTable(table_1);
 
 		ISqlModel sqlModel_2 = factory.getSqlModel();
-		ITable table_2 = factory.getTable();
-		table_2.setName("mars");
+		ITable table_2 = factory.getTable("mars");
+		
 		sqlModel_2.addTable(table_2);
 		
 		assertFalse("Unable to dectect that two sql stmts used same set of tables",sqlModel_1.matchesTablesOf(sqlModel_2));
@@ -159,16 +160,15 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetactTableCountMisMatch() {
 		ISqlModel sqlModel_a = factory.getSqlModel();
-		ITable table_a1 = factory.getTable();
-		table_a1.setName("USA");
+		ITable table_a1 = factory.getTable("USA");
+		
 		sqlModel_a.addTable(table_a1);
-		ITable table_a2 = factory.getTable();
-		table_a2.setName("Mexico");
+		ITable table_a2 = factory.getTable("Mexico");
+		
 		sqlModel_a.addTable(table_a2);
 
 		ISqlModel sqlModel_b = factory.getSqlModel();
-		ITable table_b1 = factory.getTable();
-		table_b1.setName("USA");
+		ITable table_b1 = factory.getTable("USA");
 		sqlModel_b.addTable(table_b1);
 		
 		assertFalse("Unable to dectect that two sql stmts are different",sqlModel_a.matchesTablesOf(sqlModel_b));
@@ -176,8 +176,8 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetectTableWithoutJoin_simple() {
 		ISqlModel sqlModel = factory.getSqlModel();
-		ITable table_1 = factory.getTable();
-		table_1.setName("USA");
+		ITable table_1 = factory.getTable("USA");
+		
 		sqlModel.addTable(table_1);
 		
 		ITable[] tablesWithoutJoins = sqlModel.getTablesWithoutJoins();
@@ -189,15 +189,12 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetectTableWithoutJoin_slightOverlap() {
 		ISqlModel sqlModel = factory.getSqlModel();
-		ITable table_1 = factory.getTable();
-		table_1.setName("USA");
+		ITable table_1 = factory.getTable("USA");
 		sqlModel.addTable(table_1);
-		ITable table_2 = factory.getTable();
-		table_2.setName("Mexico");
+		ITable table_2 = factory.getTable("Mexico");
 		sqlModel.addTable(table_2);
 		
-		ITable table_3 = factory.getTable();
-		table_3.setName("Canada");
+		ITable table_3 = factory.getTable("Canada");
 		
 		IBinaryOperatorExpression xpr = DefaultFactory.getFactory().getBinaryOperatorExpression();
 		IColumn leftCol = DefaultFactory.getFactory().getColumn();
@@ -217,12 +214,10 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetectTableWithoutJoin_zeroResults() {
 		ISqlModel sqlModel = factory.getSqlModel();
-		ITable table_2 = factory.getTable();
-		table_2.setName("Mexico");
+		ITable table_2 = factory.getTable("Mexico");
 		sqlModel.addTable(table_2);
 		
-		ITable table_3 = factory.getTable();
-		table_3.setName("Canada");
+		ITable table_3 = factory.getTable("Canada");
 		sqlModel.addTable(table_3);
 		
 		IBinaryOperatorExpression xpr = DefaultFactory.getFactory().getBinaryOperatorExpression();
@@ -242,11 +237,9 @@ public class TableAndColumnModelTest {
 	@Test
 	public void canDetectTableWithoutJoin_zeroResultsAndNotAddedToModelSeparately() {
 		ISqlModel sqlModel = factory.getSqlModel();
-		ITable table_2 = factory.getTable();
-		table_2.setName("Mexico");
+		ITable table_2 = factory.getTable("Mexico");
 		
-		ITable table_3 = factory.getTable();
-		table_3.setName("Canada");
+		ITable table_3 = factory.getTable("Canada");
 		
 		IBinaryOperatorExpression xpr = DefaultFactory.getFactory().getBinaryOperatorExpression();
 		IColumn leftCol = DefaultFactory.getFactory().getColumn();

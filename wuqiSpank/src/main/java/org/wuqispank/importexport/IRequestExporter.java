@@ -1,4 +1,4 @@
-package org.wuqispank;
+package org.wuqispank.importexport;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,6 @@ public interface IRequestExporter {
 	static final String ATTRIBUTE_NAME_EXIT_TIME = "exitTimeMs";
 	static final String ATTRIBUTE_NAME_CLIENT_DATE_TIME = "lousyDateTimeMs";
 
-	static final String FILE_NAME_EXTENSION = ".ws";
 	
 	void export(IRequestWrapper val) throws TransformerException;
 	OutputStream getOutputStream();

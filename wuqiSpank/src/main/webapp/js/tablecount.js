@@ -100,10 +100,8 @@
 			style = mxUtils.clone(style);
 			style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
 			style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
-//			style[mxConstants.STYLE_FONTSIZE] = 10;
+			style[mxConstants.STYLE_FONTSIZE] = 10;
 			delete style[mxConstants.STYLE_ROUNDED];
-//			style[mxConstants.STYLE_VERTICAL_LABEL_POSITION] = mxConstants.ALIGN_TOP;
-//			style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_BOTTOM;
 			style[mxConstants.STYLE_FILLCOLOR] = '#EDEDED';
 			style[mxConstants.STYLE_STROKECOLOR] = '#FFFFFF';
 			style[mxConstants.STYLE_FONTCOLOR] = '#FFFFFF';
@@ -117,6 +115,22 @@
 			//delete style[mxConstants.STYLE_VERTICAL_ALIGN];
 
 			graph.getStylesheet().putCellStyle('wsTableHeader', style);
+
+			style = mxUtils.clone(style);
+			style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
+			style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
+			style[mxConstants.STYLE_FONTSIZE] = 10;
+			delete style[mxConstants.STYLE_ROUNDED];
+			style[mxConstants.STYLE_FILLCOLOR] = '#CC0000';
+			style[mxConstants.STYLE_STROKECOLOR] = '#FFFFFF';
+			style[mxConstants.STYLE_FONTCOLOR] = '#FFFFFF';
+			style[mxConstants.STYLE_FONTSIZE] = 36;
+  			style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+  			style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+  			style[mxConstants.STYLE_LABEL_POSITION] = mxConstants.ALIGN_CENTER;
+
+			graph.getStylesheet().putCellStyle('wsTableCacheHeader', style);
+			
 											
 			style = mxUtils.clone(style);
 			style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RHOMBUS;

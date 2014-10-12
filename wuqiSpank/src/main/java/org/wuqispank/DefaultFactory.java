@@ -5,6 +5,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
+import org.wuqispank.importexport.DefaultExportDirListener;
+import org.wuqispank.importexport.DefaultImportExportMgr;
+import org.wuqispank.importexport.DefaultRequestExporter;
+import org.wuqispank.importexport.DefaultRequestImporter;
+import org.wuqispank.importexport.DynaTracePurePathImporter;
+import org.wuqispank.importexport.IExportDirListener;
+import org.wuqispank.importexport.IImportExportMgr;
+import org.wuqispank.importexport.IRequestExporter;
+import org.wuqispank.importexport.IRequestImporter;
+import org.wuqispank.importexport.RawSqlTextRequestImporter;
 import org.wuqispank.model.CenterHeavyTableOrderMgr;
 import org.wuqispank.model.DefaultBinaryOperatorExpression;
 import org.wuqispank.model.DefaultColumn;
@@ -72,13 +82,12 @@ public class DefaultFactory implements IFactory {
 	private static IMessages msgs = new AmericanEnglishMessages();
 	private static IConfig m_config = null;
 	private static IFactory INSTANCE = new DefaultFactory();
+	private static IImportExportMgr m_importExportMgr = new DefaultImportExportMgr();
 	private IJdbcProvider m_jdbcProvider;
 	
 	@Override
 	public IRequestWrapper getRequestWrapper() {
 		IRequestWrapper requestWrapper = new DefaultRequestWrapper();
-		//requestWrapper.setModelObservationMgr( this.getModelObservationMgr());
-		//return new DefaultRequestWrapper();
 		return requestWrapper;
 	}
 	@Override
@@ -126,13 +135,16 @@ public class DefaultFactory implements IFactory {
 	public ISqlModel getSqlModel() {
 		return new DefaultSqlModel();
 	}
-	@Override
-	public ITable getTable() {
-		return new DefaultTable();
-	}
+//	@Override
+//	public ITable getTable() {
+//		return new DefaultTable();
+//	}
 	@Override
 	public ITable getTable(String tableName) {
-		return new DefaultTable(tableName);
+		ITable t = new DefaultTable(tableName);
+		if (this.getConfig()!=null)
+			t.setShouldBeCached( this.getConfig().shouldTableBeCached(tableName) );
+		return t;
 	}
 	@Override
 	public IColumn getColumn() {
@@ -231,5 +243,22 @@ public class DefaultFactory implements IFactory {
 	public IRequestImporter getRequestImporter()
 			throws ParserConfigurationException {
 		return new DefaultRequestImporter();
+	}
+	@Override
+	public IRequestImporter getRawSqlTextRequestImporter() {
+		return new RawSqlTextRequestImporter();
+	}
+	@Override
+	public IExportDirListener getExportDirListener() {
+		return new DefaultExportDirListener();
+	}
+	
+	@Override
+	public IImportExportMgr getImportExportManager() {
+		return m_importExportMgr;
+	}
+	@Override
+	public void setImportExportManager(IImportExportMgr val) {
+		m_importExportMgr = val;
 	}
 }

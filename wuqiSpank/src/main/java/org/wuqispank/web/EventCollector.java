@@ -2,11 +2,10 @@ package org.wuqispank.web;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -15,11 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.headlessintrace.client.IntraceException;
 import org.headlessintrace.client.connection.Callback;
-import org.headlessintrace.client.connection.ConnectionException;
-import org.headlessintrace.client.connection.ConnectionTimeout;
 import org.headlessintrace.client.connection.DefaultCallback;
 import org.headlessintrace.client.connection.DefaultConnectionList;
 import org.headlessintrace.client.connection.IConnectionStateCallback;
@@ -31,7 +29,6 @@ import org.headlessintrace.client.filter.IncludeAnyOfTheseEventsFilterExt;
 import org.headlessintrace.client.filter.IncludeThisMethodFilterExt;
 import org.headlessintrace.client.model.ITraceEvent;
 import org.headlessintrace.client.model.ITraceEventParser;
-import org.headlessintrace.client.request.BadCompletedRequestListener;
 import org.headlessintrace.client.request.ICompletedRequestCallback;
 import org.headlessintrace.client.request.IRequest;
 import org.headlessintrace.client.request.RequestConnection;
@@ -39,32 +36,37 @@ import org.headlessintrace.jdbc.IJdbcProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
-import org.wuqispank.IReconnector;
-import org.wuqispank.IRequestExporter;
-import org.wuqispank.IRequestImporter;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.importexport.IExportDirListener;
+import org.wuqispank.importexport.IImportExportMgr;
+import org.wuqispank.importexport.IRequestImporter;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
-import org.wuqispank.web.IFactory;
+import org.xml.sax.SAXException;
 
 
 public class EventCollector implements ServletContextListener, ICompletedRequestCallback {
+	static Logger LOG = LoggerFactory.getLogger(EventCollector.class);
 	RequestConnection m_requestConnection = null;
 	/**
 	 *   F I L T E R
 	 */
 	ITraceEventParser m_parser = null;
 	
+	ITraceEvent m_requestStart = null;
+	ITraceEvent m_requestCompletion = null;
+	private IRequestRepository m_repo = null;
+	Callback m_connectionStatusCallback = new Callback();
+	
 	public EventCollector() throws IntraceException {
 		m_parser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 		m_requestStart = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: {:50", 0);
 		m_requestCompletion = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: }:250", 0);
+		m_repo = DefaultFactory.getFactory().createRepo();
+		
+		
 	}
-	ITraceEvent m_requestStart = null;
-	ITraceEvent m_requestCompletion = null;
-	private IRequestRepository m_repo = DefaultFactory.getFactory().createRepo();
-	static Logger LOG = LoggerFactory.getLogger(EventCollector.class);
-	Callback m_connectionStatusCallback = new Callback();
+
 	public IRequestRepository getRepo() {
 		return m_repo;
 	}
@@ -80,6 +82,32 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		System.out.println("ServletContextListener destroyed");
+	}
+	/**
+	 * When new files show up in the export-dir, import them.
+	 * @throws IOException 
+	 * @throws ParserConfigurationException 
+	 */
+	protected void initExportDirListener() throws IOException, ParserConfigurationException {
+		GroupNameThreadFactory threadFactory = new GroupNameThreadFactory("wuqiSpankExportDirListener");
+		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, threadFactory);
+		
+		IExportDirListener listener = DefaultFactory.getFactory().getExportDirListener();
+		listener.setImportExportMgr(DefaultFactory.getFactory().getImportExportManager());
+	    listener.init();
+
+	       /**
+	         * Parameters :
+	         * 1. Object of Runnable
+	         * 2. Initial Delay
+	         * 3. Delay between successive execution
+	         * 4. Time Unit
+	         */
+	        scheduler.scheduleAtFixedRate(
+	        		listener, 
+	        		1,
+	        		DefaultFactory.getFactory().getConfig().getExportDirListenerIntervalInSeconds(), 
+	        		TimeUnit.SECONDS);
 	}
 	/**
 	 * All connections to the SUT (system under test), even the very first, are made by the DefaultConnector
@@ -107,47 +135,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
  
 		
 	}
-	
-	protected FilenameFilter getExportFilenameFilter() {
-		FilenameFilter filter = new FilenameFilter() {
 
-			@Override
-			public boolean accept(File dir, String name) {
-				boolean rc = false;
-				if (name.endsWith(IRequestExporter.FILE_NAME_EXTENSION))
-					rc = true;
-				else
-					rc = false;
-				return rc;
-			}
-		};
-		return filter;
-	}
-	
-	protected void loadExportedRequests() {
-		IConfig config = DefaultFactory.getFactory().getConfig();
-		try {
-			if (config.getExportDir() !=null && config.getExportDir().exists()) {
-				IRequestImporter importer = DefaultFactory.getFactory().getDynaTracePurePathImporter();
-				File[] filesToImport = config.getExportDir().listFiles( getExportFilenameFilter()  );
-				for(File fileToImport : filesToImport) {
-					importer.setInputStream( new FileInputStream(fileToImport) );
-					IRequestWrapper[] requests = importer.importRq();
-					for(IRequestWrapper rq : requests)
-						getRepo().add(rq);
-				}
-			} else {
-				String msg = DefaultFactory.getFactory().getMessages().getBypassImportMessage(WebXmlConfigImpl.WEB_XML_EXPORT_DIR, config.getExportDir().getAbsolutePath());
-				LOG.warn(msg);
-			}
-			
-		} catch (Exception e) {
-			LOG.error(DefaultFactory.getFactory().getMessages().getFailureLoadingExportFiles(), e);
-			LOG.error(e.getMessage());
-		}
-		
-		
-	}
 	/**
 	 * wuqispank-specific web.xml configuration errors will be thrown from this method.
 	 * http://mail-archives.apache.org/mod_mbox/tomcat-users/200404.mbox/%3C9C5166762F311146951505C6790A9CF8013E01A8@US-VS1.corp.mpi.com%3E
@@ -159,8 +147,23 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 		
 		IConfig config = new WebXmlConfigImpl(servletContextEvent.getServletContext());
 		DefaultFactory.getFactory().setConfig(config);//make this available GLOBALLY to the rest of the program.
+
+		try {
+			 IImportExportMgr iem = DefaultFactory.getFactory().getImportExportManager();
+			 iem.setRepo( getRepo() );
+			 iem.setExportDir( DefaultFactory.getFactory().getConfig().getExportDir() );
+			 
+			 iem.addImporter(  DefaultFactory.getFactory().getDynaTracePurePathImporter() );
+			 iem.addImporter(  DefaultFactory.getFactory().getRawSqlTextRequestImporter() );
+			 iem.addImporter(  DefaultFactory.getFactory().getRequestImporter() );
+			 
+			 iem.importAtSystemStartup();
+			
+		} catch (Exception e) {
+			LOG.error( DefaultFactory.getFactory().getMessages().getImportExportInitError() );
+			e.printStackTrace();
+		}
 		
-		loadExportedRequests(); //continue even if this fails.
 		
 		try {
 			m_requestConnection = getRequestConnection();
@@ -170,48 +173,21 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			servletContextEvent.getServletContext().setAttribute(WUQISPANK_REPO, this);
 			
 			this.initReconnector();
+			this.initExportDirListener();
 			
 		} catch (IntraceException e) {
 			e.printStackTrace();
 		} catch (WuqispankException e) {
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		
-//		try {
-//			
-//			m_requestConnection = getRequestConnection();
-//					
-//			this.m_requestConnection.setCommandArray( this.getCommandArray());
-//			this.m_requestConnection.setHostPort(config.getInTraceAgent());
-//			
-//			boolean rc = m_requestConnection.connect(config.getInTraceAgent(), getCommandArray() );
-//			LOG.debug("New RequestConnection[" + m_requestConnection.hashCode() + "] success [" + rc + "] callback [" + m_connectionStatusCallback.getConnectState().toString() + "] msgs [" + m_connectionStatusCallback.getMessages().toString() + "]");
-//			
-//			if (rc) {
-//				DefaultConnectionList.getSingleton().add(config.getInTraceAgent(), m_requestConnection);
-//			} else {
-//				LOG.error( DefaultFactory.getFactory().getMessages().getConnectionError(config.getInTraceAgent()) );
-//			}
-//			
-//			servletContextEvent.getServletContext().setAttribute(WUQISPANK_REPO, this);
-//		} catch (WuqispankException we) {
-//				System.out.println(we.getMessage());
-//				System.out.println( we.getCause().getMessage());
-//				we.getCause().printStackTrace();
-//		} catch (ConnectionTimeout e) {
-//			// 
-//			e.printStackTrace();
-//		} catch (IntraceException e) {
-//			// 
-//			e.printStackTrace();
-//		} catch (ConnectionException e) {
-//			// 
-//			e.printStackTrace();
-//		} catch (BadCompletedRequestListener e) {
-//			// 
-//			e.printStackTrace();
-//		}
 	}
 	
 	/**

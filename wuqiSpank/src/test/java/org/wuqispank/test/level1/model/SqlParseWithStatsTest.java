@@ -11,8 +11,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.wuqispank.DefaultFactory;
-import org.wuqispank.IRequestImporter;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.importexport.IRequestImporter;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlStatsObserver;
 import org.wuqispank.model.ISqlWrapper;
@@ -38,8 +38,8 @@ public class SqlParseWithStatsTest {
 		
 		ISqlStatsObserver stats = rq.getSqlStats();
 		
-		ITable tableLocation = DefaultFactory.getFactory().getTable();
-		tableLocation.setName("location");
+		ITable tableLocation = DefaultFactory.getFactory().getTable("location");
+		
 		assertEquals("stats didn't compute -- no table count",1,stats.getTableCount(tableLocation));
 		
 		
@@ -74,8 +74,8 @@ public class SqlParseWithStatsTest {
 		
 		ISqlStatsObserver stats = rq.getSqlStats();
 		
-		ITable tableLocation = DefaultFactory.getFactory().getTable();
-		tableLocation.setName("location");
+		ITable tableLocation = DefaultFactory.getFactory().getTable("location");
+		
 		assertEquals("stats didn't compute -- no table count",1,stats.getTableCount(tableLocation));
 		
 		

@@ -4,10 +4,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.IReconnector;
-import org.wuqispank.IRequestExporter;
-import org.wuqispank.IRequestImporter;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.db.ISqlParser;
+import org.wuqispank.importexport.IExportDirListener;
+import org.wuqispank.importexport.IImportExportMgr;
+import org.wuqispank.importexport.IRequestExporter;
+import org.wuqispank.importexport.IRequestImporter;
 import org.wuqispank.model.IBinaryOperatorExpression;
 import org.wuqispank.model.IColumn;
 import org.wuqispank.model.IModelObservationMgr;
@@ -39,7 +41,7 @@ public interface IFactory {
 	IRequestWrapper getRequestWrapper();
 	ISqlWrapper getSqlWrapper();
 	ISqlModel getSqlModel();
-	ITable getTable();
+	//ITable getTable();
 	ITable getTable(String tableName);
 	ISqlParser getSqlParser();
 	IColumn getColumn();
@@ -57,4 +59,8 @@ public interface IFactory {
 	IJdbcProvider getJdbcProvider() throws WuqispankException;
 	void setJdbcProvider(IJdbcProvider val);
 	IReconnector getReconnector();
+	IRequestImporter getRawSqlTextRequestImporter();
+	IExportDirListener getExportDirListener();
+	IImportExportMgr getImportExportManager();
+	void setImportExportManager(IImportExportMgr val);
 }

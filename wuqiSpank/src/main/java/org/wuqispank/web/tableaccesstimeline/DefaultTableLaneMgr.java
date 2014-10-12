@@ -33,8 +33,8 @@ public class DefaultTableLaneMgr implements ITableLaneMgr, java.io.Serializable 
 	public ITable[] getTableLaneOrder2() {
 		ITable[] tableList = new ITable[m_tableOrder.length];
 		for(int i = 0; i < m_tableOrder.length; i++) {
-			tableList[i] = DefaultFactory.getFactory().getTable();
-			tableList[i].setName(m_tableOrder[i]);
+			tableList[i] = DefaultFactory.getFactory().getTable(m_tableOrder[i]);
+			//tableList[i].setName(m_tableOrder[i]);
 		}
 		return tableList;
 	}

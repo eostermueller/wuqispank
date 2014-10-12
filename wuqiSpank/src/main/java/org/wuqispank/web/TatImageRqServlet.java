@@ -11,7 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.wuqispank.DefaultFactory;
-import org.wuqispank.IRequestExporter;
+import org.wuqispank.importexport.IRequestExporter;
 import org.wuqispank.model.IRequestWrapper;
 
 public class TatImageRqServlet extends HttpServlet {

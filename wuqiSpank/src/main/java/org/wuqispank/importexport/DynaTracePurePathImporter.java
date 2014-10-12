@@ -1,10 +1,13 @@
-package org.wuqispank;
+package org.wuqispank.importexport;
 
 
 import java.io.BufferedInputStream;
-
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +24,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.wuqispank.DefaultFactory;
+import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ISqlWrapper;
@@ -28,11 +33,12 @@ import org.wuqispank.model.IStackTrace;
 import org.wuqispank.web.EventCollector;
 import org.xml.sax.SAXException;
 
-public class DynaTracePurePathImporter implements IRequestImporter {
+public class DynaTracePurePathImporter extends AbstractRequestImporter implements IRequestImporter {
 	static Logger LOG = LoggerFactory.getLogger(DynaTracePurePathImporter.class);
 
 	private static final String DYNATRACE_PUREPATH_XML_METHOD = "method";
 	private static final String DYNATRACE_PUREPATH_XML_ARGUMENT = "argument";
+
 	private InputStream m_wuqiSpankExportXml;
 
 	@Override
@@ -42,13 +48,6 @@ public class DynaTracePurePathImporter implements IRequestImporter {
 
 	@Override
 	public void setInputStream(InputStream val) {
-		
-
-		//m_wuqiSpankExportXml = new BufferedInputStream(val);
-		//BufferedInputStream b = new BufferedInputStream(val);
-		//this.m_wuqiSpankExportXml = new DataInputStream(b);
-	
-		//m_wuqiSpankExportXml.mark(0);
 		this.m_wuqiSpankExportXml = val;
 	}
 	private void importSql(IRequestWrapper rqWrap, NodeList sqlList) throws WuqispankException {
@@ -77,8 +76,6 @@ public class DynaTracePurePathImporter implements IRequestImporter {
 				}
 			}
 		}
-			
-		
 	}
 	public static String extractTextChildren(Element parentNode) {
 		StringBuilder sb = new StringBuilder();
@@ -102,28 +99,8 @@ public class DynaTracePurePathImporter implements IRequestImporter {
 			Exception e = new Exception();//stack trace might be helpful to caller;
 			throw new WuqispankException("Before calling DefaultimportRq.importRq, you must call setInputStream() with the XML to be imported.",e);
 		}
-		//getInputStream().reset();
-		//String xmlInputString = new Scanner(this.getInputStream(),"UTF-8").useDelimiter("\\A").next();
-		//Document doc = dBuilder.parse(xmlInputString);
-		
-		//int contentLength = this.getInputStream()
-		//int contentLength = getInputStream()
-//		InputStream is = this.getInputStream();
-//		byte[] byteArray = new byte[contentLength]; 
-//		is.read(byteArray,0,contentLength-1);
-
-//		int c = -1;
-//		StringBuffer readBuffer = new StringBuffer();
-//		while ((c=getInputStream().read()) != -1){
-//		   readBuffer.append((char) c);
-//		}
-//		String inString = readBuffer.toString();		
 		
 		Document doc = dBuilder.parse(this.getInputStream());
-//		Document doc = dBuilder.parse(readBuffer.toString() );
-
-		//InputSource input = XmlMimeEntityHandler.getInputSource(contentTypeValue, in);
-		
 		
 		doc.getDocumentElement().normalize();
 		Element root = doc.getDocumentElement();
@@ -147,5 +124,24 @@ public class DynaTracePurePathImporter implements IRequestImporter {
 		return results.toArray(prototype);
 	}
 
+	@Override
+	public String getRequestIdPrefix() {
+		throw new UnsupportedOperationException("This method is only supported on RawSqlTextRequestImporter");
+	}
 
+	@Override
+	public void setRequestIdPrefix(String string) {
+		throw new UnsupportedOperationException("This method is only supported on RawSqlTextRequestImporter");
+	}
+
+	@Override
+	public boolean isRuntimeImporter() {
+		return true;
+	}
+
+	@Override
+	public String getPathMatcherText() {
+		return "glob:**.dtpp";
+	}
+	
 }

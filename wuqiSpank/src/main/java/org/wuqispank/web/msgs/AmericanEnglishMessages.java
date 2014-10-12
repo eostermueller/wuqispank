@@ -93,4 +93,9 @@ public class AmericanEnglishMessages implements IMessages, java.io.Serializable 
 		return "Sql text presented for parsing was null or zero length.";
 	}
 
+	@Override
+	public String getImportExportInitError() {
+		return "Unable to import from file";
+	}
+
 }

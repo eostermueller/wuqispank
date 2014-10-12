@@ -49,6 +49,7 @@ public class TableAccessTimeline extends WebMarkupContainer {
 	public static final String STYLE_WUQISPANK_ROW_ODD = "wsRowOdd";
 	public static final String STYLE_WUQISPANK_ROW_EVEN = "wsRowEven";
 	public static final String STYLE_WUQISPANK_TABLE_HEADER = "wsTableHeader";
+	public static final String STYLE_WUQISPANK_TABLE_CACHE_HEADER = "wsTableCacheHeader";
 	public static final String STYLE_WUQISPANK_TABLE_VERTICAL = "tableVertical";
 	//public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/stock_draw-sphere.png";
 	public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/i_select.png";
@@ -244,19 +245,21 @@ public class TableAccessTimeline extends WebMarkupContainer {
 					ctx().getGraph(),
 					ctx().getMasterPool(),
 					tableHeaderLane,tableFooterLane,
-					table.getName().toUpperCase(),
+					table,
 					getRequestWrapper().getSqlStats().getTableCount(table),
 					tableX
 					);
 		}
 		
 	}
-	private void insertTableName(mxGraph graph, Object pool, Object tablesHeaderLane, Object tablesFooterLane, String tableName, int tableCount, int x) {
+	private void insertTableName(mxGraph graph, Object pool, Object tablesHeaderLane, Object tablesFooterLane, ITable table, int tableCount, int x) {
+		
+		String backgroundCssStyle =  table.shouldBeCached() ? this.STYLE_WUQISPANK_TABLE_CACHE_HEADER : STYLE_WUQISPANK_TABLE_HEADER; 
     	
-    	mxICell table1Header = (mxICell)graph.insertVertex(tablesHeaderLane,  null, tableCount, x, 0, 50, 50, STYLE_WUQISPANK_TABLE_HEADER);
-    	mxICell table1Footer = (mxICell)graph.insertVertex(tablesFooterLane,  null, tableCount, x, 0, 50, 50, STYLE_WUQISPANK_TABLE_HEADER);
-    	mxICell table1HeaderLabel = (mxICell)graph.insertVertex(tablesHeaderLane, null, tableName, x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=30");
-    	mxICell table1FooterLabel = (mxICell)graph.insertVertex(tablesFooterLane, null, tableName, x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=30");
+    	mxICell table1Header = (mxICell)graph.insertVertex(tablesHeaderLane,  null, tableCount, x, 0, 50, 50, backgroundCssStyle);
+    	mxICell table1Footer = (mxICell)graph.insertVertex(tablesFooterLane,  null, tableCount, x, 0, 50, 50, backgroundCssStyle);
+    	mxICell table1HeaderLabel = (mxICell)graph.insertVertex(tablesHeaderLane, null, table.getName().toUpperCase(), x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=100");
+    	mxICell table1FooterLabel = (mxICell)graph.insertVertex(tablesFooterLane, null, table.getName().toUpperCase(), x, 0, 20, 20, "whiteSpace=wrap;strokeColor=none;fillColor=none;labelBackgroundColor=none;opacity=30;textOpacity=100");
 		
 	}
 

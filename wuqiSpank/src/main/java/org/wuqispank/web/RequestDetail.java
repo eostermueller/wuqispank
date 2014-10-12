@@ -37,8 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.datatables.JQueryDatatable;
 import org.wuqispank.DefaultFactory;
-import org.wuqispank.IRequestExporter;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.importexport.AbstractRequestImporter;
+import org.wuqispank.importexport.DefaultRequestExporter;
+import org.wuqispank.importexport.DefaultRequestImporter;
+import org.wuqispank.importexport.IRequestExporter;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.web.msgs.IMessages;
@@ -126,7 +129,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 	            	IMessages msgs = DefaultFactory.getFactory().getMessages();
 	            	exportedFile = File.createTempFile(
 	            			"export-", 
-	            			IRequestExporter.FILE_NAME_EXTENSION, 
+	            			DefaultRequestImporter.FILE_EXTENSION, 
 	            			WuqispankApp.getConfig().getExportDir() );
 	            	
 	            	re.setOutputStream(new FileOutputStream(exportedFile));

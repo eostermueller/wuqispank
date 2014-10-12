@@ -36,8 +36,8 @@ public class XmlSwimlanes_1 extends HttpServlet {
     	mxGraphContext.setId(8);
     	
     	
-    	ITable table = DefaultFactory.getFactory().getTable();
-    	table.setName("CUST_CUST_REL");
+    	ITable table = DefaultFactory.getFactory().getTable("CUST_CUST_REL");
+    	
     	ITableHeaderRenderer thr = DefaultFactory.getFactory().getTableHeaderRenderer();
     	thr.setGraphContext(mxGraphContext);
     	thr.setParentId_1(1);
@@ -48,8 +48,8 @@ public class XmlSwimlanes_1 extends HttpServlet {
     	//thr.setWriter(sw);
     	thr.render(sw);
     	
-    	table = DefaultFactory.getFactory().getTable();
-    	table.setName("ACCOUNT");
+    	table = DefaultFactory.getFactory().getTable("ACCOUNT");
+    	
     	thr = new DefaultTableHeaderRenderer();
     	thr.setGraphContext(mxGraphContext);
     	thr.setParentId_1(1);
@@ -60,8 +60,7 @@ public class XmlSwimlanes_1 extends HttpServlet {
     	
     	thr.render(sw);
 
-    	table = DefaultFactory.getFactory().getTable();
-    	table.setName("ACCT_ACCT_REL");
+    	table = DefaultFactory.getFactory().getTable("ACCT_ACCT_REL");
     	thr = new DefaultTableHeaderRenderer();
     	thr.setGraphContext(mxGraphContext);
     	thr.setParentId_1(1);

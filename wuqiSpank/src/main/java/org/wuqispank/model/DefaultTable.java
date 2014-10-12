@@ -14,6 +14,8 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 	private List<IColumn> m_whereClauseColumns = new ArrayList<IColumn>();
 	private String m_schema = ISqlModel.NOT_SPECIFIED;
 	private String m_alias = ISqlModel.NOT_SPECIFIED;
+	private boolean m_shouldBeCached = false;
+	
 	
 	public DefaultTable(String tableName) {
 		setName(tableName);
@@ -71,6 +73,7 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 	public void addColumn(IColumn val) {
 		getWhereClauseColumns().add(val);
 	}
+
 	@Override
 	public IColumn findColumn(String nameCriteria) {
 		IColumn rc = null;
@@ -83,6 +86,15 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 		}
 		log.debug("findColumn() returning [" + ( (rc==null) ? "<column not found>" : rc.getName()) + "]");
 		return rc;
+	}
+	@Override
+	public boolean shouldBeCached() {
+		return this.m_shouldBeCached;
+	}
+	@Override
+	public void setShouldBeCached(boolean val) {
+		this.m_shouldBeCached = val;
+		
 	}
 	
 }

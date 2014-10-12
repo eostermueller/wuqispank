@@ -1,4 +1,4 @@
-package org.wuqispank.test.level1;
+package com.wuqispank.test.importexport.level1;
 
 import static org.junit.Assert.*;
 
@@ -24,8 +24,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.wuqispank.DefaultFactory;
-import org.wuqispank.IRequestExporter;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.importexport.IRequestExporter;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
 import org.xml.sax.SAXException;
@@ -45,7 +45,6 @@ public class ExportTest {
 
 	@Test 
 	public void canSerializeRequestToXml() throws WuqispankException, ParserConfigurationException, SAXException, IOException, TransformerException, IntraceException {
-		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		IRequestExporter re = DefaultFactory.getFactory().getRequestExporter();
 		re.setOutputStream(baos);
