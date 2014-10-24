@@ -63,13 +63,12 @@
 
    <h3>
 <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>
-Why do I need wuqiSpank?</h3>
+No other tool does this.</h3>
 <ul>
-	<li>, wuqiSpank generates 'SQL Sequence Diagrams' of JOINs and other table accesses.</li>
-	<li>These digrams provide immediate understanding of SQL data access strategy (DAS)</li>
-	<li>Better than any other tool, these diagrams can help you prevent, detect, and validate 
-	the #1 performance problem in enterprise software (too many calls to DB).</li>
- 
+	<li>wuqiSpank generates 'SQL Sequence Diagrams' of JOINs and other table accesses.</li>
+	<li>These diagrams provide immediate understanding of SQL data access strategy (DAS). Without wuqiSpank, it takes many ardous minutes to glean strategy from raw SQL text.</li>
+	<li>Better than any other tool, these diagrams can help prevent, detect, and validate 
+	the #1 performance problem in enterprise software (<a href="http://apmblog.compuware.com/2010/06/15/top-10-performance-problems-taken-from-zappos-monster-and-co">too many calls to DB</a>).</li>
 </ul>
 (Data Access Strategy(DAS) = "Your approach to using SQL to navigate parent/child RDBMS table relationships"
 )
@@ -77,7 +76,21 @@ Why do I need wuqiSpank?</h3>
 
 <p></p>
         
-        
+          <h3>
+<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Features</h3>
+
+<p> 
+For non-java app, you get SQL visualization (SQL Sequence Diagrams).
+For Java/JDBC apps, you additionally get
+<ul>
+	<li>tracing facility to capture SQL from your running web app</li>
+	<li>Exact line number of java code that launched each SQL statement</li>
+	<li>Grouping.  All SQL from a single user's round trip are grouped together.</li>
+	<li>Team-wide transparency.  SQL Sequence Diagrams are available in web browser to entire development team</li>
+</ul>	
+</p>
+
+<p></p>        
         
           <h3>
 <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Are you a DynaTrace user?</h3>
@@ -86,28 +99,12 @@ Why do I need wuqiSpank?</h3>
 
 <p></p>
         
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>What is wuqiSpank?</h3>
-
-<p>Which RDBMS tables does your SQL access?  wuqiSpank traces and visualizes your web appliction's JDBC activity.
-It helps you refactor/optimize your SQL/JDBC code.</p>
-
-<p></p>
-<iframe width="560" height="315" src="http://www.youtube-nocookie.com/embed/mv8w5zhR1cM" frameborder="0" allowfullscreen></iframe>
-<p></p>
-
+          
 <h3>
 <a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>What is a wuqi?</h3>
 
 <p>A wuqi is an <b>U</b>necessary <b>Q</b>uery <b>I</b>nvocation and can reside in any tier of your application.  wuqiSpank is fond of spanking JDBC wuqis.</p>
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Why would I want to spank a wuqi?</h3>
-
-<p><a href="http://apmblog.compuware.com/2010/06/15/top-10-performance-problems-taken-from-zappos-monster-and-co">Everyone knows</a> that wuqis are the number one performance problem today.  If you must know, 'spanking JDBC wuqis' means that we are optimizing JDBC code, reducing the number of round trips to the database, reducing CPU consumption and network latency.</p>
-<p>
-JDBC wuqis are especially nasty.  Refactoring your code's SQL takes great effort.  wupiSpank's unprecedented 'SQL Visibility' helps you plan ahead.</p>
-</p>
 <h3>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>3rd Party Dependencies</h3>
 
