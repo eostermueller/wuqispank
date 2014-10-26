@@ -154,11 +154,6 @@ public class DefaultRequestImporter extends AbstractRequestImporter implements I
 	}
 
 	@Override
-	public boolean isRuntimeImporter() {
-		return false;
-	}
-
-	@Override
 	public String getPathMatcherText() {
 		return "glob:**" + FILE_EXTENSION;
 	}

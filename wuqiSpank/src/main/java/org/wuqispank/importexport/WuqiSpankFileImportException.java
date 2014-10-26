@@ -9,7 +9,7 @@ public class WuqiSpankFileImportException extends WuqispankException {
 
 	private File m_exportDir;
 	private Path m_file;
-	private Class<? extends IRequestImporter> m_myClass;
+	private Class<? extends IFileImporter> m_myClass;
 
 	public WuqiSpankFileImportException(Throwable e) {
 		super(e);
@@ -25,7 +25,7 @@ public class WuqiSpankFileImportException extends WuqispankException {
 		
 	}
 
-	public void setImporter(Class<? extends IRequestImporter> val) {
+	public void setImporter(Class<? extends IFileImporter> val) {
 		m_myClass = val;
 		
 	}

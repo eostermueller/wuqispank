@@ -7,6 +7,9 @@ public class SqlParseException extends WuqispankException {
 	public void setSql(String sqlText) {
 		m_sqlText = sqlText;
 	}
+	public String getSql() {
+		return this.m_sqlText;
+	}
 
 	public SqlParseException() {
 		// TODO Auto-generated constructor stub

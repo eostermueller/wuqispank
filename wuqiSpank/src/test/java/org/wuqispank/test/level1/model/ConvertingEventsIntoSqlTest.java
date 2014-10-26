@@ -229,8 +229,9 @@ public class ConvertingEventsIntoSqlTest {
 		factory.add(e_entry);
 		factory.add(e_arg);
 		
+		IRequestWrapper rqWrap = DefaultFactory.getFactory().getRequestWrapper();
 		try {
-			ISqlWrapper sqlWrapper = factory.createSqlWrapper(null);
+			ISqlWrapper sqlWrapper = factory.createSqlWrapper(rqWrap);
 			fail("Should have received 1 error to indicate that exit method was missing");
 
 		} catch (WuqispankException we) {

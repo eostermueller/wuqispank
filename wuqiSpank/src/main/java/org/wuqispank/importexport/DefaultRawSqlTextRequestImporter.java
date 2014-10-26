@@ -23,7 +23,7 @@ import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.web.IConfig;
 import org.xml.sax.SAXException;
 
-public class RawSqlTextRequestImporter extends AbstractRequestImporter implements IRequestImporter {
+public class DefaultRawSqlTextRequestImporter extends AbstractRequestImporter implements IRequestImporter {
 
 	@Override
 	public IRequestWrapper[] importRq() throws SAXException, IOException,
@@ -73,10 +73,6 @@ public class RawSqlTextRequestImporter extends AbstractRequestImporter implement
 			
 			rqWrapper.addSqlWrapper(sqlWrapper);
 		}
-	}
-	@Override
-	public boolean isRuntimeImporter() {
-		return true;
 	}
 	@Override
 	public String getPathMatcherText() {

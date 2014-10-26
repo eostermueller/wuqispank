@@ -15,15 +15,30 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
 import org.xml.sax.SAXException;
 
 public class DefaultImportExportMgr implements IImportExportMgr {
+	public DefaultImportExportMgr()  {
+		
+		try {
+			 this.addImporter(  DefaultFactory.getFactory().getDynaTracePurePathImporter() );
+			 this.addImporter(  DefaultFactory.getFactory().getRawSqlTextRequestImporter() );
+			 this.addImporter(  DefaultFactory.getFactory().getRequestImporter() );
+			 this.addImporter(  DefaultFactory.getFactory().getInTraceEventFileImporter() );
+			
+		} catch (Exception e) {
+			LOG.error("FATAL ERROR.  Unable to create the ImportExportMgr");
+			e.printStackTrace();
+		}
+		
+	}
 	static Logger LOG = LoggerFactory.getLogger(DefaultImportExportMgr.class);
 
-	private List<IRequestImporter> m_importers = new CopyOnWriteArrayList<IRequestImporter>();
+	private List<IFileImporter> m_importers = new CopyOnWriteArrayList<IFileImporter>();
 	private IRequestRepository m_repo = null;
 	private File m_exportDir;
 	
@@ -36,7 +51,7 @@ public class DefaultImportExportMgr implements IImportExportMgr {
 		this.m_exportDir = val;
 	}
 	@Override
-	public void addImporter(IRequestImporter val) {
+	public void addImporter(IFileImporter val) {
 		this.m_importers.add(val);
 	}
 	
@@ -70,36 +85,11 @@ public class DefaultImportExportMgr implements IImportExportMgr {
 		return m_repo;
 	}
 
-	private void importFile(IRequestImporter importer, File fileToImport) throws SAXException, IOException, ParserConfigurationException, WuqispankException {
-		importer.setInputStream( new FileInputStream(fileToImport) );
-		try {
-			importer.setRequestIdPrefix(fileToImport.getName());
-		} catch(UnsupportedOperationException x) {}
-		IRequestWrapper[] requests = importer.importRq();
-		for(IRequestWrapper rq : requests) {
-			String uniqueId = rq.getUniqueId();
-			boolean duplicateFound = false;
-			if (uniqueId!=null && uniqueId.trim().length() > 0) {
-
-				IRequestWrapper tmp = getRepo().get(uniqueId);
-				if (tmp!=null)
-					duplicateFound = true;
-			}
-			LOG.debug("Duplicate found? [" + duplicateFound + "]. uniqueId [" + uniqueId + "] taken from import file [" + fileToImport.toString() + "]");
-
-			if (!duplicateFound) {
-				getRepo().add(rq);
-				LOG.debug("Just added [id=" + rq.getUniqueId() + "] from import file [" + fileToImport.toString() + "]");
-			} else
-				LOG.debug("Duplicate request was not imported.  [id=" + uniqueId + "] found in in-memory repo. Import file [" + fileToImport.toString() + "]");
-
-		}
-	}
 	
 	@Override
 	public String getHumanReadableSupportedFileTypes() {
 		StringBuilder sb = new StringBuilder();
-		for(IRequestImporter importer : this.m_importers) {
+		for(IFileImporter importer : this.m_importers) {
 			sb.append(importer.getPathMatcherText());
 			sb.append(";");
 		}
@@ -118,14 +108,13 @@ public class DefaultImportExportMgr implements IImportExportMgr {
 		} else
 			file = val;
 			
-		for(IRequestImporter importer : this.m_importers) {
+		for(IFileImporter importer : this.m_importers) {
  		   LOG.debug("Considering import of file [" + file.getFileName().toString() + "] using importer [" + importer.getClass().getName() + "]"); 
- 		   //LOG.error("Is this a full path? [" + file.toString() + "] numParts [" + file.getNameCount() + "] parent [" + file.getParent() +  "]"); 
 			if (importer.getDataFilePathMatcher().matches(file)) {
 					LOG.debug("File matches");
 					try {
 						//if (importer.isRuntimeImporter() || systemStartup)
-							importFile(importer, file.toFile());
+							importer.importFile(this, file.toFile());
 					} catch (SAXException | IOException
 							| ParserConfigurationException | WuqispankException e) {
 						WuqiSpankFileImportException we = new WuqiSpankFileImportException(e);

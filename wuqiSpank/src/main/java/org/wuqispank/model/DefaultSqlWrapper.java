@@ -65,6 +65,7 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 			parser.setSqlModel(getSqlModel());
 			parser.parse(m_sqlText);
 		} catch (SqlParseException e) {
+			log.error("Exception parsing sql text.\nFrom Parser:[" + e.getSql() + "] \nOriginal [" + this.m_sqlText + "]");
 			log.error(e.getLocalizedMessage());
 			if (e.getCause()!=null)
 				e.getCause().printStackTrace();

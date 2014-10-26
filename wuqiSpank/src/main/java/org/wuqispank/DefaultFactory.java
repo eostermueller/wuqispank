@@ -11,10 +11,12 @@ import org.wuqispank.importexport.DefaultRequestExporter;
 import org.wuqispank.importexport.DefaultRequestImporter;
 import org.wuqispank.importexport.DynaTracePurePathImporter;
 import org.wuqispank.importexport.IExportDirListener;
+import org.wuqispank.importexport.IFileImporter;
 import org.wuqispank.importexport.IImportExportMgr;
 import org.wuqispank.importexport.IRequestExporter;
 import org.wuqispank.importexport.IRequestImporter;
-import org.wuqispank.importexport.RawSqlTextRequestImporter;
+import org.wuqispank.importexport.DefaultInTraceEventFileImporter;
+import org.wuqispank.importexport.DefaultRawSqlTextRequestImporter;
 import org.wuqispank.model.CenterHeavyTableOrderMgr;
 import org.wuqispank.model.DefaultBinaryOperatorExpression;
 import org.wuqispank.model.DefaultColumn;
@@ -79,6 +81,7 @@ import org.wuqispank.web.tableaccesstimeline.ITableLaneMgr;
  */
 
 public class DefaultFactory implements IFactory {
+	public static final String RESEARCH_EYE_CATCHER = "@#WUQISPANK_RESEARCH#@:";
 	private static IMessages msgs = new AmericanEnglishMessages();
 	private static IConfig m_config = null;
 	private static IFactory INSTANCE = new DefaultFactory();
@@ -246,7 +249,11 @@ public class DefaultFactory implements IFactory {
 	}
 	@Override
 	public IRequestImporter getRawSqlTextRequestImporter() {
-		return new RawSqlTextRequestImporter();
+		return new DefaultRawSqlTextRequestImporter();
+	}
+	@Override
+	public IFileImporter getInTraceEventFileImporter() {
+		return new DefaultInTraceEventFileImporter();
 	}
 	@Override
 	public IExportDirListener getExportDirListener() {

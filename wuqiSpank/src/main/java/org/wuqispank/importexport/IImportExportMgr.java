@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import org.wuqispank.model.IRequestRepository;
 
 public interface IImportExportMgr {
-	void addImporter(IRequestImporter val);
+	void addImporter(IFileImporter val);
 	void setRepo(IRequestRepository val);
 	IRequestRepository getRepo();
 	void importAtSystemStartup() throws WuqiSpankFileImportException;

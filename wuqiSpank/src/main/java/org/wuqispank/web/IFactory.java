@@ -7,6 +7,7 @@ import org.wuqispank.IReconnector;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.importexport.IExportDirListener;
+import org.wuqispank.importexport.IFileImporter;
 import org.wuqispank.importexport.IImportExportMgr;
 import org.wuqispank.importexport.IRequestExporter;
 import org.wuqispank.importexport.IRequestImporter;
@@ -63,4 +64,5 @@ public interface IFactory {
 	IExportDirListener getExportDirListener();
 	IImportExportMgr getImportExportManager();
 	void setImportExportManager(IImportExportMgr val);
+	IFileImporter getInTraceEventFileImporter();
 }

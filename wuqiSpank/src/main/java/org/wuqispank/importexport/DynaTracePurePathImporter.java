@@ -134,10 +134,6 @@ public class DynaTracePurePathImporter extends AbstractRequestImporter implement
 		throw new UnsupportedOperationException("This method is only supported on RawSqlTextRequestImporter");
 	}
 
-	@Override
-	public boolean isRuntimeImporter() {
-		return true;
-	}
 
 	@Override
 	public String getPathMatcherText() {

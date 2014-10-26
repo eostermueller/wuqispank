@@ -36,7 +36,9 @@ public class DefaultExportDirListener implements IExportDirListener {
 	
 	public void init() throws IOException, ParserConfigurationException {
 		m_watcher = FileSystems.getDefault().newWatchService();
-		LOG.debug("About to init listener for export dir [" + this.m_importExportMgr.getExportDir().getAbsolutePath() + "]");
+		LOG.debug("About to init listener for export dir [" + this.m_importExportMgr
+				.getExportDir()
+				.getAbsolutePath() + "]");
 		Path dir = Paths.get( this.m_importExportMgr.getExportDir().getAbsolutePath() );
 		dir.register(getWatchService(), StandardWatchEventKinds.ENTRY_CREATE);
 	}

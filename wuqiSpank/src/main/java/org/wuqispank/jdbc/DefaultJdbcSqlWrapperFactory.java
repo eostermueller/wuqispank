@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.headlessintrace.client.model.ITraceEvent;
 import org.headlessintrace.client.model.ITraceEvent.EventType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
@@ -12,6 +14,7 @@ import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.ISqlWrapperFactory;
 import org.wuqispank.model.IStackTrace;
+import org.wuqispank.web.EventCollector;
 
 /** 
  * This class forms a dividing line between InTrace and Wuqispank
@@ -27,6 +30,7 @@ import org.wuqispank.model.IStackTrace;
  *
  */
 public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
+	static Logger LOG = LoggerFactory.getLogger(DefaultJdbcSqlWrapperFactory.class);
 	List<ITraceEvent> m_events = new ArrayList<ITraceEvent>();
 
 	@Override
@@ -56,7 +60,11 @@ public class DefaultJdbcSqlWrapperFactory implements ISqlWrapperFactory {
 	 */
 	public ISqlWrapper createSqlWrapper(IRequestWrapper rqWrap) throws WuqispankException {
 		if (getList().size() < this.getMinNumEventsPerSql() ) {
-			throw new WuqispankException("Error.  Expected to find at least [" + this.getMinNumEventsPerSql() + "] events for SQL but only found [" + getList().size() + "] to make up a sql statement.");
+			LOG.warn(DefaultFactory.RESEARCH_EYE_CATCHER + "Expected to find at least [" + this.getMinNumEventsPerSql() + "] events for SQL but only found [" + getList().size() + "] to make up a sql statement.");
+			int i = 0;
+			for(ITraceEvent event : getList()) {
+				LOG.warn(DefaultFactory.RESEARCH_EYE_CATCHER + "Event [" + i++ + "] Text: [" + event.getRawEventData() + "]"); 
+			}
 		}
 		
 		ISqlWrapper dsw = rqWrap.createBlankSqlWrapper();

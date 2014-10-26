@@ -1,7 +1,5 @@
 package org.wuqispank.web;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +9,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.headlessintrace.client.IntraceException;
 import org.headlessintrace.client.connection.Callback;
 import org.headlessintrace.client.connection.DefaultCallback;
@@ -39,10 +35,8 @@ import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.importexport.IExportDirListener;
 import org.wuqispank.importexport.IImportExportMgr;
-import org.wuqispank.importexport.IRequestImporter;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
-import org.xml.sax.SAXException;
 
 
 public class EventCollector implements ServletContextListener, ICompletedRequestCallback {
@@ -63,8 +57,6 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 		m_requestStart = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: {:50", 0);
 		m_requestCompletion = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: }:250", 0);
 		m_repo = DefaultFactory.getFactory().createRepo();
-		
-		
 	}
 
 	public IRequestRepository getRepo() {
@@ -148,22 +140,9 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 		IConfig config = new WebXmlConfigImpl(servletContextEvent.getServletContext());
 		DefaultFactory.getFactory().setConfig(config);//make this available GLOBALLY to the rest of the program.
 
-		try {
-			 IImportExportMgr iem = DefaultFactory.getFactory().getImportExportManager();
-			 iem.setRepo( getRepo() );
-			 iem.setExportDir( DefaultFactory.getFactory().getConfig().getExportDir() );
-			 
-			 iem.addImporter(  DefaultFactory.getFactory().getDynaTracePurePathImporter() );
-			 iem.addImporter(  DefaultFactory.getFactory().getRawSqlTextRequestImporter() );
-			 iem.addImporter(  DefaultFactory.getFactory().getRequestImporter() );
-			 
-			 iem.importAtSystemStartup();
-			
-		} catch (Exception e) {
-			LOG.error( DefaultFactory.getFactory().getMessages().getImportExportInitError() );
-			e.printStackTrace();
-		}
-		
+		 IImportExportMgr iem = DefaultFactory.getFactory().getImportExportManager();
+		 iem.setRepo( getRepo() );
+		 iem.setExportDir( DefaultFactory.getFactory().getConfig().getExportDir() );
 		
 		try {
 			m_requestConnection = getRequestConnection();
@@ -184,6 +163,15 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			 
+			 iem.importAtSystemStartup();
+			
+		} catch (Exception e) {
+			LOG.error( DefaultFactory.getFactory().getMessages().getImportExportInitError() );
 			e.printStackTrace();
 		}
 		
