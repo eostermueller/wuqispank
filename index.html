@@ -58,7 +58,7 @@ New October 26, 2014:  We now have support for DB2!
 With wuqiSpank, we finally have a tool that helps developers understand and take responsibility for the performance of their code's SQL data access strategy.
 
 <ul>
-<li>Like no other tool in the industry, wuqiSpank's unique <a href="http://eostermueller.github.io/wuqispank/images/uc1.png">table centric" sequence diagrams</a> show the 'roles' that each table plays in a well-known <a href="http://ostermueller.blogspot.com/2014/10/chatty-sql-performance-anti-patterns.html">SQL performance anti-pattern</a>. wuqiSpank shows 'parent' and 'child' roles for tables.  There are other roles that tables play, ones that heavily impact performance. Look for these roles in the November 15 release.</li>	
+<li>Like no other tool in the industry, wuqiSpank's unique <a href="http://eostermueller.github.io/wuqispank/images/uc1.png">"table centric" sequence diagrams</a> show the 'roles' that each table plays in a well-known <a href="http://ostermueller.blogspot.com/2014/10/chatty-sql-performance-anti-patterns.html">SQL performance anti-pattern</a>. wuqiSpank shows 'parent' and 'child' roles for tables.  There are other roles that tables play, ones that heavily impact performance. Look for these roles in the November 15 release.</li>	
 <li>How does wuqiSpank get your SQL? <a href="https://github.com/eostermueller/wuqispank/wiki/Getting-Started#step-2-feeding-sql-to-wuqispank">Manual import (all platforms) or live SQL tracing (Java only).</a> </li>
 <li>For Java applications, wuqiSpank shows the <a href="http://eostermueller.github.io/wuqispank/images/stackTrace.png">exact line of Java code</a> that executed SQL statement.</li>
 <li>Will performance suffer when moving from a small dev database to a large prod db?  wuqiSpank has a plan to help avoid that.  More details coming soon on this (by November 15, 2014)</li>
@@ -68,9 +68,6 @@ With wuqiSpank, we finally have a tool that helps developers understand and take
 </p>
 
 <p></p>
-        
-
-
 
           <h3>
 <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Are you a DynaTrace user?</h3>
@@ -78,8 +75,10 @@ With wuqiSpank, we finally have a tool that helps developers understand and take
 <p> <a href="https://community.compuwareapm.com/community/pages/viewpage.action?pageId=169902115">Vote here (DT Community Logon required)</a> to get wuqiSpank functionality added to <a href="http://www.compuware.com/en_us/application-performance-management/products/dynatrace-free-trial.html">DynaTrace</a>.</p>
 
 <p></p>
-        
-          
+<h3>
+<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Chunky Outperforms Chatty</h3>
+wuqiSpank aims to help developers address the #1 performance problem in enterprise software (<a href="http://apmblog.compuware.com/2010/06/15/top-10-performance-problems-taken-from-zappos-monster-and-co">too many calls to DB</a>.
+This <a href="http://ostermueller.blogspot.com/2014/10/chunky-outperforms-chatty.html">sample code and performce test</a> shows how a 'chunky' SQL data access strategy outperforms 'chatty'.  But don't take my word for it, download and run the 5 different samples yourself.           
 <h3>
 <a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>wuqiSpank.  Best name ever for a monitoring tool?</h3>
 We challenge you to find a monitoring tool with a better name than wuqiSpank.
