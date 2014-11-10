@@ -24,5 +24,9 @@ public interface ITable extends IBaseTable {
 	public void setShouldBeCached(boolean val);
 
 	public abstract IColumn getColumn(int val);
+
+	boolean isGrowthTable();
+
+	void setGrowthTable(boolean val);
 	
 }

@@ -24,18 +24,9 @@
     </context-param>	
   <context-param>
         <param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name>
-        <!--  <param-value>org.headlessintrace.jdbc.HsqldbProvider</param-value> -->
-        <!-- <param-value>org.headlessintrace.jdbc.PostgresProvider</param-value> -->
-        <param-value>org.wuqispank.web.WebXmlConfigImpl</param-value>
+        <param-value>org.headlessintrace.jdbc.OracleProvider</param-value> 
     </context-param>
     <context-param>
-        <param-name>java.sql.Statement.implementors</param-name>
-        <param-value>com.ibm.db2.jcc.DB2Statement</param-value>
-    </context-param>
-    <context-param>
-        <param-name>java.sql.Connection.implementors</param-name>
-        <param-value>com.ibm.db2.jcc.b.bb</param-value>
-    </context-param>	<context-param>
         <param-name>export-dir</param-name>
         <param-value>./export-dir</param-value>
     </context-param>	

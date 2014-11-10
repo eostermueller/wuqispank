@@ -70,6 +70,7 @@ public class HomePage extends BasePage
 			{
 				IRequestWrapper request = item.getModelObject();
 				item.add(RequestDetail.link("details", request, "foo"));
+				item.add(new Label("col.agent.time", new PropertyModel(request,"agentDateTimeString" ) ));
 				item.add(new Label("col.sql.statement.count", 	new PropertyModel(request,"sqlStatementCount" ) ));
 				item.add(new Label("col.table.count", 	new PropertyModel(request,"tableCount" ) ));
 				item.add(new Label("col.column.count", 	new PropertyModel(request,"columnCount" ) ));

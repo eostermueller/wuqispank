@@ -116,6 +116,12 @@ public class RequestDetail extends AuthenticatedWebPage {
 		//addCssSwitchingLinks();
 		//add( new Label("sqlStatementCount", getModelRequest().getEvents().size()));
 
+		//add(new Label("exampleTitle", "hmmmm"));
+
+		Label label = new Label("sqlStatementCount", new PropertyModel(getRequestWrapper(), "sqlStatementCount"));
+		
+		add(label);
+		
 	     // Add a FeedbackPanel for displaying our messages
         FeedbackPanel feedbackPanel = new FeedbackPanel("feedback");
         add(feedbackPanel);
@@ -143,15 +149,12 @@ public class RequestDetail extends AuthenticatedWebPage {
             }
         });
         
-		Label label = new Label("sqlStatementCount", new PropertyModel(getRequestWrapper(), "sqlStatementCount"));
-		
-		add(label);
 //		initProgressBar();
 
 		// create a list of ITab objects used to feed the tabbed panel
 		final List<ITab> tabs = new ArrayList<ITab>();
 
-		tabs.add(new AbstractTab(new Model<String>("first tab"))
+		tabs.add(new AbstractTab(new Model<String>("SQL Sequence Diagram"))
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -163,7 +166,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 
 		});
 
-		tabs.add(new AbstractTab(new Model<String>("second tab"))
+		tabs.add(new AbstractTab(new Model<String>("SQL Text"))
 		{
 			private static final long serialVersionUID = 1L;
 
@@ -174,7 +177,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 			}
 
 		});
-
+/*
 		tabs.add(new AbstractTab(new Model<String>("third tab"))
 		{
 			private static final long serialVersionUID = 1L;
@@ -186,7 +189,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 			}
 
 		});
-
+*/
 		setTabbedPanel(new BookmarkableTabbedPanel2<ITab>("tabs", tabs, getLocalPageParameters()));
 		getTabbedPanel().add(AttributeModifier.replace("class", RequestDetail.this.getDefaultModel()));
 		add(getTabbedPanel());
@@ -339,7 +342,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 	 * @author Igor Vaynberg (ivaynberg)
 	 * 
 	 */
-	private class TabPanel1 extends Panel
+	private class TabPanel2 extends Panel
 	{
 
 		private static final long serialVersionUID = 1L;
@@ -350,7 +353,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 		 * @param id
 		 *            component id
 		 */
-		public TabPanel1(String id)
+		public TabPanel2(String id)
 		{
 			super(id);
 			
@@ -407,7 +410,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 	 * @author Erik Ostermueller
 	 * 
 	 */
-	private class TabPanel2 extends Panel
+	private class TabPanel1 extends Panel
 	{
 		private static final long serialVersionUID = 1L;
 
@@ -417,7 +420,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 		 * @param id
 		 *            component id
 		 */
-		public TabPanel2(String id)
+		public TabPanel1(String id)
 		{
 			super(id);
 			

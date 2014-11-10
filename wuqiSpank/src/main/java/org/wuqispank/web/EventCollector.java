@@ -135,7 +135,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		LOG.debug("Entering contextInitialized");
-		System.out.println("!!Entering contextInitialized");
+		//System.out.println("!!Entering contextInitialized");
 		
 		IConfig config = new WebXmlConfigImpl(servletContextEvent.getServletContext());
 		DefaultFactory.getFactory().setConfig(config);//make this available GLOBALLY to the rest of the program.
@@ -175,7 +175,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			e.printStackTrace();
 		}
 		
-		
+		System.out.println("wuqiSpank started.  Export dir=" + config.getExportDir().getAbsolutePath() );
 	}
 	
 	/**
@@ -259,7 +259,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
 			
 			try {
-				LOG.warn("Event count ["  + request.getEvents().size() + "]");
+				LOG.warn("Adding full request with event count ["  + request.getEvents().size() + "]");
 				requestWrapper.setRequest(request);
 				getRepo().add(requestWrapper);
 			} catch (WuqispankException e) {

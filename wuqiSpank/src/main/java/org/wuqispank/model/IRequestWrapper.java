@@ -48,4 +48,6 @@ public interface IRequestWrapper extends Serializable {
 
 	ISqlWrapper createBlankSqlWrapper() throws WuqispankException;
 
+	String getAgentDateTimeString();
+
 }

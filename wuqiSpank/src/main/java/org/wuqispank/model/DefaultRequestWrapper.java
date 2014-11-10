@@ -1,7 +1,9 @@
 package org.wuqispank.model;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.headlessintrace.client.model.ITraceEvent;
@@ -237,6 +239,22 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 	@Override
 	public void setUniqueId(String val) {
 		getRequest().setUniqueId(val);
+	}
+    private static final String SIMPLE_DATE_FORMAT_PATTERN = "yyyy-MM-dd kk:mm:ss.SSS";
+	private SimpleDateFormat dateFormat = new SimpleDateFormat(SIMPLE_DATE_FORMAT_PATTERN);
+    public synchronized String format(Date date) {
+        return dateFormat.format(date);
+    }
+	@Override
+	public String getAgentDateTimeString() {
+		if (getSql() !=null && getSql().size() <1)
+			throw new RuntimeException("While retrieving the request timestamp, couldn't find a single SQL stmt for ["  + this.getUniqueId() + "]");
+		
+		ISqlWrapper firstSql = getSql().get(0);
+		
+		Date d = new Date(firstSql.getLousyDateTimeMillis());
+		
+		return format(d);
 	}
 
 //	@Override

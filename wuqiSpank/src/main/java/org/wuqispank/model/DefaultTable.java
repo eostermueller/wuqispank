@@ -15,6 +15,7 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 	private String m_schema = ISqlModel.NOT_SPECIFIED;
 	private String m_alias = ISqlModel.NOT_SPECIFIED;
 	private boolean m_shouldBeCached = false;
+	private boolean m_isGrowthTable = false;
 	
 	
 	public DefaultTable(String tableName) {
@@ -94,7 +95,14 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 	@Override
 	public void setShouldBeCached(boolean val) {
 		this.m_shouldBeCached = val;
-		
+	}
+	@Override
+	public void setGrowthTable(boolean val) {
+		this.m_isGrowthTable = val;
+	}
+	@Override
+	public boolean isGrowthTable() {
+		return m_isGrowthTable;
 	}
 	
 }

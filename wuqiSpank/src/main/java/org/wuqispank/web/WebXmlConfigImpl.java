@@ -25,6 +25,7 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 	private static final String WEB_XML_INTRACE_AGENT_HOST = "intrace-agent-host";
 	private static final String WEB_XML_INTRACE_AGENT_PORT = "intrace-agent-port";
 	private static final String WEB_XML_CSV_TABLES_THAT_SHOULD_BE_CACHED = "csv-tables-that-should-be-cached";
+	private static final String WEB_XML_CSV_GROWTH_TABLES = "csv-growth-tables";
 	private static final String WEB_XML_CIRCULAR_REQUEST_BUFFER_SIZE = "circular-request-buffer-size";
 	public static final String WEB_XML_EXPORT_DIR = "export-dir";
 	private static final String WEB_XML_RECONNECT_INTERVAL = "reconnect-interval-seconds";
@@ -43,6 +44,7 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 	private static final int DEFAULT_CIRCULAR_BUFFER_SIZE = 10000;
 
 	public static final String WEB_XML_CACHED_TABLES = "cached-tables";
+	public static final String WEB_XML_GROWTH_TABLES = "growth-tables";
 
 	public static final String RAW_SQL_REQUEST_DELIMITER = "~";
 
@@ -54,6 +56,7 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 	private transient ServletContext m_servletContext;
 
 	private Map<String, Object> m_namesOfTablesThatShouldBeCached = new Hashtable<String,Object>();
+	private Map<String, Object> m_namesOfGrowthTables = new Hashtable<String,Object>();
 
 	private ServletContext getServletContext() {
 		return m_servletContext;
@@ -68,6 +71,7 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 		this.m_servletContext = servletContext;
 		
 		initCachedTables();
+		initGrowthTables();
 	}
 
 
@@ -78,6 +82,17 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 			for(String oneTableName : tablesThatShouldBeCached) {
 				this.setTableShouldBeCached(oneTableName.trim());
 				LOG.info("Web.xml parameter [" + WEB_XML_CACHED_TABLES + "].  Table [" + oneTableName + "] will be marked as 'should be cached.'");
+			}
+		}
+		
+	}
+	private void initGrowthTables() {
+		String temp = this.getServletContext().getInitParameter(WEB_XML_GROWTH_TABLES);
+		if (temp!=null && temp.trim().length()> 0) {
+			String[] growthTables = temp.split(",");
+			for(String oneTableName : growthTables) {
+				this.setGrowthTable(oneTableName.trim());
+				LOG.info("Web.xml parameter [" + WEB_XML_GROWTH_TABLES + "].  Table [" + oneTableName + "] will be marked as 'growth table.'");
 			}
 		}
 		
@@ -297,6 +312,15 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 	@Override
 	public boolean shouldTableBeCached(String tableName) {
 		return this.m_namesOfTablesThatShouldBeCached.containsKey(tableName);
+	}
+	@Override
+	public void setGrowthTable(String tableName) {
+		this.m_namesOfGrowthTables.put(tableName, tableName);
+		
+	}
+	@Override
+	public boolean isGrowthTable(String tableName) {
+		return this.m_namesOfGrowthTables.containsKey(tableName);
 	}
 
 	@Override

@@ -33,4 +33,6 @@ public interface IConfig {
 	String getRawSqlStmtDelimiter();
 	String getRawSqlRequestDelimiter();
 	long getExportDirListenerIntervalInSeconds();
+	boolean isGrowthTable(String tableName);
+	void setGrowthTable(String tableName);
 }

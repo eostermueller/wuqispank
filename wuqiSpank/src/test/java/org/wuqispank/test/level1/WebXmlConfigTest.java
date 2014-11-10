@@ -57,4 +57,21 @@ public class WebXmlConfigTest {
 		assertFalse("Table helloWorld incorrectly marked as 'should be cached'", helloWorldTable.shouldBeCached());
 		
 	}
+	@Test
+	public void canFlagGrowthTables() {
+		Map<String,String> ht = new Hashtable<String,String>();
+		ht.put(WebXmlConfigImpl.WEB_XML_GROWTH_TABLES, "foo,bar");		
+		ServletContext ctx = new TestServletContext(ht);
+		
+		IConfig config = new WebXmlConfigImpl(ctx);
+		IFactory testFactory = new DefaultFactory();
+		testFactory.setConfig(config);
+		ITable fooTable = testFactory.getTable("foo");
+		assertTrue("Table foo was not correctly marked as 'should be growth'", fooTable.isGrowthTable());
+		ITable barTable = testFactory.getTable("bar");
+		assertTrue("Table bar was not correctly marked as 'should be growth'", barTable.isGrowthTable());
+		ITable helloWorldTable = testFactory.getTable("helloWorld");
+		assertFalse("Table helloWorld incorrectly marked as 'growth table'", helloWorldTable.isGrowthTable());
+		
+	}
 }

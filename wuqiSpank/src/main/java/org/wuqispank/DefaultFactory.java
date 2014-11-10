@@ -147,6 +147,8 @@ public class DefaultFactory implements IFactory {
 		ITable t = new DefaultTable(tableName);
 		if (this.getConfig()!=null)
 			t.setShouldBeCached( this.getConfig().shouldTableBeCached(tableName) );
+		if (this.getConfig()!=null)
+			t.setGrowthTable( this.getConfig().isGrowthTable(tableName) );
 		return t;
 	}
 	@Override

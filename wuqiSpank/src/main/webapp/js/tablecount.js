@@ -121,7 +121,7 @@
 			style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
 			style[mxConstants.STYLE_FONTSIZE] = 10;
 			delete style[mxConstants.STYLE_ROUNDED];
-			style[mxConstants.STYLE_FILLCOLOR] = '#CC0000';
+			style[mxConstants.STYLE_FILLCOLOR] = '#0077CC'; //an icy blue for static/cached data
 			style[mxConstants.STYLE_STROKECOLOR] = '#FFFFFF';
 			style[mxConstants.STYLE_FONTCOLOR] = '#FFFFFF';
 			style[mxConstants.STYLE_FONTSIZE] = 36;
@@ -130,7 +130,24 @@
   			style[mxConstants.STYLE_LABEL_POSITION] = mxConstants.ALIGN_CENTER;
 
 			graph.getStylesheet().putCellStyle('wsTableCacheHeader', style);
+
+			//Start of growth header
+			style = mxUtils.clone(style);
+			style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_ELLIPSE;
+			style[mxConstants.STYLE_PERIMETER] = mxPerimeter.EllipsePerimeter;
+			style[mxConstants.STYLE_FONTSIZE] = 10;
+			delete style[mxConstants.STYLE_ROUNDED];
+			style[mxConstants.STYLE_FILLCOLOR] = '#CC0000';
+			style[mxConstants.STYLE_STROKECOLOR] = '#FFFFFF';
+			style[mxConstants.STYLE_FONTCOLOR] = '#FFFFFF';
+			style[mxConstants.STYLE_FONTSIZE] = 36;
+  			style[mxConstants.STYLE_ALIGN] = mxConstants.ALIGN_CENTER;
+  			style[mxConstants.STYLE_VERTICAL_ALIGN] = mxConstants.ALIGN_MIDDLE;
+  			style[mxConstants.STYLE_LABEL_POSITION] = mxConstants.ALIGN_CENTER;
+
+			graph.getStylesheet().putCellStyle('wsTableGrowthHeader', style);
 			
+			//end of growth header			
 											
 			style = mxUtils.clone(style);
 			style[mxConstants.STYLE_SHAPE] = mxConstants.SHAPE_RHOMBUS;

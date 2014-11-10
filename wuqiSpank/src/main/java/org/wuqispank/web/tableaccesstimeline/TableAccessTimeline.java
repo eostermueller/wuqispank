@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.model.IRequestWrapper;
@@ -14,6 +16,7 @@ import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.model.ITable;
 import org.wuqispank.model.ITableOrderMgr;
 import org.wuqispank.model.SqlType;
+import org.wuqispank.web.EventCollector;
 
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.layout.mxStackLayout;
@@ -38,6 +41,7 @@ import com.mxgraph.view.mxSwimlaneManager;
  *
  */
 public class TableAccessTimeline extends WebMarkupContainer {
+	static Logger LOG = LoggerFactory.getLogger(TableAccessTimeline.class);
 	private GraphContext m_ctx = null;
 	GraphContext ctx() {
 		return m_ctx;
@@ -50,6 +54,7 @@ public class TableAccessTimeline extends WebMarkupContainer {
 	public static final String STYLE_WUQISPANK_ROW_EVEN = "wsRowEven";
 	public static final String STYLE_WUQISPANK_TABLE_HEADER = "wsTableHeader";
 	public static final String STYLE_WUQISPANK_TABLE_CACHE_HEADER = "wsTableCacheHeader";
+	public static final String STYLE_WUQISPANK_TABLE_GROWTH_HEADER = "wsTableGrowthHeader";
 	public static final String STYLE_WUQISPANK_TABLE_VERTICAL = "tableVertical";
 	//public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/stock_draw-sphere.png";
 	public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/i_select.png";
@@ -254,7 +259,17 @@ public class TableAccessTimeline extends WebMarkupContainer {
 	}
 	private void insertTableName(mxGraph graph, Object pool, Object tablesHeaderLane, Object tablesFooterLane, ITable table, int tableCount, int x) {
 		
-		String backgroundCssStyle =  table.shouldBeCached() ? this.STYLE_WUQISPANK_TABLE_CACHE_HEADER : STYLE_WUQISPANK_TABLE_HEADER; 
+		String backgroundCssStyle =  STYLE_WUQISPANK_TABLE_HEADER;
+		
+		if (table.isGrowthTable()) {
+			backgroundCssStyle = this.STYLE_WUQISPANK_TABLE_GROWTH_HEADER;
+			LOG.error("Table [" + table.getName() + "] is a growth table.  using style [" + backgroundCssStyle + "]");
+		} else if (table.shouldBeCached() ) { 
+			backgroundCssStyle = this.STYLE_WUQISPANK_TABLE_CACHE_HEADER;
+			LOG.error("Table [" + table.getName() + "] is a cache table.  using style [" + backgroundCssStyle + "]");
+		} else {
+			LOG.error("Table [" + table.getName() + "] is neither cache nor growth.  using style [" + backgroundCssStyle + "]");
+		}
     	
     	mxICell table1Header = (mxICell)graph.insertVertex(tablesHeaderLane,  null, tableCount, x, 0, 50, 50, backgroundCssStyle);
     	mxICell table1Footer = (mxICell)graph.insertVertex(tablesFooterLane,  null, tableCount, x, 0, 50, 50, backgroundCssStyle);
