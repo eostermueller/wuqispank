@@ -46,4 +46,13 @@ public interface ISqlModel {
 	void setSqlType(SqlType val);
 	Throwable getParseException();
 	void setParseException(Throwable val);
+	void setParser(Class clazz);
+	/**
+	 * Fuller featured parsers are can extract more data items, but they're also more vulnerable
+	 * to parsing errors on vendor-specific SQL.
+	 * @return
+	 */
+	Class getParser();
+	List<ITable> toTableList(String[] ary);
+	List<ITable> getTables();
 }

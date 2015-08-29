@@ -1,17 +1,33 @@
 package org.wuqispank.web;
 
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.rmi.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.Query;
+import javax.management.ReflectionException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.headlessintrace.client.IntraceException;
 import org.headlessintrace.client.connection.Callback;
 import org.headlessintrace.client.connection.DefaultCallback;
@@ -70,6 +86,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 
 	private static final long serialVersionUID = -4953960682833247515L;
 	public static final String WUQISPANK_REPO = "org.wuqispankSingletonInMemoryRepository";
+	private static final String DEFAULT_CONTEXT = "wuqiSpank";
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
@@ -135,6 +152,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		LOG.debug("Entering contextInitialized");
+		
 		//System.out.println("!!Entering contextInitialized");
 		
 		IConfig config = new WebXmlConfigImpl(servletContextEvent.getServletContext());
@@ -175,7 +193,9 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			e.printStackTrace();
 		}
 		
-		System.out.println("wuqiSpank started.  Export dir=" + config.getExportDir().getAbsolutePath() );
+		System.out.println(DefaultFactory.getFactory().getMessages().getStartupBanner1());
+		System.out.println(DefaultFactory.getFactory().getMessages().getStartupBanner2(config.getExportDir()));
+		System.out.println(DefaultFactory.getFactory().getMessages().getStartupBanner1());
 	}
 	
 	/**
@@ -236,11 +256,11 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 		IJdbcProvider provider = DefaultFactory.getFactory().getJdbcProvider();
 		for(String className : provider.getConnectionPackageAndClass()) {
 			output.append("|");  // the use of | is documented here: https://github.com/mchr3k/org.intrace/issues/21
-			output.append(className);
+			output.append(className.trim());
 		}
 		for(String className : provider.getStatementPackageAndClass() ) {
 			output.append("|"); // the use of | is documented here: https://github.com/mchr3k/org.intrace/issues/21
-			output.append(className);
+			output.append(className.trim());
 		}
 		ClassInstrumentationCommand cicRC = new ClassInstrumentationCommand();
 		cicRC.setIncludeClassRegEx(output.toString());
@@ -259,7 +279,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			IRequestWrapper requestWrapper = DefaultFactory.getFactory().getRequestWrapper();
 			
 			try {
-				LOG.warn("Adding full request with event count ["  + request.getEvents().size() + "]");
+				LOG.debug("Adding full request with event count ["  + request.getEvents().size() + "]");
 				requestWrapper.setRequest(request);
 				getRepo().add(requestWrapper);
 			} catch (WuqispankException e) {
@@ -310,6 +330,8 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 		
 		return filter;
 	}
+
+
 	class ProgressMeterCallback extends DefaultCallback {
 
 		@Override

@@ -1,12 +1,8 @@
-package org.wuqispank.db.foundationdb;
+package org.wuqispank.db.akiban;
 
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
+
 import java.util.Iterator;
-import java.util.List;
 
-import org.apache.wicket.MarkupContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
@@ -18,26 +14,26 @@ import org.wuqispank.model.IColumn;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 import org.wuqispank.model.SqlType;
-import org.wuqispank.web.RequestDetail;
 
-import com.foundationdb.sql.StandardException;
-import com.foundationdb.sql.parser.BinaryOperatorNode;
-import com.foundationdb.sql.parser.ColumnReference;
-import com.foundationdb.sql.parser.CursorNode;
-import com.foundationdb.sql.parser.FromBaseTable;
-import com.foundationdb.sql.parser.FromList;
-import com.foundationdb.sql.parser.FromTable;
-import com.foundationdb.sql.parser.JoinNode;
-import com.foundationdb.sql.parser.NodeTypes;
-import com.foundationdb.sql.parser.QueryTreeNode;
-import com.foundationdb.sql.parser.SQLParser;
-import com.foundationdb.sql.parser.SQLParserContext;
-import com.foundationdb.sql.parser.SelectNode;
-import com.foundationdb.sql.parser.StatementNode;
-import com.foundationdb.sql.parser.TableName;
-import com.foundationdb.sql.parser.ValueNode;
-import com.foundationdb.sql.parser.Visitable;
-import com.foundationdb.sql.parser.Visitor;
+import com.akiban.sql.StandardException;
+import com.akiban.sql.parser.BinaryOperatorNode;
+import com.akiban.sql.parser.ColumnReference;
+import com.akiban.sql.parser.CursorNode;
+import com.akiban.sql.parser.FromBaseTable;
+import com.akiban.sql.parser.FromList;
+import com.akiban.sql.parser.FromTable;
+import com.akiban.sql.parser.JoinNode;
+import com.akiban.sql.parser.NodeTypes;
+import com.akiban.sql.parser.QueryTreeNode;
+import com.akiban.sql.parser.SQLParser;
+import com.akiban.sql.parser.SQLParserContext.IdentifierCase;
+import com.akiban.sql.parser.SelectNode;
+import com.akiban.sql.parser.StatementNode;
+import com.akiban.sql.parser.TableName;
+import com.akiban.sql.parser.ValueNode;
+import com.akiban.sql.parser.Visitable;
+import com.akiban.sql.parser.Visitor;
+
 
 
 
@@ -46,10 +42,11 @@ import com.foundationdb.sql.parser.Visitor;
  * @author erikostermueller
  *
  */
-public class FoundationDBSqlParser implements ISqlParser {
-	private static final Logger log = LoggerFactory.getLogger(FoundationDBSqlParser.class);
+public class AkibanSqlParser implements ISqlParser {
+	private static final Logger log = LoggerFactory.getLogger(AkibanSqlParser.class);
 	private boolean ynUpdateOrDelete = false;
 	private ISqlModel m_sqlModel;
+	private boolean retryParseWithoutSelectList;
 
 	@SuppressWarnings("static-access")
 	@Override
@@ -211,22 +208,15 @@ public class FoundationDBSqlParser implements ISqlParser {
             			ValueNode left = binaryOperatorNode.getLeftOperand();
             			ValueNode right = binaryOperatorNode.getRightOperand();
             			IBinaryOperatorExpression expr = DefaultFactory.getFactory().getBinaryOperatorExpression();
-            			IColumn leftColumn = getSqlModel().findSelectListColumn(
-            					binaryOperatorNode.getLeftOperand().getColumnName(), 
-            					binaryOperatorNode.getLeftOperand().getTableName()); 
-            			if (leftColumn == null) {
-            				leftColumn = getSqlModel().addWhereClauseColumn(binaryOperatorNode.getLeftOperand().getTableName(), binaryOperatorNode.getLeftOperand().getColumnName());
-            			}
-        				//log.debug("Probably need to add more code to get details of a literal value in the SQL statement. Could not find left column [" + binaryOperatorNode.getLeftOperand().getColumnName() + "] in table [" + binaryOperatorNode.getLeftOperand().getTableName() + "] ");
 
+            			IColumn leftColumn = getSqlModel().addWhereClauseColumn(
+        						binaryOperatorNode.getLeftOperand().getTableName(), 
+        						binaryOperatorNode.getLeftOperand().getColumnName());
             			expr.setLeftColumn( leftColumn );
 
-            			IColumn rightColumn = getSqlModel().findSelectListColumn(
-            					binaryOperatorNode.getRightOperand().getColumnName(), 
-            					binaryOperatorNode.getRightOperand().getTableName()); 
-            			if (rightColumn == null) {
-               				rightColumn = getSqlModel().addWhereClauseColumn(binaryOperatorNode.getRightOperand().getTableName(), binaryOperatorNode.getRightOperand().getColumnName());
-            			}
+               			IColumn rightColumn = getSqlModel().addWhereClauseColumn(
+               					binaryOperatorNode.getRightOperand().getTableName(), 
+               					binaryOperatorNode.getRightOperand().getColumnName());
                			expr.setRightColumn( rightColumn );
             			//log.debug("Probably need to add more code to get details of a literal value in the SQL statement. Could not find right column [" + binaryOperatorNode.getRightOperand().getColumnName() + "] in table [" + binaryOperatorNode.getRightOperand().getTableName() + "] ");
             			
@@ -294,6 +284,12 @@ public class FoundationDBSqlParser implements ISqlParser {
 	@Override
 	public ISqlModel getSqlModel() {
 		return m_sqlModel;
+	}
+
+	@Override
+	public void setRetryParseWithoutSelectList(boolean b) {
+		// TODO Auto-generated method stub
+		
 	}
  
 }

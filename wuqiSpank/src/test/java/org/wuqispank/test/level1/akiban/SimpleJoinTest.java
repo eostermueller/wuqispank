@@ -1,4 +1,4 @@
-package org.wuqispank.test.level1.foundationdb;
+package org.wuqispank.test.level1.akiban;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.SqlParseException;
-import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
+import org.wuqispank.db.akiban.AkibanSqlParser;
 import org.wuqispank.model.IBinaryOperatorExpression;
 import org.wuqispank.model.IColumn;
 import org.wuqispank.model.ISqlModel;
@@ -25,7 +25,7 @@ public class SimpleJoinTest {
 
 	//@Test
 	public void canParseSqlTableNames() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(TWO_TABLE_SELECT_SQL);
@@ -43,7 +43,7 @@ public class SimpleJoinTest {
 	}
 	@Test
 	public void canParseThreeTableNames() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(THREE_TABLE_SELECT_SQL_FULLY_QUALIFIED_JOIN_FIELDS);
@@ -61,7 +61,7 @@ public class SimpleJoinTest {
 	}
 	@Test
 	public void canParseJoinExpressionsWithQualifiedJoinFields() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(THREE_TABLE_SELECT_SQL_FULLY_QUALIFIED_JOIN_FIELDS);
@@ -73,7 +73,7 @@ public class SimpleJoinTest {
 	}
 	@Test
 	public void canParseJoinExpressionsWithoutHelpFromQualifiedJoinFields() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(THREE_TABLE_SELECT_SQL_NO_FULLY_QUALIFIED_JOIN_FIELDS);

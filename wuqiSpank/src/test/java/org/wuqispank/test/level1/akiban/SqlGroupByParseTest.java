@@ -1,4 +1,4 @@
-package org.wuqispank.test.level1.foundationdb;
+package org.wuqispank.test.level1.akiban;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.SqlParseException;
-import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
+import org.wuqispank.db.akiban.AkibanSqlParser;
 import org.wuqispank.model.IBinaryOperatorExpression;
 import org.wuqispank.model.IColumn;
 import org.wuqispank.model.ISqlModel;
@@ -29,7 +29,7 @@ public class SqlGroupByParseTest {
 
 	@Test
 	public void canParseJoinTables() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(SQL_WITH_AGGREGATION);

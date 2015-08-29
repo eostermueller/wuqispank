@@ -10,4 +10,5 @@ public interface ISqlParser {
 	void init();
 	void setSqlModel(ISqlModel s);
 	public abstract ISqlModel getSqlModel();
+	void setRetryParseWithoutSelectList(boolean b);
 }

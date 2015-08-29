@@ -4,7 +4,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.db.ISqlParser;
-import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
+import org.wuqispank.db.TrivialSqlParser;
+import org.wuqispank.db.akiban.AkibanSqlParser;
 import org.wuqispank.importexport.DefaultExportDirListener;
 import org.wuqispank.importexport.DefaultImportExportMgr;
 import org.wuqispank.importexport.DefaultRequestExporter;
@@ -39,10 +40,6 @@ import org.wuqispank.model.IStackTrace;
 import org.wuqispank.model.ITable;
 import org.wuqispank.model.ITableOrderMgr;
 import org.wuqispank.model.InMemoryRequstRepo;
-import org.wuqispank.ta_OLD.DefaultTableHeaderConfiguration;
-import org.wuqispank.ta_OLD.ITableHeaderConfiguration;
-import org.wuqispank.ta_OLD.ITableHeaderRenderer;
-import org.wuqispank.tablecount_DEPRECATED.DefaultTableHeaderRenderer;
 import org.wuqispank.web.IConfig;
 import org.wuqispank.web.IFactory;
 import org.wuqispank.web.msgs.AmericanEnglishMessages;
@@ -157,20 +154,21 @@ public class DefaultFactory implements IFactory {
 	}
 	@Override
 	public ISqlParser getSqlParser() {
-		return new FoundationDBSqlParser();
+		return new AkibanSqlParser();
 	}
+	
 	@Override
 	public IStackTrace getStackTrace() {
 		return new DefaultStackTrace();
 	}
-	@Override
-	public ITableHeaderConfiguration getTableHeaderConfiguration() {
-		return new DefaultTableHeaderConfiguration();
-	}
-	@Override
-	public ITableHeaderRenderer getTableHeaderRenderer() {
-		return new DefaultTableHeaderRenderer();
-	}
+//	@Override
+//	public ITableHeaderConfiguration getTableHeaderConfiguration() {
+//		return new DefaultTableHeaderConfiguration();
+//	}
+//	@Override
+//	public ITableHeaderRenderer getTableHeaderRenderer() {
+//		return new DefaultTableHeaderRenderer();
+//	}
 	@Override
 	public IBinaryOperatorExpression getBinaryOperatorExpression() {
 		return new DefaultBinaryOperatorExpression();
@@ -269,5 +267,9 @@ public class DefaultFactory implements IFactory {
 	@Override
 	public void setImportExportManager(IImportExportMgr val) {
 		m_importExportMgr = val;
+	}
+	@Override
+	public ISqlParser getSecondarySqlParser() {
+		return new TrivialSqlParser();
 	}
 }

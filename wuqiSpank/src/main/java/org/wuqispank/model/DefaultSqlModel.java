@@ -12,9 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
 
 public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
-	
 	private static final Logger log = LoggerFactory.getLogger(DefaultSqlModel.class);
-	private static final String TABLE_LIST_DELIMETER = ", ";
+	private static final String TABLE_LIST_DELIMETER = ",";
 	private int m_columnCount;
 	private List<ITable> m_tables = new ArrayList<ITable>();
 	private IRequest m_request;
@@ -23,6 +22,8 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	private IModelObservationMgr m_observationMgr = null;
 	private SqlType m_sqlType;
 	private Throwable m_parseException;
+	private Class sqlParser = null;
+	
 
 	private IModelObservationMgr getObservationMgr() {
 		
@@ -68,6 +69,25 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 				t.addColumn(c);
 			}
 		}
+		
+		for(IBinaryOperatorExpression boe : getBinaryOperatorExpressions() ) {
+			
+			IColumn c = boe.getLeftColumn();
+			ITable t = findTableGivenAlias(c.getTableAlias());
+			if (t!=null) {
+				c.setTable(t);
+				t.addColumn(c);
+			}
+			
+			c = boe.getRightColumn();
+			if (c!=null) {
+				t = findTableGivenAlias(c.getTableAlias());
+				if (t!=null) {
+					c.setTable(t);
+					t.addColumn(c);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -101,7 +121,8 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 		
 		return sb.toString();
 	}
-	private List<ITable> getTables() {
+	@Override
+	public List<ITable> getTables() {
 		return m_tables;
 	}
 	/**
@@ -124,22 +145,32 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	@Override
 	public IColumn addWhereClauseColumn(String tableAlias, String columnName) {
 		log.debug("Adding where clause tab.col [" + tableAlias + "." + columnName + "]");
-		IColumn c = DefaultFactory.getFactory().getColumn();
-		c.setName(columnName);
-		ITable t = null;
-		t = findTableGivenAlias(tableAlias);
-		if (t==null) {
-			if (getTables().size()==1) {
-				t = getTables().get(0);
+		
+		IColumn rc = findSelectListColumn(columnName, tableAlias);
+		if (rc == null) {
+			rc = DefaultFactory.getFactory().getColumn();
+			rc.setName(columnName);
+			rc.setTableAlias(tableAlias);
+			ITable t = null;
+			t = findTableGivenAlias(tableAlias);
+			if (t==null) {
+				if (getTables().size()==1) {
+					t = getTables().get(0);
+				} 
+//				else {
+//					t = DefaultFactory.getFactory().getTable(null);//this.resolveColumnAliases() will be called later to find this table name.
+//					t.setAlias(tableAlias); 
+//				}
+			}
+			
+			if (t!=null) {
+				rc.setTable(t);
+				t.addColumn(rc);
 			}
 		}
-		
-		if (t!=null) {
-			c.setTable(t);
-			t.addColumn(c);
-			return c;
-		}
-		return null;
+		if (!rc.validate())
+			rc = null;
+		return rc;
 	}
 	
 
@@ -320,6 +351,25 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	@Override
 	public Throwable getParseException() {
 		return m_parseException;
+	}
+
+	@Override
+	public void setParser(Class clazz) {
+		this.sqlParser = clazz;
+	}
+
+	@Override
+	public Class getParser() {
+		return this.sqlParser;
+	}
+
+	@Override
+	public List<ITable> toTableList(String[] ary) {
+		ArrayList<ITable> tables = new ArrayList<ITable>();
+		for(String s : ary) {
+			tables.add(DefaultFactory.getFactory().getTable(s) );
+		}
+		return tables;
 	}
 
 }

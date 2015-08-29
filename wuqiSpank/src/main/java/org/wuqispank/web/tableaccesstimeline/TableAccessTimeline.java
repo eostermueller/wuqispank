@@ -263,12 +263,12 @@ public class TableAccessTimeline extends WebMarkupContainer {
 		
 		if (table.isGrowthTable()) {
 			backgroundCssStyle = this.STYLE_WUQISPANK_TABLE_GROWTH_HEADER;
-			LOG.error("Table [" + table.getName() + "] is a growth table.  using style [" + backgroundCssStyle + "]");
+			LOG.debug("Table [" + table.getName() + "] is a growth table.  using style [" + backgroundCssStyle + "]");
 		} else if (table.shouldBeCached() ) { 
 			backgroundCssStyle = this.STYLE_WUQISPANK_TABLE_CACHE_HEADER;
-			LOG.error("Table [" + table.getName() + "] is a cache table.  using style [" + backgroundCssStyle + "]");
+			LOG.debug("Table [" + table.getName() + "] is a cache table.  using style [" + backgroundCssStyle + "]");
 		} else {
-			LOG.error("Table [" + table.getName() + "] is neither cache nor growth.  using style [" + backgroundCssStyle + "]");
+			LOG.debug("Table [" + table.getName() + "] is neither cache nor growth.  using style [" + backgroundCssStyle + "]");
 		}
     	
     	mxICell table1Header = (mxICell)graph.insertVertex(tablesHeaderLane,  null, tableCount, x, 0, 50, 50, backgroundCssStyle);

@@ -39,5 +39,10 @@ public interface ISqlWrapper {
 
 	void setLousyDateTimeMillis(long clientDateTimeMillis);
 	long getLousyDateTimeMillis();
+	void setUniqueId(String val);
+	String getUnique();
+	boolean getRetryParseWithoutSelectList();
+
+	void setRetryParseWithoutSelectList(boolean b);
 
 }

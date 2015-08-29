@@ -98,4 +98,31 @@ public class AmericanEnglishMessages implements IMessages, java.io.Serializable 
 		return "Unable to import from file";
 	}
 
+	@Override
+	public String getStartupBanner1() {
+		return "#########################################";
+	}
+
+	private static final String LOG_PREFIX = "##    ";
+	@Override
+	public String getStartupBanner2(File exportDir) {
+		return LOG_PREFIX + "wuqiSpank started.\n"
+				+ LOG_PREFIX + "export-dir=" + exportDir.getAbsolutePath();
+	}
+
+	@Override
+	public String getStartupBannerGeneric(String val) {
+		return LOG_PREFIX + val;
+	}
+
+	@Override
+	public String missingSqlModel(String str) {
+		return "ISqlParser#setModel() must be set before calling ISqlParser#parse().  For sql [" + str + "]";
+	}
+	@Override
+	public String getInvalidColumnMessage() {
+		return "Attempt to add a null column.";
+	}
+
+
 }

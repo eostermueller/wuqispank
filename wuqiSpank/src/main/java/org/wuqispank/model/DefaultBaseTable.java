@@ -9,7 +9,10 @@ public class DefaultBaseTable implements IBaseTable {
 
 	@Override
 	public String getName() {
-		return m_name.toLowerCase().trim();
+		String rc = null;
+		if (this.m_name!=null)
+			rc = m_name.toLowerCase().trim();			
+		return rc;
 	}
 
 	@Override

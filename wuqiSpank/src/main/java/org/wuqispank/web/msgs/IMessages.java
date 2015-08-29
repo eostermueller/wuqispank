@@ -1,5 +1,6 @@
 package org.wuqispank.web.msgs;
 
+import java.io.File;
 import java.io.Serializable;
 
 import org.headlessintrace.client.connection.HostPort;
@@ -40,6 +41,16 @@ public interface IMessages {
 	String getMissingSqlText();
 
 	String getImportExportInitError();
+
+	String getStartupBanner1();
+
+	String getStartupBanner2(File exportDir);
+
+	String getStartupBannerGeneric(String vals);
+
+	String missingSqlModel(String str);
+
+	String getInvalidColumnMessage();
 	
 
 }

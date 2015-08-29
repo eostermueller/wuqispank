@@ -24,10 +24,39 @@
     </context-param>	
   <context-param>
         <param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name>
-        <param-value>org.headlessintrace.jdbc.OracleProvider</param-value> 
+        <param-value>org.wuqispank.web.WebXmlConfigImpl</param-value>
+        <!--  <param-value>org.headlessintrace.jdbc.OracleProvider</param-value> --> 
     </context-param>
+   <context-param>
+   	<param-name>java.sql.Statement.implementors</param-name>
+   	<param-value>
+		com.ibm.db2.jcc.DB2Statement,
+		oracle.jdbc.driver.OracleStatement,
+		com.mysql.jdbc.Statement,
+		org.postgresql.core.BaseStatement,
+		org.postgresql.jdbc4.Jdbc4CallableStatement,
+		org.postgresql.jdbc4.Jdbc4PreparedStatement,
+		org.postgresql.jdbc4.Jdbc4Statement,
+		org.hsqldb.jdbc.JDBCStatement   	
+   	</param-value>
+   </context-param>
+   <context-param>
+   	<param-name>java.sql.Connection.implementors</param-name>
+   	<param-value>
+		com.ibm.db2.jcc.b.bb,
+		oracle.jdbc.driver.PhysicalConnection,
+		com.mysql.jdbc.Connection,
+		org.postgresql.core.BaseConnection,
+		org.postgresql.jdbc4.Jdbc4Connection,
+		org.hsqldb.jdbc.jdbcConnection
+   	</param-value>
+   </context-param>
     <context-param>
         <param-name>export-dir</param-name>
+        <!-- If a relative path, it will be relative
+        	to the current working directory where
+        	the 'java' was launched from.
+        	 -->
         <param-value>./export-dir</param-value>
     </context-param>	
 	<context-param>
@@ -50,7 +79,7 @@
 
   <context-param>
     <param-name>configuration</param-name>
-    <param-value>development</param-value>
+    <param-value>deployment</param-value>
   </context-param>
   <!--  org.wuqispank.web.StatusServlet -->
 	<context-param>

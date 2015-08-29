@@ -1,5 +1,7 @@
 package org.wuqispank.model;
 
+import org.wuqispank.WuqispankException;
+
 public interface IBinaryOperatorExpression {
 	IColumn getLeftColumn();
 	IColumn getRightColumn();

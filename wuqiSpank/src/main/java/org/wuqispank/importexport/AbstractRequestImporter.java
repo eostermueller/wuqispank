@@ -33,6 +33,12 @@ public abstract class AbstractRequestImporter extends AbstractFileImporter imple
 	public void setRequestIdPrefix(String val) {
 		m_requestIdPrefix = val;
 	}
+	/**
+	 * Two use cases for writing to the export-dir:
+	 * 1) user want to import SQL from a text file
+	 * 2) wuqiSpank itself exports java-traced SQL to an xml file in the export-dir, so the SQL will be there after restart. wuqiSpank doesn't yet have a disk repository.
+	 * When this method detects a 'duplicate', it has detected use case #2 and avoids adding what it just exported.
+	 */
 	@Override
 	public void importFile(IImportExportMgr iem, File fileToImport) throws SAXException, IOException, ParserConfigurationException, WuqispankException {
 		this.setInputStream( new FileInputStream(fileToImport) );
@@ -56,7 +62,6 @@ public abstract class AbstractRequestImporter extends AbstractFileImporter imple
 				LOG.debug("Just added [id=" + rq.getUniqueId() + "] from import file [" + fileToImport.toString() + "]");
 			} else
 				LOG.debug("Duplicate request was not imported.  [id=" + uniqueId + "] found in in-memory repo. Import file [" + fileToImport.toString() + "]");
-
 		}
 	}
 

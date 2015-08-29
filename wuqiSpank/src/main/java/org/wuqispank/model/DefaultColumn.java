@@ -39,6 +39,13 @@ public class DefaultColumn implements IColumn, java.io.Serializable {
 		m_name = val;
 	}
 	@Override
+	public boolean validate() {
+		boolean rc = true;
+		if (this.getName()==null)
+			return false;
+		return rc;
+	}
+	@Override
 	public boolean equals(String columnCriteria, String tableNameCriteria) {
 		boolean rc = false;
 		if (
@@ -48,7 +55,7 @@ public class DefaultColumn implements IColumn, java.io.Serializable {
 			{
 				if (
 						(tableNameCriteria==null && getTable()==null)
-						|| tableNameCriteria.toLowerCase().trim().equals(getTable().getName())
+						|| (getTable()!=null && tableNameCriteria.toLowerCase().trim().equals(getTable().getName())  )
 						) {
 							rc = true;
 						}

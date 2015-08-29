@@ -1,5 +1,8 @@
 package org.wuqispank.model;
 
+import org.wuqispank.DefaultFactory;
+import org.wuqispank.WuqispankException;
+
 public class DefaultBinaryOperatorExpression implements
 		IBinaryOperatorExpression, java.io.Serializable {
 
@@ -13,7 +16,7 @@ public class DefaultBinaryOperatorExpression implements
 		return m_leftColumn;
 	}
 	@Override
-	public void setLeftColumn(IColumn val) {
+	public void setLeftColumn(IColumn val)  {
 		m_leftColumn = val;
 	}
 	@Override

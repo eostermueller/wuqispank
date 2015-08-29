@@ -1,7 +1,6 @@
 package org.wuqispank.model;
 
 import org.slf4j.Logger;
-
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.db.ISqlParser;
@@ -9,6 +8,7 @@ import org.wuqispank.db.SqlParseException;
 
 public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 	private static final Logger log = LoggerFactory.getLogger(DefaultSqlWrapper.class);
+	private String uniqueId = null;
 
 	private static final long UNINIT = -1;
 	
@@ -24,9 +24,11 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 	private long m_lousyDateTimeMillis = UNINIT;
 
 	private String m_sqlText;
+	private boolean retryParseWithoutSelectList;
 
 	public DefaultSqlWrapper() {
 		setSqlModel( DefaultFactory.getFactory().getSqlModel() );
+		
 	}
 	@Override
 	public int getSequence() {
@@ -36,6 +38,19 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 	@Override
 	public void setSequence(int sequence) {
 		this.m_sequence = sequence;
+	}
+	public String getFromClauseOnward() {
+		String rcSql = null;
+		int indexOfFromClause = this.getSqlText().toUpperCase().indexOf("FROM");
+		if (indexOfFromClause > 0) {
+			rcSql = this.getSqlText().substring(indexOfFromClause);
+			if (rcSql.toUpperCase().indexOf("FROM") >  0)
+				//We found a 2nd FROM clause, perhaps a sub-select, so 
+				//this sql statement is much more complicated than this simple algrithm...punt.
+				rcSql = null;
+		}
+			
+		return rcSql;
 	}
 
 
@@ -54,17 +69,28 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 //	}
 	@Override
 	public void setSqlText(String val) {
-		//text = text.replace("\n", "").replace("\r", "");
 		m_sqlText = val.replace("\n"," ").replace("\r"," ").trim();
-//		if (getSqlModel()==null)
-//			setSqlModel(DefaultFactory.getFactory().getSqlModel());
-		//getSqlModel().setColumnCount(17);
 
 		ISqlParser parser = DefaultFactory.getFactory().getSqlParser();
 		try {
+			getSqlModel().setParser(parser.getClass());
 			parser.setSqlModel(getSqlModel());
 			parser.parse(m_sqlText);
 		} catch (SqlParseException e) {
+			
+			if (this.getRetryParseWithoutSelectList()) {
+				String simplifiedSql = "SELECT UNKNOWN_COLUMNS " + this.getFromClauseOnward();
+				try {
+					parser.parse(simplifiedSql);
+				} catch(SqlParseException f) {
+					log.error("Exception parsing sql text.\nFrom Parser:[" + f.getSql() + "] \nOriginal [" + this.m_sqlText + "]");
+					log.error(f.getLocalizedMessage());
+					if (f.getCause()!=null)
+						f.getCause().printStackTrace();
+					else
+						e.printStackTrace();
+				}
+			}
 			log.error("Exception parsing sql text.\nFrom Parser:[" + e.getSql() + "] \nOriginal [" + this.m_sqlText + "]");
 			log.error(e.getLocalizedMessage());
 			if (e.getCause()!=null)
@@ -126,6 +152,25 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 	@Override
 	public long getLousyDateTimeMillis() {
 		return m_lousyDateTimeMillis;
+	}
+	@Override
+	public void setUniqueId(String val) {
+		this.uniqueId = val;
+		
+	}
+
+	@Override
+	public String getUnique() {
+		return this.uniqueId;
+	}
+
+	@Override
+	public void setRetryParseWithoutSelectList(boolean b) {
+		this.retryParseWithoutSelectList = b;
+	}
+	@Override
+	public boolean getRetryParseWithoutSelectList() {
+		return this.retryParseWithoutSelectList;
 	}
 	
 

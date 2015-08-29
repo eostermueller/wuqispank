@@ -1,4 +1,4 @@
-package org.wuqispank.test.level1.foundationdb;
+package org.wuqispank.test.level1.akiban;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +9,7 @@ import org.headlessintrace.client.model.ITraceEvent;
 import org.junit.Test;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.SqlParseException;
-import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
+import org.wuqispank.db.akiban.AkibanSqlParser;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 
@@ -21,19 +21,19 @@ public class SimpleColumnCountSqlParseTest {
 
 	@Test
 	public void canAssociateColumnsWithTables() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = org.wuqispank.DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse("select X.chicago from USA X");
 		assertEquals("Count of SQL columns incorrect when parsing the simplest SQL statement ever", 1, model.getColumnCount() );
 		ITable shouldBeUsa = model.getTable(0);
-		assertEquals("Count of SQL columns incorrect when parsing the simplest SQL statement ever", 1, shouldBeUsa.getWhereClauseColumnCount() );
+		assertEquals("incorrect column name when parsing the simplest SQL statement ever", 1, shouldBeUsa.getWhereClauseColumnCount() );
 		
 		assertEquals("SQL column name incorrectly parsed for simplest SQL statement ever", "chicago", shouldBeUsa.getColumn(0).getName() );
 	}
 	@Test
 	public void canParseTwoTableNames() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = org.wuqispank.DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse("select a.chicago, b.copenhagen from USA a, Denmark b");
@@ -50,7 +50,7 @@ public class SimpleColumnCountSqlParseTest {
 
 //	@Test
 //	public void canParseSubSelectTableName() throws SqlParseException {
-//		ISqlParser parser = new FoundationDBSqlParser();
+//		ISqlParser parser = new AkibanSqlParser();
 //		ISqlModel model = org.wuqispank.DefaultFactory.getFactory().getSqlModel();
 //		parser.setSqlModel(model);
 //		parser.parse("select chicago, Copenhagen from (select * from USA) t, Denmark");
@@ -66,7 +66,7 @@ public class SimpleColumnCountSqlParseTest {
 	
 	@Test
 	public void canParseTableNameFor_INSERT () throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = org.wuqispank.DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_INSERT_SQL);
@@ -78,7 +78,7 @@ public class SimpleColumnCountSqlParseTest {
 	}
 	@Test
 	public void canParseTableNameFor_DELETE () throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = org.wuqispank.DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_DELETE_SQL);
@@ -90,7 +90,7 @@ public class SimpleColumnCountSqlParseTest {
 	}
 	@Test
 	public void canParseTableNameFor_UPDATE() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = org.wuqispank.DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_UPDATE_SQL);
@@ -102,7 +102,7 @@ public class SimpleColumnCountSqlParseTest {
 	}
 	@Test
 	public void canParseTableNameFor_SELECT() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = org.wuqispank.DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_SELECT_SQL);

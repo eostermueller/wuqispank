@@ -66,8 +66,10 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 	@Override
 	public String getTinyId() {
 		String rc = getRequest().getUniqueId();
-		if (rc.length() >7)
-			rc = getRequest().getUniqueId().substring(0,3) + TINY_ID_DELIM + getRequest().getUniqueId().substring(getRequest().getUniqueId().length()-4);
+		final int LEN_PREFIX = 10;
+		final int LEN_SUFFIX = 5;
+		if (rc.length() > LEN_PREFIX+LEN_SUFFIX)
+			rc = getRequest().getUniqueId().substring(0,LEN_PREFIX) + TINY_ID_DELIM + getRequest().getUniqueId().substring(getRequest().getUniqueId().length()-LEN_SUFFIX);
 		return  rc;
 	}
 	@Override

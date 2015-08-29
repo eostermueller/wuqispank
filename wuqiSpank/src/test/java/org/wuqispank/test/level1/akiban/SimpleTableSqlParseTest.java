@@ -1,4 +1,4 @@
-package org.wuqispank.test.level1.foundationdb;
+package org.wuqispank.test.level1.akiban;
 
 import static org.junit.Assert.*;
 
@@ -9,7 +9,7 @@ import org.junit.Test;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.SqlParseException;
-import org.wuqispank.db.foundationdb.FoundationDBSqlParser;
+import org.wuqispank.db.akiban.AkibanSqlParser;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
 
@@ -21,7 +21,7 @@ public class SimpleTableSqlParseTest {
 
 	@Test
 	public void canParseSqlTableNames() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse("select chicago from USA");
@@ -32,7 +32,7 @@ public class SimpleTableSqlParseTest {
 	}
 	@Test
 	public void canParseTwoTableNames() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse("select chicago, copenhagen from USA, Denmark");
@@ -49,7 +49,7 @@ public class SimpleTableSqlParseTest {
 
 	@Test
 	public void canParseSubSelectTableName() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse("select chicago, Copenhagen from (select * from USA) t, Denmark");
@@ -65,7 +65,7 @@ public class SimpleTableSqlParseTest {
 	}
 	@Test
 	public void canParseTableNameFor_INSERT () throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_INSERT_SQL);
@@ -78,7 +78,7 @@ public class SimpleTableSqlParseTest {
 	}
 	@Test
 	public void canParseTableNameFor_DELETE () throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_DELETE_SQL);
@@ -91,7 +91,7 @@ public class SimpleTableSqlParseTest {
 	}
 	@Test
 	public void canParseTableNameFor_UPDATE() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_UPDATE_SQL);
@@ -104,7 +104,7 @@ public class SimpleTableSqlParseTest {
 	}
 	@Test
 	public void canParseTableNameFor_SELECT() throws SqlParseException {
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		parser.parse(EVENT_SELECT_SQL);
@@ -118,7 +118,7 @@ public class SimpleTableSqlParseTest {
 	@Test
 	public void canDetectFailedParse() {
 		final String INVALID_SQL = "ELECT name, description, date, location from Event where location = ?";
-		ISqlParser parser = new FoundationDBSqlParser();
+		ISqlParser parser = new AkibanSqlParser();
 		ISqlModel model = DefaultFactory.getFactory().getSqlModel();
 		parser.setSqlModel(model);
 		try {
