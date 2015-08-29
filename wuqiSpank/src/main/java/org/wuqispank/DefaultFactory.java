@@ -4,10 +4,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.db.ISqlParser;
-import org.wuqispank.db.TrivialSqlParser;
 import org.wuqispank.db.akiban.AkibanSqlParser;
+import org.wuqispank.db.jsqlparser.JSqlParser;
 import org.wuqispank.importexport.DefaultExportDirListener;
 import org.wuqispank.importexport.DefaultImportExportMgr;
+import org.wuqispank.importexport.DefaultInTraceEventFileImporter;
+import org.wuqispank.importexport.DefaultRawSqlTextRequestImporter;
 import org.wuqispank.importexport.DefaultRequestExporter;
 import org.wuqispank.importexport.DefaultRequestImporter;
 import org.wuqispank.importexport.DynaTracePurePathImporter;
@@ -16,8 +18,6 @@ import org.wuqispank.importexport.IFileImporter;
 import org.wuqispank.importexport.IImportExportMgr;
 import org.wuqispank.importexport.IRequestExporter;
 import org.wuqispank.importexport.IRequestImporter;
-import org.wuqispank.importexport.DefaultInTraceEventFileImporter;
-import org.wuqispank.importexport.DefaultRawSqlTextRequestImporter;
 import org.wuqispank.model.CenterHeavyTableOrderMgr;
 import org.wuqispank.model.DefaultBinaryOperatorExpression;
 import org.wuqispank.model.DefaultColumn;
@@ -270,6 +270,6 @@ public class DefaultFactory implements IFactory {
 	}
 	@Override
 	public ISqlParser getSecondarySqlParser() {
-		return new TrivialSqlParser();
+		return new JSqlParser();
 	}
 }

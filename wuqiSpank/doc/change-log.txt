@@ -1,0 +1,21 @@
+August 29, 2015
+
+* Replaced foundationdb parser (now owned by Apple) with older Akiban sql parser
+* If akiban fails parsing (most b/c of vendor-specific things), then JSqlParser will attempt to parse.
+
+
+#################################
+
+table and column and sql counts in DataTable.
+Add sequence numbers to the rows in the TableCount graph.
+javascript: display sql/stack trace from Table Access Timeline
+headlessInTraceClient -- reconnect  ISSUE CREATED
+
+Need to change spheres to the letters DUSI
+support other JDBC execution paths.  executeUpdate(), execute(), executeQuery
+support JDBC wrapper classes
+
+put headlessInTrace & InTrace Agent into Maven repo
+java -jar packaging
+upgrade pom.xml to be a Maven project and remove eclipse targets. 
+

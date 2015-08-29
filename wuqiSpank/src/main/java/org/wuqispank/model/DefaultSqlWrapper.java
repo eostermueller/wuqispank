@@ -77,13 +77,31 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 			parser.setSqlModel(getSqlModel());
 			parser.parse(m_sqlText);
 		} catch (SqlParseException e) {
+			this.setSqlModel(DefaultFactory.getFactory().getSqlModel());
+			log.error("Exception parsing sql text.\nFrom Parser:[" + parser.getClass().getName() + "] \nOriginal [" + this.m_sqlText + "]");
+			log.error(e.getLocalizedMessage());
+			if (e.getCause()!=null)
+				e.getCause().printStackTrace();
+			else
+				e.printStackTrace();
 			
-			if (this.getRetryParseWithoutSelectList()) {
-				String simplifiedSql = "SELECT UNKNOWN_COLUMNS " + this.getFromClauseOnward();
+			String simplifiedSql = "SELECT UNKNOWN_COLUMNS " + this.getFromClauseOnward();
+			try {
+				parser.parse(simplifiedSql);
+			} catch(SqlParseException f) {
+				log.error("Exception parsing sql text.\nFrom Parser:[" + parser.getClass().getName() + "] sql[" + f.getSql() + "] \nOriginal [" + this.m_sqlText + "]");
+				log.error(f.getLocalizedMessage());
+				if (f.getCause()!=null)
+					f.getCause().printStackTrace();
+				else
+					e.printStackTrace();
 				try {
+					this.setSqlModel(DefaultFactory.getFactory().getSqlModel());
+					parser = DefaultFactory.getFactory().getSecondarySqlParser();
+					parser.setSqlModel(getSqlModel());
 					parser.parse(simplifiedSql);
-				} catch(SqlParseException f) {
-					log.error("Exception parsing sql text.\nFrom Parser:[" + f.getSql() + "] \nOriginal [" + this.m_sqlText + "]");
+				} catch(SqlParseException secondarySqlParseException) {
+					log.error("Exception parsing sql text.\nFrom Parser:[" + parser.getClass().getName() + "] sql[" + secondarySqlParseException.getSql() + "] \nOriginal [" + this.m_sqlText + "]");
 					log.error(f.getLocalizedMessage());
 					if (f.getCause()!=null)
 						f.getCause().printStackTrace();
@@ -91,12 +109,6 @@ public class DefaultSqlWrapper implements ISqlWrapper, java.io.Serializable {
 						e.printStackTrace();
 				}
 			}
-			log.error("Exception parsing sql text.\nFrom Parser:[" + e.getSql() + "] \nOriginal [" + this.m_sqlText + "]");
-			log.error(e.getLocalizedMessage());
-			if (e.getCause()!=null)
-				e.getCause().printStackTrace();
-			else
-				e.printStackTrace();
 		}
 	}
 
