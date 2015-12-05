@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.wuqispank.tablecount_DEPRECATED.MXGraphContext;
 
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.layout.mxStackLayout;
@@ -35,7 +34,6 @@ public class XmlSwimlanes_8 extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 2046662393293433060L;
 	private static final String STYLE_WUQISPANK_SWIMLANE = "swimlane";
-	private MXGraphContext m_graphContext;
 	private static final String STYLE_WUQISPANK_JOIN_EDGE = "wsJoinEdge";
 	public static final String STYLE_WUQISPANK_ROW_ODD = "wsRowOdd";
 	public static final String STYLE_WUQISPANK_ROW_EVEN = "wsRowEven";
@@ -53,10 +51,6 @@ public class XmlSwimlanes_8 extends HttpServlet {
     	resp.getWriter().println( swimlaneLoader.getHtml(req.getContextPath() ) );
     }
 
-    public MXGraphContext getGraphContext() {
-    	return m_graphContext;
-    	
-    }
     /**
      * Puts the O-->O graph onto s simple swimlange.
      * @param request

@@ -13,15 +13,66 @@
 	  <listener>
 	  	<listener-class>org.wuqispank.web.EventCollector</listener-class>
 	  </listener>
-	<context-param>
+	  <listener>
+	  	<listener-class>org.wuqispank.influxdb.InfluxdbServletContextListener</listener-class>
+	  </listener>
+	  <context-param>
+	  	<param-name>influxdb-dbname</param-name>
+	  	<param-value>wuqiSpankDb</param-value>
+	  </context-param>
+	  <context-param>
+	  	<param-name>influxdb-host</param-name>
+	  	<param-value>localhost</param-value>
+	  </context-param>
+	  
+	  <context-param>
+	  	<param-name>influxdb-port</param-name>
+	  	<param-value>8086</param-value>
+	  </context-param>	
+	  <context-param>
+	  	<param-name>influxdb-user</param-name>
+	  	<param-value>root</param-value>
+	  </context-param>	
+	  <context-param>
+	  	<param-name>influxdb-retention-policy</param-name>
+	  	<param-value>default</param-value>
+	  </context-param>	
+	  <context-param>
+	  	<param-name>influxdb-batch-size</param-name>
+	  	<param-value>1000</param-value>
+	  </context-param>	
+	  <context-param>
+	  	<param-name>influxdb-write-interval-seconds</param-name>
+	  	<param-value>5</param-value>
+	  </context-param>	
+	  <context-param>
+	  	<param-name>influxdb-password</param-name>
+	  	<param-value>root</param-value>
+	  </context-param>	
+	  <context-param>
         <param-name>nativeSQL</param-name>
         <param-value>false</param-value>
+    </context-param>	
+  
+  
+	<context-param>
+        <param-name>grafana-host</param-name>
+        <param-value>localhost</param-value>
+    </context-param>	
+	<context-param>
+        <param-name>grafana-port</param-name>
+        <param-value>3000</param-value>
     </context-param>	
   
 	<context-param>
         <param-name>intrace-agent-host</param-name>
         <param-value>localhost</param-value>
     </context-param>	
+	<context-param>
+        <param-name>browser-date-format</param-name>
+        <param-value>EEE, MMM d, ''yy hh:mm:ss a z</param-value> <!--  Wed, Sep 23, '15 12:12:51 AM CDT  -->
+    </context-param>	
+    
   <context-param>
         <param-name>org.headlessintrace.jdbc.IJdbcProvider</param-name>
         <param-value>org.wuqispank.web.WebXmlConfigImpl</param-value>
@@ -65,7 +116,11 @@
     </context-param>	
 	<context-param>
         <param-name>circular-request-buffer-size</param-name>
-        <param-value>10000</param-value>
+        <param-value>16384</param-value>
+    </context-param>	
+	<context-param>
+        <param-name>number-requests-to-remove-at-once</param-name>
+        <param-value>256</param-value>
     </context-param>	
   <!--
     There are three means to configure Wickets configuration mode and they are
@@ -81,7 +136,6 @@
     <param-name>configuration</param-name>
     <param-value>deployment</param-value>
   </context-param>
-  <!--  org.wuqispank.web.StatusServlet -->
 	<context-param>
         <param-name>cached-tables</param-name>
         <param-value>pgbench_accounts</param-value>
@@ -113,6 +167,10 @@
     <servlet-class>org.wuqispank.web.StatusServlet</servlet-class>
   </servlet>
   <servlet>
+    <servlet-name>friendlyStatus</servlet-name>
+    <servlet-class>org.wuqispank.web.FriendlyStatusServlet</servlet-class>
+  </servlet>
+  <servlet>
     <servlet-name>SqlDetailRq</servlet-name>
     <servlet-class>org.wuqispank.web.SqlDetailRqServlet</servlet-class>
   </servlet>
@@ -124,6 +182,10 @@
   <servlet-mapping>
     <servlet-name>status</servlet-name>
     <url-pattern>/status</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>friendlyStatus</servlet-name>
+    <url-pattern>/friendlyStatus</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>dynaTracePurePathImporter</servlet-name>

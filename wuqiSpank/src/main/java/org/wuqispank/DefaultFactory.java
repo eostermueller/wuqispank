@@ -1,11 +1,18 @@
 package org.wuqispank;
 
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.akiban.AkibanSqlParser;
 import org.wuqispank.db.jsqlparser.JSqlParser;
+import org.wuqispank.health.DefaultHealthChecker;
+import org.wuqispank.health.DefaultInTraceHealthCheck;
+import org.wuqispank.health.DefaultTcpHealthCheck;
+import org.wuqispank.health.Result;
 import org.wuqispank.importexport.DefaultExportDirListener;
 import org.wuqispank.importexport.DefaultImportExportMgr;
 import org.wuqispank.importexport.DefaultInTraceEventFileImporter;
@@ -22,6 +29,7 @@ import org.wuqispank.model.CenterHeavyTableOrderMgr;
 import org.wuqispank.model.DefaultBinaryOperatorExpression;
 import org.wuqispank.model.DefaultColumn;
 import org.wuqispank.model.DefaultModelObservationMgr;
+import org.wuqispank.model.DefaultRequestManager;
 import org.wuqispank.model.DefaultRequestWrapper;
 import org.wuqispank.model.DefaultSqlModel;
 import org.wuqispank.model.DefaultSqlStatsObserver;
@@ -31,6 +39,7 @@ import org.wuqispank.model.DefaultTable;
 import org.wuqispank.model.IBinaryOperatorExpression;
 import org.wuqispank.model.IColumn;
 import org.wuqispank.model.IModelObservationMgr;
+import org.wuqispank.model.IRequestManager;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlModel;
@@ -51,6 +60,11 @@ import org.wuqispank.web.tableaccesstimeline.GraphContext;
 import org.wuqispank.web.tableaccesstimeline.IRow;
 import org.wuqispank.web.tableaccesstimeline.IRowGroup;
 import org.wuqispank.web.tableaccesstimeline.ITableLaneMgr;
+
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.health.HealthCheckRegistry;
+
 
 
 /**
@@ -78,12 +92,17 @@ import org.wuqispank.web.tableaccesstimeline.ITableLaneMgr;
  */
 
 public class DefaultFactory implements IFactory {
+	private static final HealthCheckRegistry healthChecks = new HealthCheckRegistry();
+	private static final MetricRegistry metrics = new MetricRegistry();
 	public static final String RESEARCH_EYE_CATCHER = "@#WUQISPANK_RESEARCH#@:";
-	private static IMessages msgs = new AmericanEnglishMessages();
+	private static final  IMessages msgs = new AmericanEnglishMessages();
 	private static IConfig m_config = null;
-	private static IFactory INSTANCE = new DefaultFactory();
+	private static  IFactory INSTANCE = new DefaultFactory();
 	private static IImportExportMgr m_importExportMgr = new DefaultImportExportMgr();
+	private static final  DefaultRequestManager requestManager = new DefaultRequestManager();
 	private IJdbcProvider m_jdbcProvider;
+	private SortedMap<String, Result> healthCheckResults = null;
+	private Object healthCheckResults_lock = new Object();
 	
 	@Override
 	public IRequestWrapper getRequestWrapper() {
@@ -184,7 +203,9 @@ public class DefaultFactory implements IFactory {
 	}
 	@Override
 	public IRequestRepository createRepo() {
-		return new InMemoryRequstRepo();
+		int capacity = this.getConfig().getCircularBufferSize();
+		int numToDelete = this.getConfig().getNumberOfRequestsToRemoveAtOnce();
+		return new InMemoryRequstRepo(capacity,numToDelete);
 	}
 	@Override
 	public IRequestExporter getRequestExporter() throws ParserConfigurationException {
@@ -271,5 +292,48 @@ public class DefaultFactory implements IFactory {
 	@Override
 	public ISqlParser getSecondarySqlParser() {
 		return new JSqlParser();
+	}
+	@Override
+	public IRequestManager getRequestManager() {
+		return requestManager;
+	}
+	@Override
+	public MetricRegistry getMetricRegistry() {
+		return DefaultFactory.metrics;
+	}
+	@Override
+	public HealthCheckRegistry getHealthCheckRegistry() {
+		return DefaultFactory.healthChecks;
+	}
+	
+	/**
+	 * From one thread, DefaultHealthChecker will be collecting results from processes with quesitonable health.
+	 * From a different thread, browser/apache wicket clients will be retrieving this to update wuqiSpank UI.
+	 */
+	@Override
+	public SortedMap<String, org.wuqispank.health.Result> getHealthCheckResults() {
+		SortedMap<String, org.wuqispank.health.Result> copyOfResults = new TreeMap<String, org.wuqispank.health.Result>();
+		synchronized (this.healthCheckResults_lock) {
+			copyOfResults = DefaultHealthChecker.cloneHealthCheckResults(this.healthCheckResults);
+		}
+		return copyOfResults;
+	}
+	@Override
+	public void setHealthCheckResults(SortedMap<String, Result> val) {
+		synchronized (this.healthCheckResults_lock) {
+			this.healthCheckResults = val;
+		}
+	}
+	@Override
+	public Runnable getHealthChecker(HealthCheckRegistry registry) {
+		return new DefaultHealthChecker(registry);
+	}
+	@Override
+	public HealthCheck getInTraceHealthCheck() {
+		return new DefaultInTraceHealthCheck();
+	}
+	@Override
+	public DefaultTcpHealthCheck getTcpHealthCheck() {
+		return new DefaultTcpHealthCheck();
 	}
 }

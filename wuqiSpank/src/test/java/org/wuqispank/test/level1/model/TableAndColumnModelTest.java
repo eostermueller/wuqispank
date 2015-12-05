@@ -2,6 +2,8 @@ package org.wuqispank.test.level1.model;
 
 import static org.junit.Assert.*;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.model.IBinaryOperatorExpression;
@@ -9,6 +11,7 @@ import org.wuqispank.model.IColumn;
 import org.wuqispank.model.IModelObservationMgr;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
+import org.wuqispank.model.SqlType;
 import org.wuqispank.web.IFactory;
 
 public class TableAndColumnModelTest {
@@ -51,7 +54,7 @@ public class TableAndColumnModelTest {
 		assertEquals("Sanity check failed..big problem.  Just added a table and can't find it", 1, sqlModel.getTableCount()); //bean-style getter for Wicket
 		ITable shouldBeUsa = sqlModel.findTable("Usa");
 		assertEquals("Sanity check failed..big problem.  Just added a table and can't find it (with the original name)", "USA".toLowerCase(), shouldBeUsa.getName() );
-		assertEquals("Sanity check failed..big problem.  Just added a table and can't find it (with the original alias)", "S", shouldBeUsa.getAlias() );
+		assertEquals("Sanity check failed..big problem.  Just added a table and can't find it (with the original alias)", "s", shouldBeUsa.getAlias() );
 
 		assertEquals("Sanity check failed, couldn't find IColumn added to a simple List", 1, sqlModel.getSelectListColumns().size());
 		
@@ -254,6 +257,39 @@ public class TableAndColumnModelTest {
 		ITable[] tablesWithoutJoins = sqlModel.getTablesWithoutJoins();
 		
 		assertEquals("Should have found exactly 0 table because both tables in the model are assigned inside joins", 0,tablesWithoutJoins.length);
+	}
+	@Test 
+	public void canSortTableNamesAlphbeticallyByTableName() {
+		ISqlModel sqlModel = factory.getSqlModel();
+		ITable table_1 = factory.getTable("USA");
+		sqlModel.addTable(table_1);
+		ITable table_2 = factory.getTable("Canada");
+		sqlModel.addTable(table_2);
+		ITable table_3 = factory.getTable("Mexico");
+		sqlModel.addTable(table_3);
+		
+		List<ITable> tables = sqlModel.getSortedTables();
+		assertEquals("tables didn't get sorted alphbetically by table name", "canada", tables.get(0).getName() ); 
+		assertEquals("tables didn't get sorted alphbetically by table name", "mexico", tables.get(1).getName() ); 
+		assertEquals("tables didn't get sorted alphbetically by table name", "usa", tables.get(2).getName() ); 
+		
+		
+		
+	}
+	@Test 
+	public void canBuildKeyWithAlphaSortedTables() {
+		ISqlModel sqlModel = factory.getSqlModel();
+		sqlModel.setSqlType(SqlType.SELECT);
+		ITable table_1 = factory.getTable("USA");
+		sqlModel.addTable(table_1);
+		ITable table_2 = factory.getTable("Canada");
+		sqlModel.addTable(table_2);
+		ITable table_3 = factory.getTable("Mexico");
+		sqlModel.addTable(table_3);
+		
+		String key = sqlModel.getKey();
+		assertTrue("could not find key with tables alpha sorted", key.startsWith("SELECT.canada~mexico~usa")); 
+		
 	}
 
 }

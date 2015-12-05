@@ -45,6 +45,7 @@ public class ObservationManagerTest {
 		sqlModel1.setObservationMgr(observationMgr);
 		
 		ITable table1_1 = DefaultFactory.getFactory().getTable("table1_1");
+		ITable table1_2 = DefaultFactory.getFactory().getTable("table1_2");
 		
 		sqlModel1.addTable(table1_1);
 		assertEquals(
@@ -69,11 +70,11 @@ public class ObservationManagerTest {
 		 * This will allow us to tally metrics across multiple SQL statement.
 		 */
 		sqlModel2.addTable(table1_1);
-		sqlModel1.addTable(table1_1);
-		sqlModel2.addTable(table1_1);
+		sqlModel1.addTable(table1_2);
+		sqlModel2.addTable(table1_2);
 		assertEquals(
 				"SqlStatsCounter didn't tally the correct number of tables added", 
-				4, 
+				2, 
 				sqlStatsObserver.getTableCount(table1_1) );
 
 	}

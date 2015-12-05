@@ -20,7 +20,7 @@ E9601A
  */
 body {
 	background-color: white;
-	background-image: url('wicket-bg.png');
+	/* background-image: url('wicket-bg.png'); */
 	background-repeat: repeat-x;
 	color: black;
 	font-family: 'Tahoma', 'Lucida Sans', 'Arial', 'Helvetica', 'Sans-serif', 'sans';

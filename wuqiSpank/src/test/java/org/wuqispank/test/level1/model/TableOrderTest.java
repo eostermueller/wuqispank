@@ -27,9 +27,6 @@ import org.wuqispank.model.ITableOrderMgr;
 public class TableOrderTest {
 	ISqlStatsObserver m_sqlStats_evenTableCount = null;
 	private ISqlStatsObserver m_sqlStats_oddTableCount; 
-	
-	
-	
 
 	/**
 	 *   Given this order: <PRE>

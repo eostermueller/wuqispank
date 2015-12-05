@@ -40,7 +40,7 @@ public interface IRequestWrapper extends Serializable {
 	void setObservationMgr(IModelObservationMgr val);
 
 	String getUniqueId();
-	void setUniqueId(String val);
+	void setUniqueId(String val) throws WuqispankException;
 
 	void addSqlWrapper(ISqlWrapper val) throws WuqispankException;
 

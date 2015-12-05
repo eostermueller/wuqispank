@@ -1,7 +1,12 @@
 package org.wuqispank.model;
 
 import java.awt.image.ImageObserver;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Observer;
@@ -14,6 +19,7 @@ import org.wuqispank.DefaultFactory;
 public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	private static final Logger log = LoggerFactory.getLogger(DefaultSqlModel.class);
 	private static final String TABLE_LIST_DELIMETER = ",";
+	private static final Object TABLE_DELIMETER_FOR_KEY = "~";
 	private int m_columnCount;
 	private List<ITable> m_tables = new ArrayList<ITable>();
 	private IRequest m_request;
@@ -23,6 +29,7 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	private SqlType m_sqlType;
 	private Throwable m_parseException;
 	private Class sqlParser = null;
+	private String key = null;
 	
 
 	private IModelObservationMgr getObservationMgr() {
@@ -42,15 +49,46 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	}
 
 	@Override
+	public String getKey() {
+		if (this.key==null) {
+			List<ITable> list = this.getSortedTables();
+			StringBuilder sb = new StringBuilder();
+			sb.append( getSqlType() ).append(".");
+			int count = 0;
+			
+			for(ITable t : list) {
+				if (count++>0) sb.append(TABLE_DELIMETER_FOR_KEY);
+				sb.append(t.getName());
+			}
+			this.key = sb.toString();
+		}
+		return this.key;
+		
+	}
+	@Override
 	public void postProcess() {
 		resolveColumnAliases();
 	}
 	
 	@Override
+	public ITable findTable(ITable criteria) {
+		ITable matchingTable = null;
+		for(ITable tab : this.getTables()) {
+			if (tab.compareTo(criteria)==0) {
+				matchingTable = tab;
+				break;
+			}
+		}
+		return matchingTable;
+	}
+	@Override
 	public void addTable(ITable val) {
-		getObservationMgr().addNewTable(val);
 		
-		getTables().add(val);
+		ITable foundMatch = this.findTable(val);
+		if (foundMatch==null) {
+			getObservationMgr().addNewTable(val);
+			getTables().add(val);
+		}
 	}
 	@Override
 	public ITable getTable(int val) {
@@ -63,10 +101,13 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	 */
     private void resolveColumnAliases() {
 		for(IColumn c : getSelectListColumns()) {
-			ITable t = findTableGivenAlias(c.getTableAlias());
-			if (t!=null) {
-				c.setTable(t);
-				t.addColumn(c);
+			
+			if (c.getTableAlias()!=null) {
+				ITable t = findTableGivenAlias(c.getTableAlias());
+				if (t!=null) {
+					c.setTable(t);
+					t.addColumn(c);
+				}
 			}
 		}
 		
@@ -178,13 +219,19 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 	public ITable findTableGivenAlias(String aliasCriteria) {
 		if (aliasCriteria ==null) 
 			return null;
+		else
+			aliasCriteria = aliasCriteria.toLowerCase();
 		
 		ITable rc = null;
 		for(ITable t : getTables()) {
+			if (aliasCriteria.equals( t.getName() )) {
+				rc = t;
+				break;
+			}
 			if (t==null || t.getAlias()==null || t.getAlias().equals(ISqlModel.NOT_SPECIFIED))
 				continue;
 			log.debug("Looking for table [" + aliasCriteria + "] comparing to table [" + t.getAlias() + "]");
-			if (aliasCriteria.toLowerCase().equals(t.getAlias().toLowerCase())) {
+			if (aliasCriteria.equals(t.getAlias().toLowerCase())) {
 				rc = t;
 				break;
 			}
@@ -371,6 +418,14 @@ public class DefaultSqlModel  implements ISqlModel, java.io.Serializable {
 		}
 		return tables;
 	}
+
+	@Override
+	public List<ITable> getSortedTables() {
+		List<ITable> list = this.getTables();
+		Collections.sort(list);
+		return list;
+	}
+	
 
 }
 

@@ -9,6 +9,11 @@ import org.wuqispank.DefaultFactory;
 
 
 public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3406840702165705332L;
+
 	private static final Logger log = LoggerFactory.getLogger(DefaultTable.class);
 	
 	private List<IColumn> m_whereClauseColumns = new ArrayList<IColumn>();
@@ -26,7 +31,10 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 
 	@Override
 	public String getAlias() {
-		return m_alias;
+		if (m_alias!=null)
+			return m_alias.toLowerCase().trim();
+		else 
+			return null;
 	}
 
 	@Override
@@ -103,6 +111,10 @@ public class DefaultTable extends DefaultBaseTable implements ITable, java.io.Se
 	@Override
 	public boolean isGrowthTable() {
 		return m_isGrowthTable;
+	}
+	@Override
+	public int compareTo(ITable o) {
+		return this.getName().compareToIgnoreCase(o.getName());
 	}
 	
 }

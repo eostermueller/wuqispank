@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 
 import org.headlessintrace.client.connection.HostPort;
+import org.wuqispank.web.WebXmlConfigImpl;
 
 
 public class AmericanEnglishMessages implements IMessages, java.io.Serializable {
@@ -122,6 +123,110 @@ public class AmericanEnglishMessages implements IMessages, java.io.Serializable 
 	@Override
 	public String getInvalidColumnMessage() {
 		return "Attempt to add a null column.";
+	}
+
+	@Override
+	public String getInvalidNumberOfRequestsToRemoveAtOnce(
+			Exception e,
+			String value,
+			String parmName, 
+			String className) {
+		
+		String error = "Found web.xml configuration [" + value + "] for property [" + parmName + "].  Was expecting a numeric value that says how many requests will be discarded (yes, data loss) at a time.  " +
+				"This discard happens when the stored request count exceeds the value specified by the web.xml parameter [" + WebXmlConfigImpl.WEB_XML_CIRCULAR_REQUEST_BUFFER_SIZE + "].   for [" + className + "] Exception [" + e.toString() + "]";
+		return error;
+	}
+
+	@Override
+	public String getInvalidInfluxDbHostName(String value,
+			String paramName, String className) {
+		return "Received [" + value + "].  Missing or blank init-param [" + paramName + "] in web.xml for [" + className + "]";
+	}
+
+	@Override
+	public String getInvalidInfluxDbWriteIntervalSeconds(Exception e,
+			String value, String paramName,
+			String className) {
+		return "Was expecting the InfluxDb write interval (measured in seconds) to be numericto be found in the web.xml init-param [" + paramName + "], but instead received [" + value + "].  Exception reported by [" + className + "] Exception [" + e.toString() + "]";
+	}
+
+	@Override
+	public String getInvalidInfluxDbPortNumber(Exception e,
+			String value, String paramName,
+			String className) {
+		return "Was expecting the numeric InfluxDb TCP port number -- between 1 and 65535 -- (for HTTP communications) to be numeric and to be found in the web.xml init-param [" + paramName + "], but instead received [" + value + "].  Exception reported by [" + className + "] Exception [" + e.toString() + "]";
+	}
+
+	@Override
+	public String getInvalidInfluxDbDbName(String value,
+			String paramName, String className) {
+		return "Received [" + value + "].  Missing or blank init-param [" + paramName + "] in web.xml for [" + className + "]";
+	}
+
+	@Override
+	public String getInvalidInfluxDbUser(String value,
+			String paramName, String className) {
+		return "Received [" + value + "].  Missing or blank init-param [" + paramName + "] in web.xml for [" + className + "]";
+	}
+
+	@Override
+	public String getInvalidInfluxDbPassword(String value,
+			String paramName, String className) {
+		return "Received [" + value + "].  Missing or blank init-param [" + paramName + "] in web.xml for [" + className + "]";
+	}
+
+	@Override
+	public String getInvalidInfluxdbBatchSize(Exception e,
+		String value, String paramName,
+		String className) {
+		return "Was expecting the numeric InfluxDb batch size to be numeric.  This determines how many web requests should be sent to the influxedb in a single HTTP write operation.  This parameter should found in the web.xml init-param [" + paramName + "], but instead received [" + value + "].  Exception reported by [" + className + "] Exception [" + e.toString() + "]";	
+	}
+
+	@Override
+	public String getInvalidInfluxDbRetentionPolicy(
+			String influxdbRetentionPolicy,
+			String paramName, String className) {
+		return "Received [" + influxdbRetentionPolicy + "], so this is a missing or blank init-param [" + paramName + "] in web.xml for [" + className + "]" +
+			"see https://influxdb.com/docs/v0.9/administration/administration.html or http://www.kibinlabs.com/influxdb-continuous-queries-and-retention-policies/ for how this parameter is used.";
+	}
+	@Override
+	public String getInfluxdbHealthCheckName() {
+		return "InfluxDBHealthCheck";
+	}
+
+	@Override
+	public String getIntraceStatusConnected() {
+		return "Connected";
+	}
+	@Override
+	public String getIntraceStatusDisconnected() {
+		return "Disconnected";
+	}
+
+	@Override
+	public Object getInTraceConnectionHealthLabel() {
+		return "InTrace Connection to: ";
+	}
+
+	@Override
+	public String getInvalidGrafanaHostName(String grafanaHostName,
+			String paramName, String className) {
+		return "Received [" + grafanaHostName + "].  Missing or blank init-param [" + paramName + "] in web.xml for [" + className + "]";
+	}
+
+	@Override
+	public String getInvalidGrafanaPortNumber(Exception e,
+			String value, String paramName,
+			String className) {
+		return "Was expecting the numeric Grafana TCP port number -- between 1 and 65535 -- (for HTTP communications) to be numeric and to be found in the web.xml init-param [" + paramName + "], but instead received [" + value + "].  Exception reported by [" + className + "] Exception [" + e.toString() + "]";
+	}
+
+	@Override
+	public String getInvalidGrafanaHealthCheckTimeoutInMs(Exception e,
+			String grafanaHealthCheckTimeoutInMs,
+			String webXmlGrafanaHealthcheckTimeoutMs, String canonicalName) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

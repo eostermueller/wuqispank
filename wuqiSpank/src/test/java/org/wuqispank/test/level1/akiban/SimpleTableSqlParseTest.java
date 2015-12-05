@@ -116,6 +116,31 @@ public class SimpleTableSqlParseTest {
 		assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
 	}
 	@Test
+	public void canParseTableAliasesInSelect() throws SqlParseException {
+				
+				ISqlParser parser = new AkibanSqlParser();
+				ISqlModel model = DefaultFactory.getFactory().getSqlModel();
+				parser.setSqlModel(model);
+				
+				parser.parse("select ITEMID, LISTPRICE, UNITCOST, SUPPLIER, I.PRODUCTID, NAME, DESCN, " 
+						+ "CATEGORY, STATUS, ATTR1, ATTR2, ATTR3, ATTR4, ATTR5 "
+						+ "from ITEM I, PRODUCT P where P.PRODUCTID = I.PRODUCTID and I.PRODUCTID = ?");
+				
+				assertEquals("Count of SQL tables incorrect when parsing the simplest SELECT SQL statement ever", 2, model.getTableCount() );
+				
+				ITable criteriaItemTable = DefaultFactory.getFactory().getTable("item");
+				ITable locatedItemTable = model.findTable(criteriaItemTable);
+				assertNotNull("could not find table named 'item'", locatedItemTable);
+				assertEquals("Could not find table alias for 'item' table", "i", locatedItemTable.getAlias());
+				
+				ITable criteriaProductTable = DefaultFactory.getFactory().getTable("pRoduct");
+				ITable locatedProductTable = model.findTable(criteriaProductTable);
+				assertNotNull("could not find table named 'product'", model.findTable(locatedProductTable));
+				assertEquals("Could not find table alias for 'product' table", "p", locatedProductTable.getAlias());
+				
+				assertEquals("Should have flagged a successful parse",true,model.isParsedSuccessfully());
+	}
+	@Test
 	public void canDetectFailedParse() {
 		final String INVALID_SQL = "ELECT name, description, date, location from Event where location = ?";
 		ISqlParser parser = new AkibanSqlParser();

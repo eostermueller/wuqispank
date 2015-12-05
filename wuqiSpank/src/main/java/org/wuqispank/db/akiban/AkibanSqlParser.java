@@ -51,6 +51,10 @@ public class AkibanSqlParser implements ISqlParser {
 	@SuppressWarnings("static-access")
 	@Override
 	public void parse(String sqlText) throws SqlParseException {
+		if (this.getSqlModel()==null) {
+			throw new SqlParseException(DefaultFactory.getFactory().getMessages().missingSqlModel(sqlText));
+		}
+		this.getSqlModel().setParser(this.getClass());
 		init();
 		if (sqlText==null || "".equals(sqlText.trim())) {
 			throw new SqlParseException(DefaultFactory.getFactory().getMessages().getMissingSqlText() );
@@ -169,7 +173,7 @@ public class AkibanSqlParser implements ISqlParser {
                     getSqlModel().addSelectListColumn(ref.getTableName(), ref.getColumnName());
             		break;
             	case NodeTypes.FROM_BASE_TABLE:
-            		if (!ynUpdateOrDelete) {//gotta skip this for updates/deletes, because foundationdb tells us about the table name twice for some unknown  (and probably very good) reasons.
+            		//if (!ynUpdateOrDelete) {//gotta skip this for updates/deletes, because Akiban tells us about the table name twice for some unknown  (and probably very good) reasons.
                 		FromBaseTable fromBaseTable = (FromBaseTable)node;
                 		try {
                 			TableName unkTableName = fromBaseTable.getOrigTableName();
@@ -180,7 +184,7 @@ public class AkibanSqlParser implements ISqlParser {
                 		}
                 		myTable.setAlias(fromBaseTable.getCorrelationName());
                 		getSqlModel().addTable(myTable);
-            		}
+            		//}
             		break;
             	case NodeTypes.TABLE_NAME:
             		TableName unk2TableName = (TableName)node;

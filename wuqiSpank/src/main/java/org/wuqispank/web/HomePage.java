@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.datatables.DemoDatatable;
 import org.wuqispank.model.IRequestWrapper;
+import org.wuqispank.web.wicket.ServletRequestsTable;
 
 public class HomePage extends BasePage
 {
@@ -41,18 +44,11 @@ public class HomePage extends BasePage
 
 	/**
 	 * 
-	 * @NAIVE_ASSUMPTION_1
-	 * This ctor makes naive assumption that _all_ the requests in the repository
-	 * will fit into memory.
-	 * This is an ok assumption as long as the implementor of IRequestRepository
-	 * is a circular buffer.
-	 * 
-	 * But when we move to requests persisted on the hard disk,
-	 * we\"ll be able to store many more requests than can fit into memory.
 	 */
 	public HomePage()
 	{
-		WebMarkupContainer table = new DemoDatatable("table");
+		WebMarkupContainer table = new ServletRequestsTable("table");
+		//WebMarkupContainer table = new DemoDatatable("table");
 		add(table);
 
 		Iterator<IRequestWrapper> itr = WuqispankApp.getRepo().getIterator();

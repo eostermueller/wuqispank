@@ -12,7 +12,10 @@ import org.headlessintrace.jdbc.IJdbcProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
+import org.wuqispank.health.DefaultHealthChecker;
 import org.wuqispank.web.msgs.IMessages;
+
+import com.codahale.metrics.health.HealthCheckRegistry;
 
 public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcProvider {
 	/**
@@ -26,12 +29,14 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 	private static final String WEB_XML_INTRACE_AGENT_PORT = "intrace-agent-port";
 	private static final String WEB_XML_CSV_TABLES_THAT_SHOULD_BE_CACHED = "csv-tables-that-should-be-cached";
 	private static final String WEB_XML_CSV_GROWTH_TABLES = "csv-growth-tables";
-	private static final String WEB_XML_CIRCULAR_REQUEST_BUFFER_SIZE = "circular-request-buffer-size";
+	public static final String WEB_XML_CIRCULAR_REQUEST_BUFFER_SIZE = "circular-request-buffer-size";
 	public static final String WEB_XML_EXPORT_DIR = "export-dir";
 	private static final String WEB_XML_RECONNECT_INTERVAL = "reconnect-interval-seconds";
 	private static final String WEB_XML_EXPORT_DIR_LISTENER_INTERVAL = "export-dir-listener-interval-seconds";
 	public static final String WEB_XML_RAW_SQL_REQUEST_DELIMITER = "raw-sql-request-delimiter";
 	public static final String WEB_XML_RAW_SQL_STMT_DELIMITER = "raw-sql-stmt-delimiter";
+	public static final String WEB_XML_HEALTHCHECK_INTERVAL = "healthcheck-interval-seconds";
+
 	private IMessages msgs = null;
 	private IMessages getMsgs() {
 		return msgs;
@@ -49,6 +54,25 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 	public static final String RAW_SQL_REQUEST_DELIMITER = "~";
 
 	public static final String RAW_SQL_STMT_DELIMITER = ";";
+
+	public static final String WEB_XML_NUM_REQUESTS_TO_REMOVE_AT_ONCE = "number-requests-to-remove-at-once";
+
+	public static final String WEB_XML_GRAFANA_PORT = "grafana-port";
+	public static final String WEB_XML_GRAFANA_HOST = "grafana-host";
+	public static final String WEB_XML_GRAFANA_HEALTHCHECK_TIMEOUT_MS = "grafana-healthcheck-timeout-ms";
+	public static final int WEB_XML_GRAFANA_HEALTHCHECK_TIMEOUT_MS_DEFAULT = 2000;
+
+	public static final String WEB_XML_INFLUXDB_PORT = "influxdb-port";
+	public static final String WEB_XML_INFLUXDB_HOST = "influxdb-host";
+	public static final String WEB_XML_INFLUXDB_WRITE_INTERVAL_SECONDS = "influxdb-write-interval-seconds";
+	public static final String WEB_XML_INFLUXDB_DB_NAME = "influxdb-dbname";
+	public static final String WEB_XML_INFLUXDB_USER = "influxdb-user";
+	public static final String WEB_XML_INFLUXDB_PASSWORD = "influxdb-password";
+	public static final String WEB_XML_INFLUXDB_BATCH_SIZE = "influxdb-batch-size";
+	public static final String WEB_XML_INFLUXDB_RETENTION_POLICY = "influxdb-retention-policy";
+
+	private static final int UNINITIALIZED = -1;
+
 
 
 
@@ -96,6 +120,25 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 			}
 		}
 		
+	}
+	@Override
+	public String getInfluxDbHost() {
+		String  influxdbHostName = getServletContext().getInitParameter(WEB_XML_INFLUXDB_HOST);
+		if (influxdbHostName==null || "".trim().equals(influxdbHostName.trim())) {
+			throw new WebXmlConfigurationException(msgs.getInvalidInfluxDbHostName(influxdbHostName, WEB_XML_INFLUXDB_HOST, this.getClass().getCanonicalName()));
+		}
+		return influxdbHostName.trim();
+	}
+	@Override
+	public int getInfluxDbPort() {
+		String influxdbPort = getServletContext().getInitParameter(WEB_XML_INFLUXDB_PORT);
+		int rc = -1;
+		try {
+			rc = Integer.parseInt(influxdbPort.trim());
+		} catch(Exception e) {
+			throw new WebXmlConfigurationException(msgs.getInvalidInfluxDbPortNumber(e, influxdbPort, WEB_XML_INFLUXDB_PORT, this.getClass().getCanonicalName()));
+		}
+		return rc;
 	}
 
 	@Override
@@ -356,6 +399,156 @@ public class WebXmlConfigImpl implements IConfig, java.io.Serializable, IJdbcPro
 			}
 		}
 		return intListenerIntervalSeconds;
+	}
+
+	@Override
+	public int getNumberOfRequestsToRemoveAtOnce() {
+		int intNumRequestsToRemoveAtOnce = 16384;//default
+		String numRequestsToRemoveAtOnce = getServletContext().getInitParameter(this.WEB_XML_NUM_REQUESTS_TO_REMOVE_AT_ONCE);
+		
+		if (numRequestsToRemoveAtOnce !=null && !"".trim().equals(numRequestsToRemoveAtOnce)) {
+			try {
+				intNumRequestsToRemoveAtOnce = Integer.parseInt(numRequestsToRemoveAtOnce);
+			} catch(Exception e) {
+				throw new WebXmlConfigurationException(
+						msgs.getInvalidNumberOfRequestsToRemoveAtOnce(
+								e, 
+								numRequestsToRemoveAtOnce, 
+								this.WEB_XML_NUM_REQUESTS_TO_REMOVE_AT_ONCE, 
+								this.getClass().getCanonicalName()
+							)
+						);
+			}
+		}
+		return intNumRequestsToRemoveAtOnce;
+	}
+
+	@Override
+	public int getInfluxDbWriteIntervalSeconds() {
+		int intInfluxDbWriteIntervalSeconds = 10;//default -- same as DynaTrace.
+		String influxDbWriteIntervalSeconds = getServletContext().getInitParameter(WebXmlConfigImpl.WEB_XML_INFLUXDB_WRITE_INTERVAL_SECONDS);
+		
+		if (influxDbWriteIntervalSeconds !=null && !"".trim().equals(influxDbWriteIntervalSeconds)) {
+			try {
+				intInfluxDbWriteIntervalSeconds = Integer.parseInt(influxDbWriteIntervalSeconds);
+			} catch(Exception e) {
+				throw new WebXmlConfigurationException(
+						msgs.getInvalidInfluxDbWriteIntervalSeconds(
+								e, 
+								influxDbWriteIntervalSeconds, 
+								this.WEB_XML_INFLUXDB_WRITE_INTERVAL_SECONDS, 
+								this.getClass().getCanonicalName()
+							)
+						);
+			}
+		}
+		return intInfluxDbWriteIntervalSeconds;
+	}
+
+	@Override
+	public String getInfluxdbDbName() {
+		String  influxdbDbName = getServletContext().getInitParameter(WebXmlConfigImpl.WEB_XML_INFLUXDB_DB_NAME);
+		if (influxdbDbName==null || "".trim().equals(influxdbDbName.trim())) {
+			throw new WebXmlConfigurationException(msgs.getInvalidInfluxDbDbName(influxdbDbName, WebXmlConfigImpl.WEB_XML_INFLUXDB_DB_NAME, this.getClass().getCanonicalName()));
+		}
+		return influxdbDbName;
+	}
+
+	@Override
+	public String getInfluxDbUser() {
+		String  influxdbDbUser = getServletContext().getInitParameter(WebXmlConfigImpl.WEB_XML_INFLUXDB_USER);
+		if (influxdbDbUser==null || "".trim().equals(influxdbDbUser.trim())) {
+			throw new WebXmlConfigurationException(msgs.getInvalidInfluxDbUser(influxdbDbUser, WebXmlConfigImpl.WEB_XML_INFLUXDB_USER, this.getClass().getCanonicalName()));
+		}
+		return influxdbDbUser;
+	}
+
+	@Override
+	public String getInfluxDbPassword() {
+		String  influxdbPassword = getServletContext().getInitParameter(WebXmlConfigImpl.WEB_XML_INFLUXDB_PASSWORD);
+		if (influxdbPassword==null || "".trim().equals(influxdbPassword.trim())) {
+			throw new WebXmlConfigurationException(msgs.getInvalidInfluxDbPassword(influxdbPassword, WebXmlConfigImpl.WEB_XML_INFLUXDB_PASSWORD, this.getClass().getCanonicalName()));
+		}
+		return influxdbPassword;
+	}
+
+	@Override
+	public int getInfluxdbBatchSize() {
+		String influxdbBatchSize = getServletContext().getInitParameter(this.WEB_XML_INFLUXDB_BATCH_SIZE);
+		int rc = UNINITIALIZED;
+		try {
+			rc = Integer.parseInt(influxdbBatchSize.trim());
+		} catch(Exception e) {
+			throw new WebXmlConfigurationException(msgs.getInvalidInfluxdbBatchSize(e, influxdbBatchSize, this.WEB_XML_INFLUXDB_BATCH_SIZE, this.getClass().getCanonicalName()));
+		}
+		return rc;
+	}
+	@Override
+	public String getInfluxdbRetentionPolicy() {
+		String  influxdbRetentionPolicy = getServletContext().getInitParameter(WebXmlConfigImpl.WEB_XML_INFLUXDB_RETENTION_POLICY);
+		if (influxdbRetentionPolicy==null || "".trim().equals(influxdbRetentionPolicy.trim())) {
+			throw new WebXmlConfigurationException(
+					msgs.getInvalidInfluxDbRetentionPolicy(
+							influxdbRetentionPolicy, 
+							WebXmlConfigImpl.WEB_XML_INFLUXDB_RETENTION_POLICY, 
+							this.getClass().getCanonicalName() )
+			);
+		}
+		return influxdbRetentionPolicy;
+	}
+
+	@Override
+	public int getHealthCheckIntervalSeconds() {
+		int intHealthcheckIntervalSeconds = 10;//default
+		String healthcheckIntervalInSeconds = getServletContext().getInitParameter(this.WEB_XML_HEALTHCHECK_INTERVAL);
+		
+		if (healthcheckIntervalInSeconds !=null && !"".trim().equals(healthcheckIntervalInSeconds)) {
+			try {
+				intHealthcheckIntervalSeconds = Integer.parseInt(healthcheckIntervalInSeconds);
+			} catch(Exception e) {
+				throw new WebXmlConfigurationException(msgs.getInvalidReconnectInterval(e, healthcheckIntervalInSeconds, WEB_XML_RECONNECT_INTERVAL, this.getClass().getCanonicalName()));
+			}
+		}
+		return intHealthcheckIntervalSeconds;
+	}
+	@Override
+	public Runnable getHealthChecker(HealthCheckRegistry registry) {
+		return new DefaultHealthChecker( registry );
+	}
+	@Override
+	public String getGrafanaHost() {
+		String  grafanaHostName = getServletContext().getInitParameter(WEB_XML_GRAFANA_HOST);
+		if (grafanaHostName==null || "".trim().equals(grafanaHostName.trim())) {
+			throw new WebXmlConfigurationException(msgs.getInvalidGrafanaHostName(grafanaHostName, WEB_XML_GRAFANA_HOST, this.getClass().getCanonicalName()));
+		}
+		return grafanaHostName.trim();
+	}
+	@Override
+	public int getGrafanaPort() {
+		String grafanaPort = getServletContext().getInitParameter(WEB_XML_GRAFANA_PORT);
+		int rc = -1;
+		try {
+			rc = Integer.parseInt(grafanaPort.trim());
+		} catch(Exception e) {
+			throw new WebXmlConfigurationException(msgs.getInvalidGrafanaPortNumber(e, grafanaPort, WEB_XML_GRAFANA_PORT, this.getClass().getCanonicalName()));
+		}
+		return rc;
+	}
+
+	@Override
+	public int getGrafanaHealthCheckTimeoutInMs() {
+		int rc = -1;
+		String grafanaHealthCheckTimeoutInMs = getServletContext().getInitParameter(WEB_XML_GRAFANA_HEALTHCHECK_TIMEOUT_MS);
+		if (grafanaHealthCheckTimeoutInMs==null || grafanaHealthCheckTimeoutInMs.trim().length()==0) {
+			rc = WEB_XML_GRAFANA_HEALTHCHECK_TIMEOUT_MS_DEFAULT;
+		} else {
+			try {
+				rc = Integer.parseInt(grafanaHealthCheckTimeoutInMs.trim());
+			} catch(Exception e) {
+				throw new WebXmlConfigurationException(msgs.getInvalidGrafanaHealthCheckTimeoutInMs(e, grafanaHealthCheckTimeoutInMs, WEB_XML_GRAFANA_HEALTHCHECK_TIMEOUT_MS, this.getClass().getCanonicalName()));
+			}
+		}
+		return rc;
 	}
 
 }

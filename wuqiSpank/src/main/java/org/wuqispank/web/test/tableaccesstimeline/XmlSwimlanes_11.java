@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.wuqispank.tablecount_DEPRECATED.MXGraphContext;
-
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.layout.mxStackLayout;
 import com.mxgraph.model.mxICell;
@@ -21,7 +19,6 @@ import com.mxgraph.util.mxXmlUtils;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 import com.mxgraph.view.mxSwimlaneManager;
-//import org.headlessintrace.client.DefaultFactory;
 
 /**
  * Expand/collapse works!
@@ -36,7 +33,6 @@ public class XmlSwimlanes_11 extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 2046662393293433060L;
 	private static final String STYLE_WUQISPANK_SWIMLANE = "swimlane";
-	private MXGraphContext m_graphContext;
 	private static final String STYLE_WUQISPANK_JOIN_EDGE = "wsJoinEdge";
 	public static final String STYLE_WUQISPANK_ROW_ODD = "wsRowOdd";
 	public static final String STYLE_WUQISPANK_ROW_EVEN = "wsRowEven";
@@ -46,17 +42,14 @@ public class XmlSwimlanes_11 extends HttpServlet {
 	private static final String STYLE_WUQISPANK_VERTICAL_TABLE_LANE = "wsVerticalTableLane";
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException    {
 
-    	MXGraphSwimlaneHtmlLoader swimlaneLoader = new MXGraphSwimlaneHtmlLoader();
+    	//MXGraphSwimlaneHtmlLoader swimlaneLoader = new MXGraphSwimlaneHtmlLoader();
+		
+		MXGraphSwimlaneHtmlLoader swimlaneLoader = new MXGraphSwimlaneHtmlLoader();
     	swimlaneLoader.setMxGraphFolder("mxGraph-2_4_0_4");
     	//    	swimlaneLoader.setMxGraphFolder("mxGraph-2_2_0_2");    	
     	swimlaneLoader.setJavaScript("/js/XmlSwimlanes_11.js");
     	swimlaneLoader.setGraphXml(this.createGraph());
     	resp.getWriter().println( swimlaneLoader.getHtml(req.getContextPath() ) );
-    }
-
-    public MXGraphContext getGraphContext() {
-    	return m_graphContext;
-    	
     }
     /**
      * Puts the O-->O graph onto s simple swimlange.

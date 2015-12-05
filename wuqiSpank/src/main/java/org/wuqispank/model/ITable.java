@@ -2,7 +2,7 @@ package org.wuqispank.model;
 
 import java.util.List;
 
-public interface ITable extends IBaseTable {
+public interface ITable extends Comparable<ITable>, IBaseTable  {
 	
 //	List<IColumn> getColumns();
 
@@ -28,5 +28,7 @@ public interface ITable extends IBaseTable {
 	boolean isGrowthTable();
 
 	void setGrowthTable(boolean val);
+	public int compareTo(ITable o);
+	
 	
 }

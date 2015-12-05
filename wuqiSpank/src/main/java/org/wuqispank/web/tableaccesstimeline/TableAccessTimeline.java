@@ -57,7 +57,7 @@ public class TableAccessTimeline extends WebMarkupContainer {
 	public static final String STYLE_WUQISPANK_TABLE_GROWTH_HEADER = "wsTableGrowthHeader";
 	public static final String STYLE_WUQISPANK_TABLE_VERTICAL = "tableVertical";
 	//public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/stock_draw-sphere.png";
-	public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/i_select.png";
+	public static final String STYLE_WUQISPANK_SPHERE = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/i_se_EE_lect.png";
 	public static final String STYLE_WUQISPANK_VERTICAL_TABLE_LANE = "wsVerticalTableLane";
 
 	
@@ -72,7 +72,7 @@ public class TableAccessTimeline extends WebMarkupContainer {
 		
 	}
 	public static String getBaseImage() {
-		String baseImage = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=/wuqiSpank/images/";
+		String baseImage = "shape=image;verticalLabelPosition=bottom;verticalAlign=top;image=../../images/";
 		return baseImage;
 	}
 	public static String getTableAccessImage(SqlType sqlType, boolean isException) {
@@ -136,6 +136,10 @@ public class TableAccessTimeline extends WebMarkupContainer {
 		response.render( JavaScriptHeaderItem.forUrl(getMxGraphFolder() + "/js/mxClient.js"));
 		response.render( JavaScriptHeaderItem.forUrl("js/tablecount.js"));
 		response.render( JavaScriptHeaderItem.forUrl("js/vkbeautify.0.99.00.beta.js"));
+		response.render( JavaScriptHeaderItem.forUrl("js/jquery-1.10.2.js"));
+		
+		//response.render( JavaScriptHeaderItem.forUrl("js/jquery.dataTables.min.js"));
+		
 		
 	}
 	/**

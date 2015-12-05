@@ -134,7 +134,7 @@ public class DefaultRow implements IRow, java.io.Serializable {
 			if (colLeft==null)
 				joinExpression.setLiteralComparison(true);
 			else if (colLeft.getTable()==null)
-				throw new WuqispankException("Found null table for \"left column\" in join for sql [" + this.getSqlWrapper().getSqlText() + "]");
+				throw new WuqispankException("Found null table for \"left column\" in join for sql [" + this.getSqlWrapper().getSqlText() + "].  sql parsed by [" + model.getParser().getName() + "]");
 			else
 				leftTableMarker = getTableMarker(colLeft.getTable());
 			
@@ -142,7 +142,7 @@ public class DefaultRow implements IRow, java.io.Serializable {
 			if (colRight==null)
 				joinExpression.setLiteralComparison(true);
 			else if (colRight.getTable()==null)
-				throw new WuqispankException("Found null table for \"right column\" in join for sql [" + this.getSqlWrapper().getSqlText() + "]");
+				throw new WuqispankException("Found null table for \"right column\" in join for sql [" + this.getSqlWrapper().getSqlText() + "]  sql parsed by [" + model.getParser().getName() + "");
 			else
 				rightTableMarker = getTableMarker(colRight.getTable());
 			

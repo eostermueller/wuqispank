@@ -13,9 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.wuqispank.DefaultFactory;
 //import org.headlessintrace.client.DefaultFactory;
 import org.wuqispank.model.ITable;
-import org.wuqispank.ta_OLD.ITableHeaderRenderer;
-import org.wuqispank.tablecount_DEPRECATED.DefaultTableHeaderRenderer;
-import org.wuqispank.tablecount_DEPRECATED.MXGraphContext;
 
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.layout.mxIGraphLayout;
@@ -37,7 +34,6 @@ import com.mxgraph.view.mxSwimlaneManager;
  */
 public class XmlSwimlanes_6 extends HttpServlet {
     private static final String STYLE_WUQISPANK_SWIMLANE = "swimlane";
-	private MXGraphContext m_graphContext;
 	private String STYLE_WUQISPANK_ROW_ODD = "wuqispankRowOdd";
 	private String STYLE_WUQISPANK_ROW_EVEN = "wuqispankRowEven";
 	private String STYLE_WUQISPANK_TABLE_HEADER = "tableHeader";
@@ -49,10 +45,6 @@ public class XmlSwimlanes_6 extends HttpServlet {
     	resp.getWriter().println( swimlaneLoader.getHtml(req.getContextPath() ) );
     }
 
-    public MXGraphContext getGraphContext() {
-    	return m_graphContext;
-    	
-    }
     /**
      * Puts the O-->O graph onto s simple swimlange.
      * @param request

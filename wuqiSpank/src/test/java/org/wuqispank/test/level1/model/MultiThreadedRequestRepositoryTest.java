@@ -30,7 +30,7 @@ public class MultiThreadedRequestRepositoryTest {
 
 	@Test
 	public void test() {
-		IRequestRepository repo = new InMemoryRequstRepo();
+		IRequestRepository repo = new InMemoryRequstRepo(16384,256);
 		
 		//int numThreads = 51;
 		//int iterations = 1013;		

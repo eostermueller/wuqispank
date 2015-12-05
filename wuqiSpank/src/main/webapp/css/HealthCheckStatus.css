@@ -1,0 +1,29 @@
+td.health ,th.health {
+    font-family: Arial, Verdana, Sans-serif;
+    font-size: 12px;
+}
+
+img.health {
+  width:100%;
+  /* max-height : auto;*/
+  max-width : 15px;
+}
+tr.health {
+  height: 10px;
+}
+table.status td.health {
+  text-align: center;
+  valign: middle;
+  width: 200;
+  padding: 2px;
+}
+.w3-table-all{border:1px solid #ccc}
+.w3-bordered tr,.w3-table-all tr{border-bottom:1px solid #d0d0d0}
+.w3-striped tbody tr:nth-child(even){background-color:#f2f2f2}
+.w3-table-all tr:nth-child(odd){background-color:#fff}
+.w3-table-all tr:nth-child(even){background-color:#f2f2f2}
+.w3-hoverable tbody tr{transition:background-color .25s ease}
+.w3-hoverable tbody tr:hover{background-color:#f2f2f2}
+.w3-centered tr th,.w3-centered tr td{text-align:center}
+.w3-table td,.w3-table th,.w3-table-all td,.w3-table-all th{padding:4px 8px;display:table-cell;text-align:left;vertical-align:top}
+.w3-table th:first-child,.w3-table td:first-child,.w3-table-all th:first-child,.w3-table-all td:first-child{padding-left:16px}

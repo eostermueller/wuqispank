@@ -1,11 +1,15 @@
 package org.wuqispank.web;
 
+import java.util.SortedMap;
+
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.headlessintrace.jdbc.IJdbcProvider;
 import org.wuqispank.IReconnector;
 import org.wuqispank.WuqispankException;
 import org.wuqispank.db.ISqlParser;
+import org.wuqispank.health.DefaultTcpHealthCheck;
+import org.wuqispank.health.Result;
 import org.wuqispank.importexport.IExportDirListener;
 import org.wuqispank.importexport.IFileImporter;
 import org.wuqispank.importexport.IImportExportMgr;
@@ -14,6 +18,7 @@ import org.wuqispank.importexport.IRequestImporter;
 import org.wuqispank.model.IBinaryOperatorExpression;
 import org.wuqispank.model.IColumn;
 import org.wuqispank.model.IModelObservationMgr;
+import org.wuqispank.model.IRequestManager;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlModel;
@@ -28,6 +33,9 @@ import org.wuqispank.web.tableaccesstimeline.IRow;
 import org.wuqispank.web.tableaccesstimeline.IRowGroup;
 import org.wuqispank.web.tableaccesstimeline.ITableLaneMgr;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.mxgraph.view.mxGraph;
 
 public interface IFactory {
@@ -46,8 +54,6 @@ public interface IFactory {
 	ISqlParser getSecondarySqlParser();
 	IColumn getColumn();
 	IStackTrace getStackTrace();
-//	ITableHeaderConfiguration getTableHeaderConfiguration();
-//	ITableHeaderRenderer getTableHeaderRenderer();
 	IBinaryOperatorExpression getBinaryOperatorExpression();
 	IModelObservationMgr getObservationMgr();
 	ISqlStatsObserver getSqlStatsCounter();
@@ -64,4 +70,12 @@ public interface IFactory {
 	IImportExportMgr getImportExportManager();
 	void setImportExportManager(IImportExportMgr val);
 	IFileImporter getInTraceEventFileImporter();
+	IRequestManager getRequestManager();
+	MetricRegistry getMetricRegistry();
+	HealthCheckRegistry getHealthCheckRegistry();
+	SortedMap<String, org.wuqispank.health.Result> getHealthCheckResults();
+	void setHealthCheckResults(SortedMap<String, org.wuqispank.health.Result> val);
+	Runnable getHealthChecker(HealthCheckRegistry registry);
+	HealthCheck getInTraceHealthCheck();
+	DefaultTcpHealthCheck getTcpHealthCheck();
 }

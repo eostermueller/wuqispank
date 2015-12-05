@@ -2,6 +2,8 @@ package org.wuqispank.model;
 
 import java.util.Iterator;
 
+import org.wuqispank.WuqispankException;
+
 
 /**
  * 
@@ -28,9 +30,15 @@ import java.util.Iterator;
  *
  */
 public interface IRequestRepository {
-	void add(IRequestWrapper val);
+	void add(IRequestWrapper val) throws WuqispankException;
 	IRequestWrapper get(String key);
 	Iterator<IRequestWrapper> getIterator();
 	void remove(String key);
 	int size();
+	int getSqlCount();
+	int getServletRequestCapacity();
+	int getPercentageFull();
+	long getFreeMemoryInMb();
+	int getCountOfDiscardedRequests();
+	int getCountOfTotalRequests();
 }

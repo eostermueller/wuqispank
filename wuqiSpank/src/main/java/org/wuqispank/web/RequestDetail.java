@@ -2,24 +2,14 @@ package org.wuqispank.web;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.Serializable;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
-import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.Page;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.tabs.AbstractTab;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
@@ -27,7 +17,6 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -35,17 +24,17 @@ import org.apache.wicket.util.string.StringValue;
 import org.headlessintrace.client.request.IRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wicketstuff.datatables.DemoDatatable;
 import org.wicketstuff.datatables.JQueryDatatable;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
-import org.wuqispank.importexport.AbstractRequestImporter;
-import org.wuqispank.importexport.DefaultRequestExporter;
 import org.wuqispank.importexport.DefaultRequestImporter;
 import org.wuqispank.importexport.IRequestExporter;
 import org.wuqispank.model.IRequestWrapper;
 import org.wuqispank.model.ISqlWrapper;
 import org.wuqispank.web.msgs.IMessages;
 import org.wuqispank.web.tableaccesstimeline.TableAccessTimeline;
+import org.wuqispank.web.wicket.DataTableRequestDetail;
 
 public class RequestDetail extends AuthenticatedWebPage {
 //	ProgressBar bar = null;
@@ -368,8 +357,7 @@ public class RequestDetail extends AuthenticatedWebPage {
 				LOG.error("Error.  In TabPanel1 ctor for id [" + id + "], and no request found.");
 			} else {
 				LOG.debug("Found unique id in tab panel 1 [" + request.getUniqueId() + "]");
-				WebMarkupContainer table = new JQueryDatatable("sqlTable");
-				//WebMarkupContainer table = new DemoDatatable("sqlTable");
+				WebMarkupContainer table = new DataTableRequestDetail("sqlTable");
 				
 				add(table);
 

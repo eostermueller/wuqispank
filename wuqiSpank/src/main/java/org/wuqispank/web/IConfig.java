@@ -5,9 +5,12 @@ import java.io.File;
 import org.headlessintrace.client.connection.HostPort;
 import org.headlessintrace.jdbc.IJdbcProvider;
 
+import com.codahale.metrics.health.HealthCheckRegistry;
+
 public interface IConfig {
 	HostPort getInTraceAgent();
 	int getCircularBufferSize();
+	int getNumberOfRequestsToRemoveAtOnce();
 	File getExportDir();
 	int getMaxRowCountOfHeterogenousGroup();
 	int getMaxRowCountOfHomogeneousGroup();
@@ -35,4 +38,17 @@ public interface IConfig {
 	long getExportDirListenerIntervalInSeconds();
 	boolean isGrowthTable(String tableName);
 	void setGrowthTable(String tableName);
+	int getInfluxDbPort();
+	String getInfluxDbHost();
+	int getInfluxDbWriteIntervalSeconds();
+	int getHealthCheckIntervalSeconds();
+	String getInfluxdbDbName();
+	String getInfluxDbUser();
+	String getInfluxDbPassword();
+	int getInfluxdbBatchSize();
+	String getInfluxdbRetentionPolicy();
+	Runnable getHealthChecker(HealthCheckRegistry registry);
+	String getGrafanaHost();
+	int getGrafanaPort();
+	int getGrafanaHealthCheckTimeoutInMs();
 }

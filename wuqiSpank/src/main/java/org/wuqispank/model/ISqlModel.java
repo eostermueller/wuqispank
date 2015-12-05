@@ -55,4 +55,7 @@ public interface ISqlModel {
 	Class getParser();
 	List<ITable> toTableList(String[] ary);
 	List<ITable> getTables();
+	public List<ITable> getSortedTables();
+	String getKey();
+	ITable findTable(ITable criteria);
 }

@@ -1,10 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <html xmlns:wicket="http://wicket.apache.org">
-<body>
+<body >
+
+<div style="width: 980px">
   <wicket:panel>
-    <a href="index.html" style="color: #005493" target="_top"> <!-- <img style="background-color: inherit;" src="logo.png" /> --> </a>      
-        <div style="float:left;"><span wicket:id="exampleTitle">Example Title Goes Here</span></div>
     <br/>
+	<div class="fg-toolbar ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix">
+		<div id="idb_length" class="dataTables_length"><wicket:message key="connection.status">Default label</wicket:message> 
+		</div>
+	</div>
+	<p id="dateTimeLabel"></p>
+			<table id="statusTable" class="w3-table-all">
+
+				<tr class="health">
+				        <th><wicket:message key="status.colhead.resource">Default label</wicket:message></th>
+				        <th><wicket:message key="status.colhead.status">Default label</wicket:message></th>
+				        <th><wicket:message key="status.colhead.host">Default label</wicket:message></th>
+				        <th><wicket:message key="status.colhead.port">Default label</wicket:message></th>
+				        <th><wicket:message key="status.colhead.statistics">Default label</wicket:message></th>
+				        <th><wicket:message key="status.colhead.doc">Default label</wicket:message></th>
+				</tr>
+				<tr class="health">
+					<td class="health"> <wicket:message key="status.intrace">Default label</wicket:message> </td>
+					<td id="intrace_Status" class="health"> <wicket:message key="refresh.wait">Default label</wicket:message></td>
+					<td id="intrace_Host"> <wicket:message key="refresh.wait">Default label</wicket:message> </td>
+					<td id="intrace_Port"> <wicket:message key="refresh.wait">Default label</wicket:message> </td>
+					<td id="intrace_Stats" class="health">97275</td>
+				</tr>
+				
+				<tr>
+				
+					<td class="health"> <wicket:message key="status.influxdb">Default label</wicket:message> </td>
+				 
+					<td id="influxdb_Status" class="health"> <wicket:message key="refresh.wait">Default label</wicket:message></td>
+					<td id="influxdb_Host"><wicket:message key="refresh.wait">Default label</wicket:message></td>
+					<td id="influxdb_Port"><wicket:message key="refresh.wait">Default label</wicket:message></td>
+					<td id="influxdb_Stats" class="health"></td>
+					<td id="influxdb_Doc" class="health"></td>
+					 
+				</tr>
+
+				
+				<tr>
+					<td class="health"> <wicket:message key="status.grafana">Default label</wicket:message> </td>
+					<td id="grafana_Status" class="health"> <wicket:message key="refresh.wait">Default label</wicket:message></td>
+					<td id="grafana_Host"><wicket:message key="refresh.wait">Default label</wicket:message></td>
+					<td id="grafana_Port"><wicket:message key="refresh.wait">Default label</wicket:message></td>
+				</tr>
+		
+		</table>
+
   </wicket:panel>
+ </div>
 </body>
 </html>

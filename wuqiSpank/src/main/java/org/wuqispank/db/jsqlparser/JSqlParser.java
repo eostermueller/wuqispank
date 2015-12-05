@@ -13,6 +13,7 @@ import org.wuqispank.db.ISqlParser;
 import org.wuqispank.db.SqlParseException;
 import org.wuqispank.model.ISqlModel;
 import org.wuqispank.model.ITable;
+import org.wuqispank.model.SqlType;
 
 public class JSqlParser implements ISqlParser {
 
@@ -24,19 +25,25 @@ public class JSqlParser implements ISqlParser {
 		if (this.getSqlModel()==null) {
 			throw new SqlParseException(DefaultFactory.getFactory().getMessages().missingSqlModel(sqlText));
 		}
+		this.getSqlModel().setParser(this.getClass());
 		
 		try {
 			Statement statement = CCJSqlParserUtil.parse(sqlText);
 			ParsedDataExtractor pde = null;
 			if (statement instanceof Select) {
 				pde = new SelectExtractor( (Select)statement, this.getSqlModel());
+				this.getSqlModel().setSqlType(SqlType.SELECT);
 			} else if (statement instanceof Update) {
 				pde = new UpdateExtractor( (Update)statement, this.getSqlModel());
+				this.getSqlModel().setSqlType(SqlType.UPDATE);
 			} else if (statement instanceof Insert) {
 				pde = new InsertExtractor( (Insert)statement, this.getSqlModel());
+				this.getSqlModel().setSqlType(SqlType.INSERT);
 			} else if (statement instanceof Delete) {
 				pde = new DeleteExtractor( (Delete)statement, this.getSqlModel());
+				this.getSqlModel().setSqlType(SqlType.DELETE);
 			} else {
+				this.getSqlModel().setSqlType(SqlType.OTHER);
 				throw new SqlParseException("The Replace statement is not yet supported.");
 			}
 			pde.extract();

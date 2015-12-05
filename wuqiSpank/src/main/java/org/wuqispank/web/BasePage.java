@@ -17,6 +17,9 @@
 package org.wuqispank.web;
 
 
+import org.apache.wicket.markup.head.CssContentHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
@@ -45,7 +48,7 @@ public class BasePage extends WebPage
 	public BasePage(final PageParameters pageParameters)
 	{
 		super(pageParameters);
-
+		this.setStatelessHint ( true );
 		final String packageName = getClass().getPackage().getName();
 		add(new Header("mainNavigation", Strings.afterLast(packageName, '.'), this));
 	}
@@ -59,6 +62,18 @@ public class BasePage extends WebPage
 	public BasePage(IModel<?> model)
 	{
 		super(model);
+	}
+	@Override
+	public void renderHead(IHeaderResponse response)
+	{
+		renderBasicJS(response);
+	}
+	
+	private void renderBasicJS(IHeaderResponse response)
+	{
+		response.render( JavaScriptHeaderItem.forUrl("js/wuqispank.js"));
+		response.render( CssContentHeaderItem.forUrl("css/HealthCheckStatus.css"));
+		
 	}
 
 }

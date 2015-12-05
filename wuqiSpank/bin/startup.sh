@@ -9,4 +9,4 @@ else
 fi
 
 echo Writing to wuqiSpank logfile $(dirname $0)/logs/wuqiSpank-$$.log
-java -jar wuqiSpank.jar -httpPort 8071 1> $(dirname $0)/logs/wuqiSpank-$$.log 2>&1 &
+java -Xmx3g -jar wuqiSpank.jar  1> $(dirname $0)/logs/wuqiSpank-$$.log 2>&1 &

@@ -40,6 +40,7 @@ public class JQueryDatatable extends WebMarkupContainer
 		js.append("	var oTable = $(\"#" + getMarkupId() + "\").dataTable( {\n");
 		//js.append("		\"bJQueryUI\": true,\n");
 		js.append( horizontalScrollConfiguration() );
+		js.append("\"autoWidth\": true");
 		js.append( columnConfiguration() );
 //		js.append("		\"sPaginationType\": \"full_numbers\"\n");
 		js.append("	} );\n");

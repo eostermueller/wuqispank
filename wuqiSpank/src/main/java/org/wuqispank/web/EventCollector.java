@@ -1,29 +1,13 @@
 package org.wuqispank.web;
 
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.rmi.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
-import javax.management.Query;
-import javax.management.ReflectionException;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.xml.parsers.ParserConfigurationException;
@@ -49,15 +33,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wuqispank.DefaultFactory;
 import org.wuqispank.WuqispankException;
+import org.wuqispank.health.DefaultTcpHealthCheck;
 import org.wuqispank.importexport.IExportDirListener;
 import org.wuqispank.importexport.IImportExportMgr;
+import org.wuqispank.model.IRequestListener;
 import org.wuqispank.model.IRequestRepository;
 import org.wuqispank.model.IRequestWrapper;
+import org.wuqispank.util.GroupNameThreadFactory;
+
+import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.health.HealthCheckRegistry;
 
 
-public class EventCollector implements ServletContextListener, ICompletedRequestCallback {
+public class EventCollector implements ServletContextListener, ICompletedRequestCallback, IRequestListener {
 	static Logger LOG = LoggerFactory.getLogger(EventCollector.class);
 	RequestConnection m_requestConnection = null;
+	ScheduledExecutorService wuqiSpankHealthCheckerScheduler = null; 
+	ScheduledExecutorService exportDirListenerScheduler = null;
+	ScheduledExecutorService inTraceReconnectorScheduler = null;
 	/**
 	 *   F I L T E R
 	 */
@@ -72,7 +65,6 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 		m_parser = org.headlessintrace.client.DefaultFactory.getFactory().getEventParser();
 		m_requestStart = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: {:50", 0);
 		m_requestCompletion = m_parser.createEvent("[15:47:00.999]:[203]:javax.servlet.http.HttpServlet:service: }:250", 0);
-		m_repo = DefaultFactory.getFactory().createRepo();
 	}
 
 	public IRequestRepository getRepo() {
@@ -90,7 +82,12 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		System.out.println("ServletContextListener destroyed");
+		LOG.info("wuqiSpank shutdown in progress (contextDestroyed)" );
+		//System.out.println("ServletContextListener destroyed");
+		wuqiSpankHealthCheckerScheduler.shutdown();
+		exportDirListenerScheduler.shutdown();
+		inTraceReconnectorScheduler.shutdown();
+		DefaultFactory.getFactory().getReconnector().disconnectAll();
 	}
 	/**
 	 * When new files show up in the export-dir, import them.
@@ -99,7 +96,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	 */
 	protected void initExportDirListener() throws IOException, ParserConfigurationException {
 		GroupNameThreadFactory threadFactory = new GroupNameThreadFactory("wuqiSpankExportDirListener");
-		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, threadFactory);
+		exportDirListenerScheduler = Executors.newScheduledThreadPool(1, threadFactory);
 		
 		IExportDirListener listener = DefaultFactory.getFactory().getExportDirListener();
 		listener.setImportExportMgr(DefaultFactory.getFactory().getImportExportManager());
@@ -112,22 +109,52 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	         * 3. Delay between successive execution
 	         * 4. Time Unit
 	         */
-	        scheduler.scheduleAtFixedRate(
+	        exportDirListenerScheduler.scheduleAtFixedRate(
 	        		listener, 
 	        		1,
 	        		DefaultFactory.getFactory().getConfig().getExportDirListenerIntervalInSeconds(), 
 	        		TimeUnit.SECONDS);
+	}
+	protected void initHealthChecks() {
+		HealthCheck intraceHealthCheck = DefaultFactory.getFactory().getInTraceHealthCheck();
+		DefaultFactory.getFactory().getHealthCheckRegistry().register("wuqiSpankInTraceHealthChecker",intraceHealthCheck); 
+		
+		DefaultTcpHealthCheck grafanaHealthCheck = DefaultFactory.getFactory().getTcpHealthCheck();
+		grafanaHealthCheck.setHost( DefaultFactory.getFactory().getConfig().getGrafanaHost());
+		grafanaHealthCheck.setPort( DefaultFactory.getFactory().getConfig().getGrafanaPort() );
+		grafanaHealthCheck.setTimeoutInMs(DefaultFactory.getFactory().getConfig().getGrafanaHealthCheckTimeoutInMs() );
+		DefaultFactory.getFactory().getHealthCheckRegistry().register("wuqiSpankGrafanaHealthChecker",grafanaHealthCheck); 
+		
+		GroupNameThreadFactory threadFactory = new GroupNameThreadFactory("wuqiSpankHealthChecker");
+		wuqiSpankHealthCheckerScheduler = Executors.newScheduledThreadPool(1, threadFactory);
+		
+        HealthCheckRegistry registry = DefaultFactory.getFactory().getHealthCheckRegistry();
+        Runnable runnable = DefaultFactory.getFactory().getHealthChecker(registry);
+
+        LOG.debug("HealthCheck interval (seconds): [" + DefaultFactory.getFactory().getConfig().getHealthCheckIntervalSeconds() + "]");
+       /**
+         * Parameters :
+         * 1. Object of Runnable
+         * 2. Initial Delay
+         * 3. Delay between successive execution
+         * 4. Time Unit
+         */
+        wuqiSpankHealthCheckerScheduler.scheduleAtFixedRate(
+        		runnable, 
+        		1,
+        		DefaultFactory.getFactory().getConfig().getHealthCheckIntervalSeconds(), 
+        		TimeUnit.SECONDS);
 	}
 	/**
 	 * All connections to the SUT (system under test), even the very first, are made by the DefaultConnector
 	 */
 	protected void initReconnector() {
 		
-		GroupNameThreadFactory threadFactory = new GroupNameThreadFactory("wuqiSpankReconnector");
-		ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, threadFactory);
 		
-        
-       Runnable runnable = DefaultFactory.getFactory().getReconnector();
+		GroupNameThreadFactory threadFactory = new GroupNameThreadFactory("wuqiSpankReconnector");
+		inTraceReconnectorScheduler = Executors.newScheduledThreadPool(1, threadFactory);
+
+		Runnable runnable = DefaultFactory.getFactory().getReconnector();
 
        /**
          * Parameters :
@@ -136,7 +163,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
          * 3. Delay between successive execution
          * 4. Time Unit
          */
-        scheduler.scheduleAtFixedRate(
+        inTraceReconnectorScheduler.scheduleAtFixedRate(
         		runnable, 
         		1,
         		DefaultFactory.getFactory().getConfig().getReconnectIntervalInSeconds(), 
@@ -151,12 +178,14 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 	 */
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
+		DefaultFactory.getFactory().getRequestManager().registerListener(this);
 		LOG.debug("Entering contextInitialized");
 		
 		//System.out.println("!!Entering contextInitialized");
 		
 		IConfig config = new WebXmlConfigImpl(servletContextEvent.getServletContext());
 		DefaultFactory.getFactory().setConfig(config);//make this available GLOBALLY to the rest of the program.
+		m_repo = DefaultFactory.getFactory().createRepo();
 
 		 IImportExportMgr iem = DefaultFactory.getFactory().getImportExportManager();
 		 iem.setRepo( getRepo() );
@@ -168,9 +197,12 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			DefaultConnectionList.getSingleton().add(config.getInTraceAgent(), m_requestConnection);
 			
 			servletContextEvent.getServletContext().setAttribute(WUQISPANK_REPO, this);
+			LOG.debug("Just called ServletContext#setAttribute(" + this.WUQISPANK_REPO + "," + this.hashCode() + ")");
+			//LOG.debug("WuqispankApp.getRepo() [" + WuqispankApp.getRepo().hashCode() + "]");
 			
 			this.initReconnector();
 			this.initExportDirListener();
+			this.initHealthChecks();
 			
 		} catch (IntraceException e) {
 			e.printStackTrace();
@@ -281,7 +313,7 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			try {
 				LOG.debug("Adding full request with event count ["  + request.getEvents().size() + "]");
 				requestWrapper.setRequest(request);
-				getRepo().add(requestWrapper);
+				DefaultFactory.getFactory().getRequestManager().add(requestWrapper);
 			} catch (WuqispankException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -289,6 +321,12 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 		} //else there was a round trip to the SUT without SQL events.
 		
 	}
+	
+	@Override
+	public void add(IRequestWrapper requestWrapper) throws WuqispankException {
+		getRepo().add(requestWrapper);
+	}	
+	
 	/**
 	 * 
 	 * If making changes here, also consider making changes to this.getCommandArray().
@@ -344,40 +382,5 @@ public class EventCollector implements ServletContextListener, ICompletedRequest
 			}
 		}
 	}
-    /**
- * A thread factory that names each thread with the provided group name.
- * <p>
- * Except lines with "elarson modified", copied from code 
- * Executors$DefaultThreadFactory -- Doug Lea, Copyright Oracle, et al.
- */
-static class GroupNameThreadFactory implements ThreadFactory {
-    private String groupname; /* elarson modified */
-    private static final AtomicInteger poolNumber = new AtomicInteger(1);
-    private final ThreadGroup group;
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
-    private final String namePrefix;
-
-    GroupNameThreadFactory(String groupname) {
-        this.groupname = groupname; /* elarson modified */
-        SecurityManager s = System.getSecurityManager();
-        group = (s != null) ? s.getThreadGroup() :
-                              Thread.currentThread().getThreadGroup();
-        namePrefix = "pool-" +
-                       this.groupname + /* elarson modified */
-                       poolNumber.getAndIncrement() +
-                     "-thread-";
-    }
-
-    public Thread newThread(Runnable r) {
-        Thread t = new Thread(group, r,
-                              namePrefix + threadNumber.getAndIncrement(),
-                              0);
-        if (t.isDaemon())
-            t.setDaemon(false);
-        if (t.getPriority() != Thread.NORM_PRIORITY)
-            t.setPriority(Thread.NORM_PRIORITY);
-        return t;
-    }
-}	
 }
 

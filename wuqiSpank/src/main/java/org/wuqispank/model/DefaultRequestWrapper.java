@@ -239,7 +239,9 @@ public class DefaultRequestWrapper implements IRequestWrapper {
 		m_sqlModel = val;
 	}
 	@Override
-	public void setUniqueId(String val) {
+	public void setUniqueId(String val) throws WuqispankException {
+		if ( this.getRequest()==null)
+			this.setRequest( org.headlessintrace.client.DefaultFactory.getFactory().getRequest() );
 		getRequest().setUniqueId(val);
 	}
     private static final String SIMPLE_DATE_FORMAT_PATTERN = "yyyy-MM-dd kk:mm:ss.SSS";

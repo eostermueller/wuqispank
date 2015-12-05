@@ -2,6 +2,7 @@ export-dir/
 datatables/target/
 wuqiSpank/.extract/
 wuqiSpank/target
+wuqiSpank/bin/logs/
 *.class
 export-dir/
 wuqiSpank/.classpath
